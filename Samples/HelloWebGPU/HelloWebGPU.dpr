@@ -1,11 +1,13 @@
-program SimpleWebGPUDraw;
+program HelloWebGPU;
 
 {$APPTYPE CONSOLE}
 
 uses
-   Winapi.Windows, Winapi.Messages,
-   System.SysUtils, System.Math,
-   webgpu;
+  Winapi.Windows,
+  Winapi.Messages,
+  System.SysUtils,
+  System.Math,
+  webgpu;
 
 const
    cWindowWidth = 800;
@@ -17,10 +19,19 @@ const
         @builtin(position) position: vec4f,
         @location(0) color: vec4f
       };
+      @group(0) @binding(0) var<uniform> u_angle: f32;
+      //const u_angle: f32 = 0.1;
       @vertex
       fn vs_main(@location(0) position: vec2f) -> VertexOutput {
         var output: VertexOutput;
-        output.position = vec4f(position, 0.0, 1.0);
+        var cos_angle = cos(u_angle);
+        var sin_angle = sin(u_angle);
+        var rotation_matrix = mat2x2f(
+           vec2f(cos_angle, -sin_angle),
+           vec2f(sin_angle, cos_angle)
+        );
+        var rotated_position = rotation_matrix * position;
+        output.position = vec4f(rotated_position, 0.0, 1.0);
         output.color = vec4f(0, 0, 1, 1);
         return output;
       };
@@ -39,7 +50,6 @@ var
    vAdapter: WGPUAdapter;
    vDevice: WGPUDevice;
    vQueue: WGPUQueue;
-   vSwapChain: WGPUSwapChain;
    vRenderPipeline: WGPURenderPipeline;
    vVertexBuffer: WGPUBuffer;
    vUniformBuffer: WGPUBuffer;
@@ -89,6 +99,40 @@ begin
    UpdateWindow(vWindowHandle);
 end;
 
+procedure UncapturedErrorCallback(
+   const device: PWGPUDevice;
+   &type: WGPUErrorType; const &message: PUTF8Char;
+   userdata1: Pointer; userdata2: Pointer
+   ); cdecl;
+begin
+   if &message <> nil then
+      Writeln(Ord(&type).ToHexString, ' ', &message);
+end;
+
+procedure CompilationCallback(
+   status: WGPUCompilationInfoRequestStatus;
+   const compilationInfo: PWGPUCompilationInfo; userdata1, userdata2: Pointer
+   ); cdecl;
+begin
+   if compilationInfo.messageCount = 0 then Exit;
+
+   Writeln('Compilation ', PChar(userData1), ' ', Ord(status));
+   var p := compilationInfo.messages;
+   for var i := 1 to compilationInfo.messageCount do begin
+      Writeln('Line ', p.lineNum, ':', p.linePos, ' ', p.message);
+      Inc(p);
+   end;
+end;
+
+procedure PipelineInfoCallback(
+   status: WGPUCreatePipelineAsyncStatus;
+   pipeline: WGPURenderPipeline; const &message: PUTF8Char;
+   userdata1: Pointer; userdata2: Pointer
+   ); cdecl;
+begin
+   Writeln('Pipeline ', &message);
+end;
+
 procedure DeviceCallback(status: WGPURequestDeviceStatus; device: WGPUDevice; const &message: PUTF8Char; userdata: Pointer); cdecl;
 begin
    vDevice := device;
@@ -106,8 +150,8 @@ end;
 procedure InitializeWebGPU;
 begin
    // Create vInstance
-   var InstanceDescriptor := Default(WGPUInstanceDescriptor);
-   vInstance := wgpuCreateInstance(@InstanceDescriptor);
+   var instanceDescriptor := Default(WGPUInstanceDescriptor);
+   vInstance := wgpuCreateInstance(@instanceDescriptor);
    Assert(vInstance <> nil);
 
    // Request adapter
@@ -116,8 +160,23 @@ begin
    Assert(vAdapter <> nil);
 
    // Request device
+   var requiredLimits := Default(WGPURequiredLimits);
+   requiredLimits.limits.maxBindGroups := 1;
+   requiredLimits.limits.maxUniformBuffersPerShaderStage := 1;
+   requiredLimits.limits.maxUniformBufferBindingSize := 16 * 4;
+   requiredLimits.limits.minUniformBufferOffsetAlignment := 256;
+   requiredLimits.limits.minStorageBufferOffsetAlignment := 256;
+
    var deviceDescriptor := Default(WGPUDeviceDescriptor);
    deviceDescriptor.&label := 'WebGPU Device';
+   deviceDescriptor.requiredLimits := @requiredLimits;
+   deviceDescriptor.uncapturedErrorCallbackInfo2.callback := @UncapturedErrorCallback;
+   var featuresArray : array of WGPUFeatureName := [
+      WGPUFeatureName_TimestampQuery
+      // , WGPUFeatureName_ChromiumExperimentalTimestampQueryInsidePasses
+   ];
+   deviceDescriptor.requiredFeatureCount := Length(featuresArray);
+   deviceDescriptor.requiredFeatures := Pointer(featuresArray);;
    wgpuAdapterRequestDevice(vAdapter, @deviceDescriptor, @DeviceCallback, nil);
    Assert(vDevice <> nil);
 
@@ -147,7 +206,7 @@ begin
    surfaceConfiguration.viewFormatCount := 0;
    surfaceConfiguration.width := cWindowWidth;
    surfaceConfiguration.height := cWindowHeight;
-   surfaceConfiguration.presentMode := WGPUPresentMode_Fifo;
+   surfaceConfiguration.presentMode := WGPUPresentMode_Mailbox;
 
    wgpuSurfaceConfigure(vSurface, @surfaceConfiguration);
 
@@ -171,6 +230,12 @@ begin
    var vertexModule := wgpuDeviceCreateShaderModule(vDevice, @shaderModuleDescriptor);
    Assert(vertexModule <> nil);
 
+   var compilationInfoCallbackInfo2 := Default(WGPUCompilationInfoCallbackInfo2);
+   compilationInfoCallbackInfo2.mode := WGPUCallbackMode_AllowSpontaneous;
+   compilationInfoCallbackInfo2.callback := @CompilationCallback;
+   compilationInfoCallbackInfo2.userdata1 := PChar('Vertex Shader');
+   wgpuShaderModuleGetCompilationInfo2(vertexModule, compilationInfoCallbackInfo2);
+
    var fragmentSource := Default(WGPUShaderSourceWGSL);
    fragmentSource.chain.sType := WGPUSType_ShaderSourceWGSL;
    fragmentSource.code := PUTF8Char(cFragmentShaderCode);
@@ -181,9 +246,27 @@ begin
    var fragmentModule := wgpuDeviceCreateShaderModule(vDevice, @shaderModuleDescriptor);
    Assert(fragmentModule <> nil);
 
+   compilationInfoCallbackInfo2.userdata1 := PChar('Fragment Shader');
+   wgpuShaderModuleGetCompilationInfo2(fragmentModule, compilationInfoCallbackInfo2);
+
+   // Create a bind group layout
+   var bindGroupLayoutEntry := Default(WGPUBindGroupLayoutEntry);
+   bindGroupLayoutEntry.binding := 0; // slot 0
+   bindGroupLayoutEntry.buffer.&type := WGPUBufferBindingType_Uniform;
+   bindGroupLayoutEntry.buffer.minBindingSize := SizeOf(Single);
+   bindGroupLayoutEntry.visibility := WGPUShaderStage_Vertex;
+
+   var bindGroupLayoutDescriptor := Default(WGPUBindGroupLayoutDescriptor);
+   bindGroupLayoutDescriptor.entryCount := 1;
+   bindGroupLayoutDescriptor.entries := @bindGroupLayoutEntry;
+   var bindGroupLayout := wgpuDeviceCreateBindGroupLayout(vDevice, @bindGroupLayoutDescriptor);
+   Assert(bindGroupLayout <> nil);
+
    // Create pipeline layout
    var pipelineLayoutDescriptor := Default(WGPUPipelineLayoutDescriptor);
    pipelineLayoutDescriptor.&label := 'Pipeline Layout';
+   pipelineLayoutDescriptor.bindGroupLayoutCount := 1;
+   pipelineLayoutDescriptor.bindGroupLayouts := @bindGroupLayout;
    var pipelineLayout := wgpuDeviceCreatePipelineLayout(vDevice, @pipelineLayoutDescriptor);
    Assert(pipelineLayout <> nil);
 
@@ -197,10 +280,6 @@ begin
    vertexAttributes[0].format := WGPUVertexFormat_Float32x2;
    vertexAttributes[0].offset := 0;
    vertexAttributes[0].shaderLocation := 0;
-
-//   vertexAttributes[1].format := WGPUVertexFormat_Float32x4;
-//   vertexAttributes[1].offset := 2 * SizeOf(Single);
-//   vertexAttributes[1].shaderLocation := 1;
 
    var vertexState := Default(WGPUVertexState);
    vertexState.module := vertexModule;
@@ -244,6 +323,19 @@ begin
    vRenderPipeline := wgpuDeviceCreateRenderPipeline(vDevice, @pipelineDescriptor);
    Assert(vRenderPipeline <> nil);
 
+   // Create the bind group
+   var bindGroupEntry := Default(WGPUBindGroupEntry);
+   bindGroupEntry.binding := 0;
+   bindGroupEntry.buffer := vUniformBuffer;
+   bindGroupEntry.size := SizeOf(Single);
+
+   var bindGroupDescriptor := Default(WGPUBindGroupDescriptor);
+   bindGroupDescriptor.layout := bindGroupLayout;
+   bindGroupDescriptor.entryCount := 1;
+   bindGroupDescriptor.entries := @bindGroupEntry;
+   vBindGroup := wgpuDeviceCreateBindGroup(vDevice, @bindGroupDescriptor);
+   Assert(vBindGroup <> nil);
+
    wgpuShaderModuleRelease(vertexModule);
    wgpuShaderModuleRelease(fragmentModule);
    wgpuPipelineLayoutRelease(pipelineLayout);
@@ -260,6 +352,13 @@ begin
    Assert(vVertexBuffer <> nil);
 
    wgpuQueueWriteBuffer(vQueue, vVertexBuffer, 0, @Vertices, SizeOf(Vertices));
+
+   // Create uniform buffer
+   var uniformBufferDescriptor := Default(WGPUBufferDescriptor);
+   uniformBufferDescriptor.usage := WGPUBufferUsage_Uniform or WGPUBufferUsage_CopyDst;
+   uniformBufferDescriptor.size := SizeOf(Single);
+   vUniformBuffer := wgpuDeviceCreateBuffer(vDevice, @uniformBufferDescriptor);
+   Assert(vUniformBuffer <> nil);
 end;
 
 procedure Render;
@@ -304,6 +403,7 @@ begin
 
    wgpuRenderPassEncoderSetPipeline(renderPass, vRenderPipeline);
    wgpuRenderPassEncoderSetVertexBuffer(renderPass, 0, vVertexBuffer, 0, SizeOf(Vertices));
+   wgpuRenderPassEncoderSetBindGroup(renderPass, 0, vBindGroup, 0, nil);
    wgpuRenderPassEncoderDraw(renderPass, 4, 1, 0, 0);
 
    wgpuRenderPassEncoderEnd(renderPass);
@@ -311,25 +411,29 @@ begin
 
    var commandBuffer := wgpuCommandEncoderFinish(commandEncoder, nil);
    Assert(commandBuffer <> nil);
-   wgpuCommandEncoderRelease(commandEncoder);
+
+   var angle : Single := Frac(Now) * 86400 * PI / 4; // PI/4 per second
+   wgpuQueueWriteBuffer(vQueue, vUniformBuffer, 0, @angle, SizeOf(angle));
 
    wgpuQueueSubmit(vQueue, 1, @commandBuffer);
-
-   wgpuCommandBufferRelease(commandBuffer);
 
    wgpuTextureViewRelease(targetView);
 
    wgpuSurfacePresent(vSurface);
-   wgpuDeviceTick(vDevice);
+   wgpuInstanceProcessEvents(vInstance);
 
    wgpuTextureRelease(surfaceTexture.texture);
+
+   wgpuCommandEncoderRelease(commandEncoder);
+
+   wgpuCommandBufferRelease(commandBuffer);
 end;
 
 procedure MainLoop;
 var
-   msg: TMsg;
-   startTime, currentTime, totalTime: DWORD;
-   frameCount: Integer;
+   msg : TMsg;
+   startTime, currentTime, totalTime : DWORD;
+   frameCount : Integer;
    windowTitle : String;
 begin
    startTime := GetTickCount;
@@ -370,8 +474,8 @@ begin
    try
       InitializeWindow;
       InitializeWebGPU;
-      CreateRenderPipeline;
       CreateBuffers;
+      CreateRenderPipeline;
       MainLoop;
    except
       on E: Exception do
