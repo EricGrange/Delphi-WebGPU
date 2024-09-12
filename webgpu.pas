@@ -6,19 +6,10 @@ unit webgpu;
 
 interface
 
-const
-  {$IF Defined(WIN64)}
-  WEBGPU_LIB = 'webgpu_dawn.dll';
-  _PU = '';
-  {$ELSE}
-    {$MESSAGE Error 'Unsupported platform'}
-  {$ENDIF}
+uses
+   Windows, SysUtils;
 
 const
-  { TODO : Macro probably uses invalid symbol "void": }
-  (* NULL ( ( void * ) 0 ) *)
-  { TODO : Unable to convert function-like macro: }
-  (* offsetof ( TYPE , MEMBER ) ( ( size_t ) & ( ( TYPE * ) 0 ) -> MEMBER ) *)
   INT8_MIN = (-128);
   INT16_MIN = (-32768);
   INT32_MIN = (-2147483647-1);
@@ -67,33 +58,7 @@ const
   SIG_ATOMIC_MAX = INT32_MAX;
   SIZE_MAX = UINT32_MAX;
   WCHAR_MIN = 0;
-  { TODO : Macro probably uses invalid symbol "wchar_t": }
-  (* WCHAR_MAX ( ( wchar_t ) - 1 ) *)
   WINT_MIN = 0;
-  { TODO : Macro probably uses invalid symbol "wint_t": }
-  (* WINT_MAX ( ( wint_t ) - 1 ) *)
-  { TODO : Unable to convert function-like macro: }
-  (* INT8_C ( val ) ( ( int8_t ) + ( val ) ) *)
-  { TODO : Unable to convert function-like macro: }
-  (* UINT8_C ( val ) ( ( uint8_t ) + ( val ## U ) ) *)
-  { TODO : Unable to convert function-like macro: }
-  (* INT16_C ( val ) ( ( int16_t ) + ( val ) ) *)
-  { TODO : Unable to convert function-like macro: }
-  (* UINT16_C ( val ) ( ( uint16_t ) + ( val ## U ) ) *)
-  { TODO : Unable to convert function-like macro: }
-  (* INT32_C ( val ) val ## L *)
-  { TODO : Unable to convert function-like macro: }
-  (* UINT32_C ( val ) val ## UL *)
-  { TODO : Unable to convert function-like macro: }
-  (* INT64_C ( val ) val ## LL *)
-  { TODO : Unable to convert function-like macro: }
-  (* UINT64_C ( val ) val ## ULL *)
-  { TODO : Unable to convert function-like macro: }
-  (* INTMAX_C ( val ) INT64_C ( val ) *)
-  { TODO : Unable to convert function-like macro: }
-  (* UINTMAX_C ( val ) UINT64_C ( val ) *)
-  { TODO : Unable to convert function-like macro: }
-  (* WGPU_MAKE_INIT_STRUCT ( type , value ) ( ( type ) value ) *)
   WGPU_ARRAY_LAYER_COUNT_UNDEFINED = UINT32_MAX;
   WGPU_COPY_STRIDE_UNDEFINED = UINT32_MAX;
   WGPU_DEPTH_SLICE_UNDEFINED = UINT32_MAX;
@@ -103,520 +68,6 @@ const
   WGPU_QUERY_SET_INDEX_UNDEFINED = UINT32_MAX;
   WGPU_WHOLE_MAP_SIZE = SIZE_MAX;
   WGPU_WHOLE_SIZE = UINT64_MAX;
-  { TODO : Unable to convert macro: }
-  (* WGPU_COMMA , *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_BUFFER_MAP_CALLBACK_INFO_2_INIT WGPU_MAKE_INIT_STRUCT ( WGPUBufferMapCallbackInfo2 , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.mode=*/ { } WGPU_COMMA /*.callback=*/ nullptr WGPU_COMMA /*.userdata1=*/ nullptr WGPU_COMMA /*.userdata2=*/ nullptr WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_COMPILATION_INFO_CALLBACK_INFO_2_INIT WGPU_MAKE_INIT_STRUCT ( WGPUCompilationInfoCallbackInfo2 , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.mode=*/ { } WGPU_COMMA /*.callback=*/ nullptr WGPU_COMMA /*.userdata1=*/ nullptr WGPU_COMMA /*.userdata2=*/ nullptr WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_CREATE_COMPUTE_PIPELINE_ASYNC_CALLBACK_INFO_2_INIT WGPU_MAKE_INIT_STRUCT ( WGPUCreateComputePipelineAsyncCallbackInfo2 , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.mode=*/ { } WGPU_COMMA /*.callback=*/ nullptr WGPU_COMMA /*.userdata1=*/ nullptr WGPU_COMMA /*.userdata2=*/ nullptr WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_CREATE_RENDER_PIPELINE_ASYNC_CALLBACK_INFO_2_INIT WGPU_MAKE_INIT_STRUCT ( WGPUCreateRenderPipelineAsyncCallbackInfo2 , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.mode=*/ { } WGPU_COMMA /*.callback=*/ nullptr WGPU_COMMA /*.userdata1=*/ nullptr WGPU_COMMA /*.userdata2=*/ nullptr WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_DEVICE_LOST_CALLBACK_INFO_2_INIT WGPU_MAKE_INIT_STRUCT ( WGPUDeviceLostCallbackInfo2 , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.mode=*/ { } WGPU_COMMA /*.callback=*/ nullptr WGPU_COMMA /*.userdata1=*/ nullptr WGPU_COMMA /*.userdata2=*/ nullptr WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_POP_ERROR_SCOPE_CALLBACK_INFO_2_INIT WGPU_MAKE_INIT_STRUCT ( WGPUPopErrorScopeCallbackInfo2 , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.mode=*/ { } WGPU_COMMA /*.callback=*/ nullptr WGPU_COMMA /*.userdata1=*/ nullptr WGPU_COMMA /*.userdata2=*/ nullptr WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_QUEUE_WORK_DONE_CALLBACK_INFO_2_INIT WGPU_MAKE_INIT_STRUCT ( WGPUQueueWorkDoneCallbackInfo2 , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.mode=*/ { } WGPU_COMMA /*.callback=*/ nullptr WGPU_COMMA /*.userdata1=*/ nullptr WGPU_COMMA /*.userdata2=*/ nullptr WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_REQUEST_ADAPTER_CALLBACK_INFO_2_INIT WGPU_MAKE_INIT_STRUCT ( WGPURequestAdapterCallbackInfo2 , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.mode=*/ { } WGPU_COMMA /*.callback=*/ nullptr WGPU_COMMA /*.userdata1=*/ nullptr WGPU_COMMA /*.userdata2=*/ nullptr WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_REQUEST_DEVICE_CALLBACK_INFO_2_INIT WGPU_MAKE_INIT_STRUCT ( WGPURequestDeviceCallbackInfo2 , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.mode=*/ { } WGPU_COMMA /*.callback=*/ nullptr WGPU_COMMA /*.userdata1=*/ nullptr WGPU_COMMA /*.userdata2=*/ nullptr WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_UNCAPTURED_ERROR_CALLBACK_INFO_2_INIT WGPU_MAKE_INIT_STRUCT ( WGPUUncapturedErrorCallbackInfo2 , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.callback=*/ nullptr WGPU_COMMA /*.userdata1=*/ nullptr WGPU_COMMA /*.userdata2=*/ nullptr WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_INTERNAL__HAVE_EMDAWNWEBGPU_HEADER_INIT WGPU_MAKE_INIT_STRUCT ( WGPUINTERNAL__HAVE_EMDAWNWEBGPU_HEADER , { \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_ADAPTER_INFO_INIT WGPU_MAKE_INIT_STRUCT ( WGPUAdapterInfo , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.vendor=*/ nullptr WGPU_COMMA /*.architecture=*/ nullptr WGPU_COMMA /*.device=*/ nullptr WGPU_COMMA /*.description=*/ nullptr WGPU_COMMA /*.backendType=*/ { } WGPU_COMMA /*.adapterType=*/ { } WGPU_COMMA /*.vendorID=*/ { } WGPU_COMMA /*.deviceID=*/ { } WGPU_COMMA /*.compatibilityMode=*/ false WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_ADAPTER_PROPERTIES_INIT WGPU_MAKE_INIT_STRUCT ( WGPUAdapterProperties , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.vendorID=*/ { } WGPU_COMMA /*.vendorName=*/ nullptr WGPU_COMMA /*.architecture=*/ nullptr WGPU_COMMA /*.deviceID=*/ { } WGPU_COMMA /*.name=*/ nullptr WGPU_COMMA /*.driverDescription=*/ nullptr WGPU_COMMA /*.adapterType=*/ { } WGPU_COMMA /*.backendType=*/ { } WGPU_COMMA /*.compatibilityMode=*/ false WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_ADAPTER_PROPERTIES_D3D_INIT WGPU_MAKE_INIT_STRUCT ( WGPUAdapterPropertiesD3D , { /*.chain=*/ { } WGPU_COMMA /*.shaderModel=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_ADAPTER_PROPERTIES_VK_INIT WGPU_MAKE_INIT_STRUCT ( WGPUAdapterPropertiesVk , { /*.chain=*/ { } WGPU_COMMA /*.driverVersion=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_BIND_GROUP_ENTRY_INIT WGPU_MAKE_INIT_STRUCT ( WGPUBindGroupEntry , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.binding=*/ { } WGPU_COMMA /*.buffer=*/ nullptr WGPU_COMMA /*.offset=*/ 0 WGPU_COMMA /*.size=*/ WGPU_WHOLE_SIZE WGPU_COMMA /*.sampler=*/ nullptr WGPU_COMMA /*.textureView=*/ nullptr WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_BLEND_COMPONENT_INIT WGPU_MAKE_INIT_STRUCT ( WGPUBlendComponent , { /*.operation=*/ WGPUBlendOperation_Add WGPU_COMMA /*.srcFactor=*/ WGPUBlendFactor_One WGPU_COMMA /*.dstFactor=*/ WGPUBlendFactor_Zero WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_BUFFER_BINDING_LAYOUT_INIT WGPU_MAKE_INIT_STRUCT ( WGPUBufferBindingLayout , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.type=*/ WGPUBufferBindingType_Undefined WGPU_COMMA /*.hasDynamicOffset=*/ false WGPU_COMMA /*.minBindingSize=*/ 0 WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_BUFFER_DESCRIPTOR_INIT WGPU_MAKE_INIT_STRUCT ( WGPUBufferDescriptor , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.label=*/ nullptr WGPU_COMMA /*.usage=*/ { } WGPU_COMMA /*.size=*/ { } WGPU_COMMA /*.mappedAtCreation=*/ false WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_BUFFER_HOST_MAPPED_POINTER_INIT WGPU_MAKE_INIT_STRUCT ( WGPUBufferHostMappedPointer , { /*.chain=*/ { } WGPU_COMMA /*.pointer=*/ { } WGPU_COMMA /*.disposeCallback=*/ { } WGPU_COMMA /*.userdata=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_BUFFER_MAP_CALLBACK_INFO_INIT WGPU_MAKE_INIT_STRUCT ( WGPUBufferMapCallbackInfo , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.mode=*/ { } WGPU_COMMA /*.callback=*/ { } WGPU_COMMA /*.userdata=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_COLOR_INIT WGPU_MAKE_INIT_STRUCT ( WGPUColor , { /*.r=*/ { } WGPU_COMMA /*.g=*/ { } WGPU_COMMA /*.b=*/ { } WGPU_COMMA /*.a=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_COLOR_TARGET_STATE_EXPAND_RESOLVE_TEXTURE_DAWN_INIT WGPU_MAKE_INIT_STRUCT ( WGPUColorTargetStateExpandResolveTextureDawn , { /*.chain=*/ { } WGPU_COMMA /*.enabled=*/ false WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_COMMAND_BUFFER_DESCRIPTOR_INIT WGPU_MAKE_INIT_STRUCT ( WGPUCommandBufferDescriptor , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.label=*/ nullptr WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_COMMAND_ENCODER_DESCRIPTOR_INIT WGPU_MAKE_INIT_STRUCT ( WGPUCommandEncoderDescriptor , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.label=*/ nullptr WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_COMPILATION_INFO_CALLBACK_INFO_INIT WGPU_MAKE_INIT_STRUCT ( WGPUCompilationInfoCallbackInfo , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.mode=*/ { } WGPU_COMMA /*.callback=*/ { } WGPU_COMMA /*.userdata=*/ nullptr WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_COMPILATION_MESSAGE_INIT WGPU_MAKE_INIT_STRUCT ( WGPUCompilationMessage , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.message=*/ nullptr WGPU_COMMA /*.type=*/ { } WGPU_COMMA /*.lineNum=*/ { } WGPU_COMMA /*.linePos=*/ { } WGPU_COMMA /*.offset=*/ { } WGPU_COMMA /*.length=*/ { } WGPU_COMMA /*.utf16LinePos=*/ { } WGPU_COMMA /*.utf16Offset=*/ { } WGPU_COMMA /*.utf16Length=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_COMPUTE_PASS_TIMESTAMP_WRITES_INIT WGPU_MAKE_INIT_STRUCT ( WGPUComputePassTimestampWrites , { /*.querySet=*/ { } WGPU_COMMA /*.beginningOfPassWriteIndex=*/ WGPU_QUERY_SET_INDEX_UNDEFINED WGPU_COMMA /*.endOfPassWriteIndex=*/ WGPU_QUERY_SET_INDEX_UNDEFINED WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_CONSTANT_ENTRY_INIT WGPU_MAKE_INIT_STRUCT ( WGPUConstantEntry , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.key=*/ { } WGPU_COMMA /*.value=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_COPY_TEXTURE_FOR_BROWSER_OPTIONS_INIT WGPU_MAKE_INIT_STRUCT ( WGPUCopyTextureForBrowserOptions , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.flipY=*/ false WGPU_COMMA /*.needsColorSpaceConversion=*/ false WGPU_COMMA /*.srcAlphaMode=*/ WGPUAlphaMode_Unpremultiplied WGPU_COMMA /*.srcTransferFunctionParameters=*/ nullptr WGPU_COMMA /*.conversionMatrix=*/ nullptr WGPU_COMMA /*.dstTransferFunctionParameters=*/ nullptr WGPU_COMMA /*.dstAlphaMode=*/ WGPUAlphaMode_Unpremultiplied WGPU_COMMA /*.internalUsage=*/ false WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_CREATE_COMPUTE_PIPELINE_ASYNC_CALLBACK_INFO_INIT WGPU_MAKE_INIT_STRUCT ( WGPUCreateComputePipelineAsyncCallbackInfo , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.mode=*/ { } WGPU_COMMA /*.callback=*/ { } WGPU_COMMA /*.userdata=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_CREATE_RENDER_PIPELINE_ASYNC_CALLBACK_INFO_INIT WGPU_MAKE_INIT_STRUCT ( WGPUCreateRenderPipelineAsyncCallbackInfo , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.mode=*/ { } WGPU_COMMA /*.callback=*/ { } WGPU_COMMA /*.userdata=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_DAWN_WGSL_BLOCKLIST_INIT WGPU_MAKE_INIT_STRUCT ( WGPUDawnWGSLBlocklist , { /*.chain=*/ { } WGPU_COMMA /*.blocklistedFeatureCount=*/ 0 WGPU_COMMA /*.blocklistedFeatures=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_DAWN_ADAPTER_PROPERTIES_POWER_PREFERENCE_INIT WGPU_MAKE_INIT_STRUCT ( WGPUDawnAdapterPropertiesPowerPreference , { /*.chain=*/ { } WGPU_COMMA /*.powerPreference=*/ WGPUPowerPreference_Undefined WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_DAWN_BUFFER_DESCRIPTOR_ERROR_INFO_FROM_WIRE_CLIENT_INIT WGPU_MAKE_INIT_STRUCT ( WGPUDawnBufferDescriptorErrorInfoFromWireClient , { /*.chain=*/ { } WGPU_COMMA /*.outOfMemory=*/ false WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_DAWN_CACHE_DEVICE_DESCRIPTOR_INIT WGPU_MAKE_INIT_STRUCT ( WGPUDawnCacheDeviceDescriptor , { /*.chain=*/ { } WGPU_COMMA /*.isolationKey=*/ "" WGPU_COMMA /*.loadDataFunction=*/ nullptr WGPU_COMMA /*.storeDataFunction=*/ nullptr WGPU_COMMA /*.functionUserdata=*/ nullptr WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_DAWN_COMPUTE_PIPELINE_FULL_SUBGROUPS_INIT WGPU_MAKE_INIT_STRUCT ( WGPUDawnComputePipelineFullSubgroups , { /*.chain=*/ { } WGPU_COMMA /*.requiresFullSubgroups=*/ false WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_DAWN_ENCODER_INTERNAL_USAGE_DESCRIPTOR_INIT WGPU_MAKE_INIT_STRUCT ( WGPUDawnEncoderInternalUsageDescriptor , { /*.chain=*/ { } WGPU_COMMA /*.useInternalUsages=*/ false WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_DAWN_EXPERIMENTAL_SUBGROUP_LIMITS_INIT WGPU_MAKE_INIT_STRUCT ( WGPUDawnExperimentalSubgroupLimits , { /*.chain=*/ { } WGPU_COMMA /*.minSubgroupSize=*/ WGPU_LIMIT_U32_UNDEFINED WGPU_COMMA /*.maxSubgroupSize=*/ WGPU_LIMIT_U32_UNDEFINED WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_DAWN_RENDER_PASS_COLOR_ATTACHMENT_RENDER_TO_SINGLE_SAMPLED_INIT WGPU_MAKE_INIT_STRUCT ( WGPUDawnRenderPassColorAttachmentRenderToSingleSampled , { /*.chain=*/ { } WGPU_COMMA /*.implicitSampleCount=*/ 1 WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_DAWN_SHADER_MODULE_SPIRV_OPTIONS_DESCRIPTOR_INIT WGPU_MAKE_INIT_STRUCT ( WGPUDawnShaderModuleSPIRVOptionsDescriptor , { /*.chain=*/ { } WGPU_COMMA /*.allowNonUniformDerivatives=*/ false WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_DAWN_TEXTURE_INTERNAL_USAGE_DESCRIPTOR_INIT WGPU_MAKE_INIT_STRUCT ( WGPUDawnTextureInternalUsageDescriptor , { /*.chain=*/ { } WGPU_COMMA /*.internalUsage=*/ WGPUTextureUsage_None WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_DAWN_TOGGLES_DESCRIPTOR_INIT WGPU_MAKE_INIT_STRUCT ( WGPUDawnTogglesDescriptor , { /*.chain=*/ { } WGPU_COMMA /*.enabledToggleCount=*/ 0 WGPU_COMMA /*.enabledToggles=*/ { } WGPU_COMMA /*.disabledToggleCount=*/ 0 WGPU_COMMA /*.disabledToggles=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_DAWN_WIRE_WGSL_CONTROL_INIT WGPU_MAKE_INIT_STRUCT ( WGPUDawnWireWGSLControl , { /*.chain=*/ { } WGPU_COMMA /*.enableExperimental=*/ false WGPU_COMMA /*.enableUnsafe=*/ false WGPU_COMMA /*.enableTesting=*/ false WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_DEVICE_LOST_CALLBACK_INFO_INIT WGPU_MAKE_INIT_STRUCT ( WGPUDeviceLostCallbackInfo , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.mode=*/ WGPUCallbackMode_WaitAnyOnly WGPU_COMMA /*.callback=*/ nullptr WGPU_COMMA /*.userdata=*/ nullptr WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_DRM_FORMAT_PROPERTIES_INIT WGPU_MAKE_INIT_STRUCT ( WGPUDrmFormatProperties , { /*.modifier=*/ { } WGPU_COMMA /*.modifierPlaneCount=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_EXTENT_2D_INIT WGPU_MAKE_INIT_STRUCT ( WGPUExtent2D , { /*.width=*/ { } WGPU_COMMA /*.height=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_EXTENT_3D_INIT WGPU_MAKE_INIT_STRUCT ( WGPUExtent3D , { /*.width=*/ { } WGPU_COMMA /*.height=*/ 1 WGPU_COMMA /*.depthOrArrayLayers=*/ 1 WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_EXTERNAL_TEXTURE_BINDING_ENTRY_INIT WGPU_MAKE_INIT_STRUCT ( WGPUExternalTextureBindingEntry , { /*.chain=*/ { } WGPU_COMMA /*.externalTexture=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_EXTERNAL_TEXTURE_BINDING_LAYOUT_INIT WGPU_MAKE_INIT_STRUCT ( WGPUExternalTextureBindingLayout , { /*.chain=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_FORMAT_CAPABILITIES_INIT WGPU_MAKE_INIT_STRUCT ( WGPUFormatCapabilities , { /*.nextInChain=*/ nullptr WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_FUTURE_INIT WGPU_MAKE_INIT_STRUCT ( WGPUFuture , { /*.id=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_INSTANCE_FEATURES_INIT WGPU_MAKE_INIT_STRUCT ( WGPUInstanceFeatures , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.timedWaitAnyEnable=*/ false WGPU_COMMA /*.timedWaitAnyMaxCount=*/ 0 WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_LIMITS_INIT WGPU_MAKE_INIT_STRUCT ( WGPULimits , { /*.maxTextureDimension1D=*/ WGPU_LIMIT_U32_UNDEFINED WGPU_COMMA /*.maxTextureDimension2D=*/ WGPU_LIMIT_U32_UNDEFINED WGPU_COMMA /*.maxTextureDimension3D=*/ WGPU_LIMIT_U32_UNDEFINED WGPU_COMMA /*.maxTextureArrayLayers=*/ WGPU_LIMIT_U32_UNDEFINED WGPU_COMMA /*.maxBindGroups=*/ WGPU_LIMIT_U32_UNDEFINED WGPU_COMMA /*.maxBindGroupsPlusVertexBuffers=*/ WGPU_LIMIT_U32_UNDEFINED WGPU_COMMA /*.maxBindingsPerBindGroup=*/ WGPU_LIMIT_U32_UNDEFINED WGPU_COMMA /*.maxDynamicUniformBuffersPerPipelineLayout=*/ WGPU_LIMIT_U32_UNDEFINED WGPU_COMMA /*.maxDynamicStorageBuffersPerPipelineLayout=*/ WGPU_LIMIT_U32_UNDEFINED WGPU_COMMA /*.maxSampledTexturesPerShaderStage=*/ WGPU_LIMIT_U32_UNDEFINED WGPU_COMMA /*.maxSamplersPerShaderStage=*/ WGPU_LIMIT_U32_UNDEFINED WGPU_COMMA /*.maxStorageBuffersPerShaderStage=*/ WGPU_LIMIT_U32_UNDEFINED WGPU_COMMA /*.maxStorageTexturesPerShaderStage=*/
-  WGPU_LIMIT_U32_UNDEFINED WGPU_COMMA /*.maxUniformBuffersPerShaderStage=*/ WGPU_LIMIT_U32_UNDEFINED WGPU_COMMA /*.maxUniformBufferBindingSize=*/ WGPU_LIMIT_U64_UNDEFINED WGPU_COMMA /*.maxStorageBufferBindingSize=*/ WGPU_LIMIT_U64_UNDEFINED WGPU_COMMA /*.minUniformBufferOffsetAlignment=*/ WGPU_LIMIT_U32_UNDEFINED WGPU_COMMA /*.minStorageBufferOffsetAlignment=*/
-   WGPU_LIMIT_U32_UNDEFINED WGPU_COMMA /*.maxVertexBuffers=*/ WGPU_LIMIT_U32_UNDEFINED WGPU_COMMA /*.maxBufferSize=*/ WGPU_LIMIT_U64_UNDEFINED WGPU_COMMA /*.maxVertexAttributes=*/ WGPU_LIMIT_U32_UNDEFINED WGPU_COMMA /*.maxVertexBufferArrayStride=*/ WGPU_LIMIT_U32_UNDEFINED WGPU_COMMA /*.maxInterStageShaderComponents=*/ WGPU_LIMIT_U32_UNDEFINED WGPU_COMMA /*.maxInterStageShaderVariables=*/ WGPU_LIMIT_U32_UNDEFINED WGPU_COMMA /*.maxColorAttachments=*/ WGPU_LIMIT_U32_UNDEFINED WGPU_COMMA /*.maxColorAttachmentBytesPerSample=*/ WGPU_LIMIT_U32_UNDEFINED WGPU_COMMA /*.maxComputeWorkgroupStorageSize=*/ WGPU_LIMIT_U32_UNDEFINED WGPU_COMMA /*.maxComputeInvocationsPerWorkgroup=*/ WGPU_LIMIT_U32_UNDEFINED WGPU_COMMA /*.maxComputeWorkgroupSizeX=*/ WGPU_LIMIT_U32_UNDEFINED WGPU_COMMA /*.maxComputeWorkgroupSizeY=*/ WGPU_LIMIT_U32_UNDEFINED WGPU_COMMA /*.maxComputeWorkgroupSizeZ=*/ WGPU_LIMIT_U32_UNDEFINED WGPU_COMMA /*.maxComputeWorkgroupsPerDimension=*/ WGPU_LIMIT_U32_UNDEFINED WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_MEMORY_HEAP_INFO_INIT WGPU_MAKE_INIT_STRUCT ( WGPUMemoryHeapInfo , { /*.properties=*/ { } WGPU_COMMA /*.size=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_MULTISAMPLE_STATE_INIT WGPU_MAKE_INIT_STRUCT ( WGPUMultisampleState , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.count=*/ 1 WGPU_COMMA /*.mask=*/ 0xFFFFFFFF WGPU_COMMA /*.alphaToCoverageEnabled=*/ false WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_ORIGIN_2D_INIT WGPU_MAKE_INIT_STRUCT ( WGPUOrigin2D , { /*.x=*/ 0 WGPU_COMMA /*.y=*/ 0 WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_ORIGIN_3D_INIT WGPU_MAKE_INIT_STRUCT ( WGPUOrigin3D , { /*.x=*/ 0 WGPU_COMMA /*.y=*/ 0 WGPU_COMMA /*.z=*/ 0 WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_PIPELINE_LAYOUT_DESCRIPTOR_INIT WGPU_MAKE_INIT_STRUCT ( WGPUPipelineLayoutDescriptor , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.label=*/ nullptr WGPU_COMMA /*.bindGroupLayoutCount=*/ { } WGPU_COMMA /*.bindGroupLayouts=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_PIPELINE_LAYOUT_STORAGE_ATTACHMENT_INIT WGPU_MAKE_INIT_STRUCT ( WGPUPipelineLayoutStorageAttachment , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.offset=*/ 0 WGPU_COMMA /*.format=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_POP_ERROR_SCOPE_CALLBACK_INFO_INIT WGPU_MAKE_INIT_STRUCT ( WGPUPopErrorScopeCallbackInfo , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.mode=*/ WGPUCallbackMode_WaitAnyOnly WGPU_COMMA /*.callback=*/ { } WGPU_COMMA /*.oldCallback=*/ { } WGPU_COMMA /*.userdata=*/ nullptr WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_PRIMITIVE_STATE_INIT WGPU_MAKE_INIT_STRUCT ( WGPUPrimitiveState , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.topology=*/ WGPUPrimitiveTopology_TriangleList WGPU_COMMA /*.stripIndexFormat=*/ WGPUIndexFormat_Undefined WGPU_COMMA /*.frontFace=*/ WGPUFrontFace_CCW WGPU_COMMA /*.cullMode=*/ WGPUCullMode_None WGPU_COMMA /*.unclippedDepth=*/ false WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_QUERY_SET_DESCRIPTOR_INIT WGPU_MAKE_INIT_STRUCT ( WGPUQuerySetDescriptor , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.label=*/ nullptr WGPU_COMMA /*.type=*/ { } WGPU_COMMA /*.count=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_QUEUE_DESCRIPTOR_INIT WGPU_MAKE_INIT_STRUCT ( WGPUQueueDescriptor , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.label=*/ nullptr WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_QUEUE_WORK_DONE_CALLBACK_INFO_INIT WGPU_MAKE_INIT_STRUCT ( WGPUQueueWorkDoneCallbackInfo , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.mode=*/ { } WGPU_COMMA /*.callback=*/ { } WGPU_COMMA /*.userdata=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_RENDER_BUNDLE_DESCRIPTOR_INIT WGPU_MAKE_INIT_STRUCT ( WGPURenderBundleDescriptor , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.label=*/ nullptr WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_RENDER_BUNDLE_ENCODER_DESCRIPTOR_INIT WGPU_MAKE_INIT_STRUCT ( WGPURenderBundleEncoderDescriptor , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.label=*/ nullptr WGPU_COMMA /*.colorFormatCount=*/ { } WGPU_COMMA /*.colorFormats=*/ { } WGPU_COMMA /*.depthStencilFormat=*/ WGPUTextureFormat_Undefined WGPU_COMMA /*.sampleCount=*/ 1 WGPU_COMMA /*.depthReadOnly=*/ false WGPU_COMMA /*.stencilReadOnly=*/ false WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_RENDER_PASS_DEPTH_STENCIL_ATTACHMENT_INIT WGPU_MAKE_INIT_STRUCT ( WGPURenderPassDepthStencilAttachment , { /*.view=*/ { } WGPU_COMMA /*.depthLoadOp=*/ WGPULoadOp_Undefined WGPU_COMMA /*.depthStoreOp=*/ WGPUStoreOp_Undefined WGPU_COMMA /*.depthClearValue=*/ NAN WGPU_COMMA /*.depthReadOnly=*/ false WGPU_COMMA /*.stencilLoadOp=*/ WGPULoadOp_Undefined WGPU_COMMA /*.stencilStoreOp=*/ WGPUStoreOp_Undefined WGPU_COMMA /*.stencilClearValue=*/ 0 WGPU_COMMA /*.stencilReadOnly=*/ false WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_RENDER_PASS_DESCRIPTOR_EXPAND_RESOLVE_RECT_INIT WGPU_MAKE_INIT_STRUCT ( WGPURenderPassDescriptorExpandResolveRect , { /*.chain=*/ { } WGPU_COMMA /*.x=*/ { } WGPU_COMMA /*.y=*/ { } WGPU_COMMA /*.width=*/ { } WGPU_COMMA /*.height=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_RENDER_PASS_MAX_DRAW_COUNT_INIT WGPU_MAKE_INIT_STRUCT ( WGPURenderPassMaxDrawCount , { /*.chain=*/ { } WGPU_COMMA /*.maxDrawCount=*/ 50000000 WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_RENDER_PASS_TIMESTAMP_WRITES_INIT WGPU_MAKE_INIT_STRUCT ( WGPURenderPassTimestampWrites , { /*.querySet=*/ { } WGPU_COMMA /*.beginningOfPassWriteIndex=*/ WGPU_QUERY_SET_INDEX_UNDEFINED WGPU_COMMA /*.endOfPassWriteIndex=*/ WGPU_QUERY_SET_INDEX_UNDEFINED WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_REQUEST_ADAPTER_CALLBACK_INFO_INIT WGPU_MAKE_INIT_STRUCT ( WGPURequestAdapterCallbackInfo , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.mode=*/ { } WGPU_COMMA /*.callback=*/ { } WGPU_COMMA /*.userdata=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_REQUEST_ADAPTER_OPTIONS_INIT WGPU_MAKE_INIT_STRUCT ( WGPURequestAdapterOptions , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.compatibleSurface=*/ nullptr WGPU_COMMA /*.powerPreference=*/ WGPUPowerPreference_Undefined WGPU_COMMA /*.backendType=*/ WGPUBackendType_Undefined WGPU_COMMA /*.forceFallbackAdapter=*/ false WGPU_COMMA /*.compatibilityMode=*/ false WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_REQUEST_DEVICE_CALLBACK_INFO_INIT WGPU_MAKE_INIT_STRUCT ( WGPURequestDeviceCallbackInfo , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.mode=*/ { } WGPU_COMMA /*.callback=*/ { } WGPU_COMMA /*.userdata=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_SAMPLER_BINDING_LAYOUT_INIT WGPU_MAKE_INIT_STRUCT ( WGPUSamplerBindingLayout , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.type=*/ WGPUSamplerBindingType_Undefined WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_SAMPLER_DESCRIPTOR_INIT WGPU_MAKE_INIT_STRUCT ( WGPUSamplerDescriptor , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.label=*/ nullptr WGPU_COMMA /*.addressModeU=*/ WGPUAddressMode_ClampToEdge WGPU_COMMA /*.addressModeV=*/ WGPUAddressMode_ClampToEdge WGPU_COMMA /*.addressModeW=*/ WGPUAddressMode_ClampToEdge WGPU_COMMA /*.magFilter=*/ WGPUFilterMode_Nearest WGPU_COMMA /*.minFilter=*/ WGPUFilterMode_Nearest WGPU_COMMA /*.mipmapFilter=*/ WGPUMipmapFilterMode_Nearest WGPU_COMMA /*.lodMinClamp=*/ 0.0f WGPU_COMMA /*.lodMaxClamp=*/ 32.0f WGPU_COMMA /*.compare=*/ WGPUCompareFunction_Undefined WGPU_COMMA /*.maxAnisotropy=*/ 1 WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_SHADER_MODULE_COMPILATION_OPTIONS_INIT WGPU_MAKE_INIT_STRUCT ( WGPUShaderModuleCompilationOptions , { /*.chain=*/ { } WGPU_COMMA /*.strictMath=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_SHADER_MODULE_DESCRIPTOR_INIT WGPU_MAKE_INIT_STRUCT ( WGPUShaderModuleDescriptor , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.label=*/ nullptr WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_SHADER_SOURCE_SPIRV_INIT WGPU_MAKE_INIT_STRUCT ( WGPUShaderSourceSPIRV , { /*.chain=*/ { } WGPU_COMMA /*.codeSize=*/ { } WGPU_COMMA /*.code=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_SHADER_SOURCE_WGSL_INIT WGPU_MAKE_INIT_STRUCT ( WGPUShaderSourceWGSL , { /*.chain=*/ { } WGPU_COMMA /*.code=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_SHARED_BUFFER_MEMORY_BEGIN_ACCESS_DESCRIPTOR_INIT WGPU_MAKE_INIT_STRUCT ( WGPUSharedBufferMemoryBeginAccessDescriptor , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.initialized=*/ { } WGPU_COMMA /*.fenceCount=*/ 0 WGPU_COMMA /*.fences=*/ { } WGPU_COMMA /*.signaledValues=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_SHARED_BUFFER_MEMORY_DESCRIPTOR_INIT WGPU_MAKE_INIT_STRUCT ( WGPUSharedBufferMemoryDescriptor , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.label=*/ nullptr WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_SHARED_BUFFER_MEMORY_END_ACCESS_STATE_INIT WGPU_MAKE_INIT_STRUCT ( WGPUSharedBufferMemoryEndAccessState , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.initialized=*/ { } WGPU_COMMA /*.fenceCount=*/ 0 WGPU_COMMA /*.fences=*/ { } WGPU_COMMA /*.signaledValues=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_SHARED_BUFFER_MEMORY_PROPERTIES_INIT WGPU_MAKE_INIT_STRUCT ( WGPUSharedBufferMemoryProperties , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.usage=*/ { } WGPU_COMMA /*.size=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_SHARED_FENCE_DXGI_SHARED_HANDLE_DESCRIPTOR_INIT WGPU_MAKE_INIT_STRUCT ( WGPUSharedFenceDXGISharedHandleDescriptor , { /*.chain=*/ { } WGPU_COMMA /*.handle=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_SHARED_FENCE_DXGI_SHARED_HANDLE_EXPORT_INFO_INIT WGPU_MAKE_INIT_STRUCT ( WGPUSharedFenceDXGISharedHandleExportInfo , { /*.chain=*/ { } WGPU_COMMA /*.handle=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_SHARED_FENCE_MTL_SHARED_EVENT_DESCRIPTOR_INIT WGPU_MAKE_INIT_STRUCT ( WGPUSharedFenceMTLSharedEventDescriptor , { /*.chain=*/ { } WGPU_COMMA /*.sharedEvent=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_SHARED_FENCE_MTL_SHARED_EVENT_EXPORT_INFO_INIT WGPU_MAKE_INIT_STRUCT ( WGPUSharedFenceMTLSharedEventExportInfo , { /*.chain=*/ { } WGPU_COMMA /*.sharedEvent=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_SHARED_FENCE_DESCRIPTOR_INIT WGPU_MAKE_INIT_STRUCT ( WGPUSharedFenceDescriptor , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.label=*/ nullptr WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_SHARED_FENCE_EXPORT_INFO_INIT WGPU_MAKE_INIT_STRUCT ( WGPUSharedFenceExportInfo , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.type=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_SHARED_FENCE_VK_SEMAPHORE_OPAQUE_FD_DESCRIPTOR_INIT WGPU_MAKE_INIT_STRUCT ( WGPUSharedFenceVkSemaphoreOpaqueFDDescriptor , { /*.chain=*/ { } WGPU_COMMA /*.handle=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_SHARED_FENCE_VK_SEMAPHORE_OPAQUE_FD_EXPORT_INFO_INIT WGPU_MAKE_INIT_STRUCT ( WGPUSharedFenceVkSemaphoreOpaqueFDExportInfo , { /*.chain=*/ { } WGPU_COMMA /*.handle=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_SHARED_FENCE_VK_SEMAPHORE_SYNC_FD_DESCRIPTOR_INIT WGPU_MAKE_INIT_STRUCT ( WGPUSharedFenceVkSemaphoreSyncFDDescriptor , { /*.chain=*/ { } WGPU_COMMA /*.handle=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_SHARED_FENCE_VK_SEMAPHORE_SYNC_FD_EXPORT_INFO_INIT WGPU_MAKE_INIT_STRUCT ( WGPUSharedFenceVkSemaphoreSyncFDExportInfo , { /*.chain=*/ { } WGPU_COMMA /*.handle=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_SHARED_FENCE_VK_SEMAPHORE_ZIRCON_HANDLE_DESCRIPTOR_INIT WGPU_MAKE_INIT_STRUCT ( WGPUSharedFenceVkSemaphoreZirconHandleDescriptor , { /*.chain=*/ { } WGPU_COMMA /*.handle=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_SHARED_FENCE_VK_SEMAPHORE_ZIRCON_HANDLE_EXPORT_INFO_INIT WGPU_MAKE_INIT_STRUCT ( WGPUSharedFenceVkSemaphoreZirconHandleExportInfo , { /*.chain=*/ { } WGPU_COMMA /*.handle=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_SHARED_TEXTURE_MEMORY_D3D_SWAPCHAIN_BEGIN_STATE_INIT WGPU_MAKE_INIT_STRUCT ( WGPUSharedTextureMemoryD3DSwapchainBeginState , { /*.chain=*/ { } WGPU_COMMA /*.isSwapchain=*/ false WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_SHARED_TEXTURE_MEMORY_DXGI_SHARED_HANDLE_DESCRIPTOR_INIT WGPU_MAKE_INIT_STRUCT ( WGPUSharedTextureMemoryDXGISharedHandleDescriptor , { /*.chain=*/ { } WGPU_COMMA /*.handle=*/ { } WGPU_COMMA /*.useKeyedMutex=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_SHARED_TEXTURE_MEMORY_EGL_IMAGE_DESCRIPTOR_INIT WGPU_MAKE_INIT_STRUCT ( WGPUSharedTextureMemoryEGLImageDescriptor , { /*.chain=*/ { } WGPU_COMMA /*.image=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_SHARED_TEXTURE_MEMORY_IO_SURFACE_DESCRIPTOR_INIT WGPU_MAKE_INIT_STRUCT ( WGPUSharedTextureMemoryIOSurfaceDescriptor , { /*.chain=*/ { } WGPU_COMMA /*.ioSurface=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_SHARED_TEXTURE_MEMORY_A_HARDWARE_BUFFER_DESCRIPTOR_INIT WGPU_MAKE_INIT_STRUCT ( WGPUSharedTextureMemoryAHardwareBufferDescriptor , { /*.chain=*/ { } WGPU_COMMA /*.handle=*/ { } WGPU_COMMA /*.useExternalFormat=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_SHARED_TEXTURE_MEMORY_BEGIN_ACCESS_DESCRIPTOR_INIT WGPU_MAKE_INIT_STRUCT ( WGPUSharedTextureMemoryBeginAccessDescriptor , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.concurrentRead=*/ { } WGPU_COMMA /*.initialized=*/ { } WGPU_COMMA /*.fenceCount=*/ { } WGPU_COMMA /*.fences=*/ { } WGPU_COMMA /*.signaledValues=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_SHARED_TEXTURE_MEMORY_DESCRIPTOR_INIT WGPU_MAKE_INIT_STRUCT ( WGPUSharedTextureMemoryDescriptor , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.label=*/ nullptr WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_SHARED_TEXTURE_MEMORY_DMA_BUF_PLANE_INIT WGPU_MAKE_INIT_STRUCT ( WGPUSharedTextureMemoryDmaBufPlane , { /*.fd=*/ { } WGPU_COMMA /*.offset=*/ { } WGPU_COMMA /*.stride=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_SHARED_TEXTURE_MEMORY_END_ACCESS_STATE_INIT WGPU_MAKE_INIT_STRUCT ( WGPUSharedTextureMemoryEndAccessState , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.initialized=*/ { } WGPU_COMMA /*.fenceCount=*/ { } WGPU_COMMA /*.fences=*/ { } WGPU_COMMA /*.signaledValues=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_SHARED_TEXTURE_MEMORY_OPAQUE_FD_DESCRIPTOR_INIT WGPU_MAKE_INIT_STRUCT ( WGPUSharedTextureMemoryOpaqueFDDescriptor , { /*.chain=*/ { } WGPU_COMMA /*.vkImageCreateInfo=*/ { } WGPU_COMMA /*.memoryFD=*/ { } WGPU_COMMA /*.memoryTypeIndex=*/ { } WGPU_COMMA /*.allocationSize=*/ { } WGPU_COMMA /*.dedicatedAllocation=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_SHARED_TEXTURE_MEMORY_VK_DEDICATED_ALLOCATION_DESCRIPTOR_INIT WGPU_MAKE_INIT_STRUCT ( WGPUSharedTextureMemoryVkDedicatedAllocationDescriptor , { /*.chain=*/ { } WGPU_COMMA /*.dedicatedAllocation=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_SHARED_TEXTURE_MEMORY_VK_IMAGE_LAYOUT_BEGIN_STATE_INIT WGPU_MAKE_INIT_STRUCT ( WGPUSharedTextureMemoryVkImageLayoutBeginState , { /*.chain=*/ { } WGPU_COMMA /*.oldLayout=*/ { } WGPU_COMMA /*.newLayout=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_SHARED_TEXTURE_MEMORY_VK_IMAGE_LAYOUT_END_STATE_INIT WGPU_MAKE_INIT_STRUCT ( WGPUSharedTextureMemoryVkImageLayoutEndState , { /*.chain=*/ { } WGPU_COMMA /*.oldLayout=*/ { } WGPU_COMMA /*.newLayout=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_SHARED_TEXTURE_MEMORY_ZIRCON_HANDLE_DESCRIPTOR_INIT WGPU_MAKE_INIT_STRUCT ( WGPUSharedTextureMemoryZirconHandleDescriptor , { /*.chain=*/ { } WGPU_COMMA /*.memoryFD=*/ { } WGPU_COMMA /*.allocationSize=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_STATIC_SAMPLER_BINDING_LAYOUT_INIT WGPU_MAKE_INIT_STRUCT ( WGPUStaticSamplerBindingLayout , { /*.chain=*/ { } WGPU_COMMA /*.sampler=*/ { } WGPU_COMMA /*.sampledTextureBinding=*/ WGPU_LIMIT_U32_UNDEFINED WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_STENCIL_FACE_STATE_INIT WGPU_MAKE_INIT_STRUCT ( WGPUStencilFaceState , { /*.compare=*/ WGPUCompareFunction_Always WGPU_COMMA /*.failOp=*/ WGPUStencilOperation_Keep WGPU_COMMA /*.depthFailOp=*/ WGPUStencilOperation_Keep WGPU_COMMA /*.passOp=*/ WGPUStencilOperation_Keep WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_STORAGE_TEXTURE_BINDING_LAYOUT_INIT WGPU_MAKE_INIT_STRUCT ( WGPUStorageTextureBindingLayout , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.access=*/ WGPUStorageTextureAccess_Undefined WGPU_COMMA /*.format=*/ WGPUTextureFormat_Undefined WGPU_COMMA /*.viewDimension=*/ WGPUTextureViewDimension_2D WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_STRING_VIEW_INIT WGPU_MAKE_INIT_STRUCT ( WGPUStringView , { /*.data=*/ nullptr WGPU_COMMA /*.length=*/ SIZE_MAX WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_SURFACE_CAPABILITIES_INIT WGPU_MAKE_INIT_STRUCT ( WGPUSurfaceCapabilities , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.usages=*/ { } WGPU_COMMA /*.formatCount=*/ { } WGPU_COMMA /*.formats=*/ { } WGPU_COMMA /*.presentModeCount=*/ { } WGPU_COMMA /*.presentModes=*/ { } WGPU_COMMA /*.alphaModeCount=*/ { } WGPU_COMMA /*.alphaModes=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_SURFACE_CONFIGURATION_INIT WGPU_MAKE_INIT_STRUCT ( WGPUSurfaceConfiguration , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.device=*/ { } WGPU_COMMA /*.format=*/ { } WGPU_COMMA /*.usage=*/ WGPUTextureUsage_RenderAttachment WGPU_COMMA /*.viewFormatCount=*/ 0 WGPU_COMMA /*.viewFormats=*/ { } WGPU_COMMA /*.alphaMode=*/ WGPUCompositeAlphaMode_Auto WGPU_COMMA /*.width=*/ { } WGPU_COMMA /*.height=*/ { } WGPU_COMMA /*.presentMode=*/ WGPUPresentMode_Fifo WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_SURFACE_DESCRIPTOR_INIT WGPU_MAKE_INIT_STRUCT ( WGPUSurfaceDescriptor , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.label=*/ nullptr WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_SURFACE_DESCRIPTOR_FROM_WINDOWS_CORE_WINDOW_INIT WGPU_MAKE_INIT_STRUCT ( WGPUSurfaceDescriptorFromWindowsCoreWindow , { /*.chain=*/ { } WGPU_COMMA /*.coreWindow=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_SURFACE_DESCRIPTOR_FROM_WINDOWS_SWAP_CHAIN_PANEL_INIT WGPU_MAKE_INIT_STRUCT ( WGPUSurfaceDescriptorFromWindowsSwapChainPanel , { /*.chain=*/ { } WGPU_COMMA /*.swapChainPanel=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_SURFACE_SOURCE_XCB_WINDOW_INIT WGPU_MAKE_INIT_STRUCT ( WGPUSurfaceSourceXCBWindow , { /*.chain=*/ { } WGPU_COMMA /*.connection=*/ { } WGPU_COMMA /*.window=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_SURFACE_SOURCE_ANDROID_NATIVE_WINDOW_INIT WGPU_MAKE_INIT_STRUCT ( WGPUSurfaceSourceAndroidNativeWindow , { /*.chain=*/ { } WGPU_COMMA /*.window=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_SURFACE_SOURCE_CANVAS_HTML_SELECTOR__EMSCRIPTEN_INIT WGPU_MAKE_INIT_STRUCT ( WGPUSurfaceSourceCanvasHTMLSelector_Emscripten , { /*.chain=*/ { } WGPU_COMMA /*.selector=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_SURFACE_SOURCE_METAL_LAYER_INIT WGPU_MAKE_INIT_STRUCT ( WGPUSurfaceSourceMetalLayer , { /*.chain=*/ { } WGPU_COMMA /*.layer=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_SURFACE_SOURCE_WAYLAND_SURFACE_INIT WGPU_MAKE_INIT_STRUCT ( WGPUSurfaceSourceWaylandSurface , { /*.chain=*/ { } WGPU_COMMA /*.display=*/ { } WGPU_COMMA /*.surface=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_SURFACE_SOURCE_WINDOWS_HWND_INIT WGPU_MAKE_INIT_STRUCT ( WGPUSurfaceSourceWindowsHWND , { /*.chain=*/ { } WGPU_COMMA /*.hinstance=*/ { } WGPU_COMMA /*.hwnd=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_SURFACE_SOURCE_XLIB_WINDOW_INIT WGPU_MAKE_INIT_STRUCT ( WGPUSurfaceSourceXlibWindow , { /*.chain=*/ { } WGPU_COMMA /*.display=*/ { } WGPU_COMMA /*.window=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_SURFACE_TEXTURE_INIT WGPU_MAKE_INIT_STRUCT ( WGPUSurfaceTexture , { /*.texture=*/ { } WGPU_COMMA /*.suboptimal=*/ { } WGPU_COMMA /*.status=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_SWAP_CHAIN_DESCRIPTOR_INIT WGPU_MAKE_INIT_STRUCT ( WGPUSwapChainDescriptor , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.label=*/ nullptr WGPU_COMMA /*.usage=*/ { } WGPU_COMMA /*.format=*/ { } WGPU_COMMA /*.width=*/ { } WGPU_COMMA /*.height=*/ { } WGPU_COMMA /*.presentMode=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_TEXTURE_BINDING_LAYOUT_INIT WGPU_MAKE_INIT_STRUCT ( WGPUTextureBindingLayout , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.sampleType=*/ WGPUTextureSampleType_Undefined WGPU_COMMA /*.viewDimension=*/ WGPUTextureViewDimension_2D WGPU_COMMA /*.multisampled=*/ false WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_TEXTURE_BINDING_VIEW_DIMENSION_DESCRIPTOR_INIT WGPU_MAKE_INIT_STRUCT ( WGPUTextureBindingViewDimensionDescriptor , { /*.chain=*/ { } WGPU_COMMA /*.textureBindingViewDimension=*/ WGPUTextureViewDimension_Undefined WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_TEXTURE_DATA_LAYOUT_INIT WGPU_MAKE_INIT_STRUCT ( WGPUTextureDataLayout , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.offset=*/ 0 WGPU_COMMA /*.bytesPerRow=*/ WGPU_COPY_STRIDE_UNDEFINED WGPU_COMMA /*.rowsPerImage=*/ WGPU_COPY_STRIDE_UNDEFINED WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_TEXTURE_VIEW_DESCRIPTOR_INIT WGPU_MAKE_INIT_STRUCT ( WGPUTextureViewDescriptor , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.label=*/ nullptr WGPU_COMMA /*.format=*/ WGPUTextureFormat_Undefined WGPU_COMMA /*.dimension=*/ WGPUTextureViewDimension_Undefined WGPU_COMMA /*.baseMipLevel=*/ 0 WGPU_COMMA /*.mipLevelCount=*/ WGPU_MIP_LEVEL_COUNT_UNDEFINED WGPU_COMMA /*.baseArrayLayer=*/ 0 WGPU_COMMA /*.arrayLayerCount=*/ WGPU_ARRAY_LAYER_COUNT_UNDEFINED WGPU_COMMA /*.aspect=*/ WGPUTextureAspect_All WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_UNCAPTURED_ERROR_CALLBACK_INFO_INIT WGPU_MAKE_INIT_STRUCT ( WGPUUncapturedErrorCallbackInfo , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.callback=*/ nullptr WGPU_COMMA /*.userdata=*/ nullptr WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_VERTEX_ATTRIBUTE_INIT WGPU_MAKE_INIT_STRUCT ( WGPUVertexAttribute , { /*.format=*/ { } WGPU_COMMA /*.offset=*/ { } WGPU_COMMA /*.shaderLocation=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_Y_CB_CR_VK_DESCRIPTOR_INIT WGPU_MAKE_INIT_STRUCT ( WGPUYCbCrVkDescriptor , { /*.chain=*/ { } WGPU_COMMA /*.vkFormat=*/ 0 WGPU_COMMA /*.vkYCbCrModel=*/ 0 WGPU_COMMA /*.vkYCbCrRange=*/ 0 WGPU_COMMA /*.vkComponentSwizzleRed=*/ 0 WGPU_COMMA /*.vkComponentSwizzleGreen=*/ 0 WGPU_COMMA /*.vkComponentSwizzleBlue=*/ 0 WGPU_COMMA /*.vkComponentSwizzleAlpha=*/ 0 WGPU_COMMA /*.vkXChromaOffset=*/ 0 WGPU_COMMA /*.vkYChromaOffset=*/ 0 WGPU_COMMA /*.vkChromaFilter=*/ WGPUFilterMode_Nearest WGPU_COMMA /*.forceExplicitReconstruction=*/ false WGPU_COMMA /*.externalFormat=*/ 0 WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_A_HARDWARE_BUFFER_PROPERTIES_INIT WGPU_MAKE_INIT_STRUCT ( WGPUAHardwareBufferProperties , { /*.yCbCrInfo=*/ WGPU_Y_CB_CR_VK_DESCRIPTOR_INIT WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_ADAPTER_PROPERTIES_MEMORY_HEAPS_INIT WGPU_MAKE_INIT_STRUCT ( WGPUAdapterPropertiesMemoryHeaps , { /*.chain=*/ { } WGPU_COMMA /*.heapCount=*/ { } WGPU_COMMA /*.heapInfo=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_BIND_GROUP_DESCRIPTOR_INIT WGPU_MAKE_INIT_STRUCT ( WGPUBindGroupDescriptor , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.label=*/ nullptr WGPU_COMMA /*.layout=*/ { } WGPU_COMMA /*.entryCount=*/ { } WGPU_COMMA /*.entries=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_BIND_GROUP_LAYOUT_ENTRY_INIT WGPU_MAKE_INIT_STRUCT ( WGPUBindGroupLayoutEntry , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.binding=*/ { } WGPU_COMMA /*.visibility=*/ { } WGPU_COMMA /*.buffer=*/ WGPU_BUFFER_BINDING_LAYOUT_INIT WGPU_COMMA /*.sampler=*/ WGPU_SAMPLER_BINDING_LAYOUT_INIT WGPU_COMMA /*.texture=*/ WGPU_TEXTURE_BINDING_LAYOUT_INIT WGPU_COMMA /*.storageTexture=*/ WGPU_STORAGE_TEXTURE_BINDING_LAYOUT_INIT WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_BLEND_STATE_INIT WGPU_MAKE_INIT_STRUCT ( WGPUBlendState , { /*.color=*/ WGPU_BLEND_COMPONENT_INIT WGPU_COMMA /*.alpha=*/ WGPU_BLEND_COMPONENT_INIT WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_COMPILATION_INFO_INIT WGPU_MAKE_INIT_STRUCT ( WGPUCompilationInfo , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.messageCount=*/ { } WGPU_COMMA /*.messages=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_COMPUTE_PASS_DESCRIPTOR_INIT WGPU_MAKE_INIT_STRUCT ( WGPUComputePassDescriptor , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.label=*/ nullptr WGPU_COMMA /*.timestampWrites=*/ nullptr WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_DEPTH_STENCIL_STATE_INIT WGPU_MAKE_INIT_STRUCT ( WGPUDepthStencilState , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.format=*/ { } WGPU_COMMA /*.depthWriteEnabled=*/ WGPUOptionalBool_Undefined WGPU_COMMA /*.depthCompare=*/ WGPUCompareFunction_Undefined WGPU_COMMA /*.stencilFront=*/ WGPU_STENCIL_FACE_STATE_INIT WGPU_COMMA /*.stencilBack=*/ WGPU_STENCIL_FACE_STATE_INIT WGPU_COMMA /*.stencilReadMask=*/ 0xFFFFFFFF WGPU_COMMA /*.stencilWriteMask=*/ 0xFFFFFFFF WGPU_COMMA /*.depthBias=*/ 0 WGPU_COMMA /*.depthBiasSlopeScale=*/ 0.0f WGPU_COMMA /*.depthBiasClamp=*/ 0.0f WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_DRM_FORMAT_CAPABILITIES_INIT WGPU_MAKE_INIT_STRUCT ( WGPUDrmFormatCapabilities , { /*.chain=*/ { } WGPU_COMMA /*.propertiesCount=*/ { } WGPU_COMMA /*.properties=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_EXTERNAL_TEXTURE_DESCRIPTOR_INIT WGPU_MAKE_INIT_STRUCT ( WGPUExternalTextureDescriptor , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.label=*/ nullptr WGPU_COMMA /*.plane0=*/ { } WGPU_COMMA /*.plane1=*/ nullptr WGPU_COMMA /*.visibleOrigin=*/ WGPU_ORIGIN_2D_INIT WGPU_COMMA /*.visibleSize=*/ WGPU_EXTENT_2D_INIT WGPU_COMMA /*.doYuvToRgbConversionOnly=*/ false WGPU_COMMA /*.yuvToRgbConversionMatrix=*/ nullptr WGPU_COMMA /*.srcTransferFunctionParameters=*/ { } WGPU_COMMA /*.dstTransferFunctionParameters=*/ { } WGPU_COMMA /*.gamutConversionMatrix=*/ { } WGPU_COMMA /*.mirrored=*/ false WGPU_COMMA /*.rotation=*/ WGPUExternalTextureRotation_Rotate0Degrees WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_FUTURE_WAIT_INFO_INIT WGPU_MAKE_INIT_STRUCT ( WGPUFutureWaitInfo , { /*.future=*/ WGPU_FUTURE_INIT WGPU_COMMA /*.completed=*/ false WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_IMAGE_COPY_BUFFER_INIT WGPU_MAKE_INIT_STRUCT ( WGPUImageCopyBuffer , { /*.layout=*/ WGPU_TEXTURE_DATA_LAYOUT_INIT WGPU_COMMA /*.buffer=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_IMAGE_COPY_EXTERNAL_TEXTURE_INIT WGPU_MAKE_INIT_STRUCT ( WGPUImageCopyExternalTexture , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.externalTexture=*/ { } WGPU_COMMA /*.origin=*/ WGPU_ORIGIN_3D_INIT WGPU_COMMA /*.naturalSize=*/ WGPU_EXTENT_2D_INIT WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_IMAGE_COPY_TEXTURE_INIT WGPU_MAKE_INIT_STRUCT ( WGPUImageCopyTexture , { /*.texture=*/ { } WGPU_COMMA /*.mipLevel=*/ 0 WGPU_COMMA /*.origin=*/ WGPU_ORIGIN_3D_INIT WGPU_COMMA /*.aspect=*/ WGPUTextureAspect_All WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_INSTANCE_DESCRIPTOR_INIT WGPU_MAKE_INIT_STRUCT ( WGPUInstanceDescriptor , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.features=*/ WGPU_INSTANCE_FEATURES_INIT WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_PIPELINE_LAYOUT_PIXEL_LOCAL_STORAGE_INIT WGPU_MAKE_INIT_STRUCT ( WGPUPipelineLayoutPixelLocalStorage , { /*.chain=*/ { } WGPU_COMMA /*.totalPixelLocalStorageSize=*/ { } WGPU_COMMA /*.storageAttachmentCount=*/ 0 WGPU_COMMA /*.storageAttachments=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_PROGRAMMABLE_STAGE_DESCRIPTOR_INIT WGPU_MAKE_INIT_STRUCT ( WGPUProgrammableStageDescriptor , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.module=*/ { } WGPU_COMMA /*.entryPoint=*/ nullptr WGPU_COMMA /*.constantCount=*/ 0 WGPU_COMMA /*.constants=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_RENDER_PASS_COLOR_ATTACHMENT_INIT WGPU_MAKE_INIT_STRUCT ( WGPURenderPassColorAttachment , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.view=*/ nullptr WGPU_COMMA /*.depthSlice=*/ WGPU_DEPTH_SLICE_UNDEFINED WGPU_COMMA /*.resolveTarget=*/ nullptr WGPU_COMMA /*.loadOp=*/ { } WGPU_COMMA /*.storeOp=*/ { } WGPU_COMMA /*.clearValue=*/ WGPU_COLOR_INIT WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_RENDER_PASS_STORAGE_ATTACHMENT_INIT WGPU_MAKE_INIT_STRUCT ( WGPURenderPassStorageAttachment , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.offset=*/ 0 WGPU_COMMA /*.storage=*/ { } WGPU_COMMA /*.loadOp=*/ { } WGPU_COMMA /*.storeOp=*/ { } WGPU_COMMA /*.clearValue=*/ WGPU_COLOR_INIT WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_REQUIRED_LIMITS_INIT WGPU_MAKE_INIT_STRUCT ( WGPURequiredLimits , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.limits=*/ WGPU_LIMITS_INIT WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_SHARED_TEXTURE_MEMORY_A_HARDWARE_BUFFER_PROPERTIES_INIT WGPU_MAKE_INIT_STRUCT ( WGPUSharedTextureMemoryAHardwareBufferProperties , { /*.chain=*/ { } WGPU_COMMA /*.yCbCrInfo=*/ WGPU_Y_CB_CR_VK_DESCRIPTOR_INIT WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_SHARED_TEXTURE_MEMORY_DMA_BUF_DESCRIPTOR_INIT WGPU_MAKE_INIT_STRUCT ( WGPUSharedTextureMemoryDmaBufDescriptor , { /*.chain=*/ { } WGPU_COMMA /*.size=*/ WGPU_EXTENT_3D_INIT WGPU_COMMA /*.drmFormat=*/ { } WGPU_COMMA /*.drmModifier=*/ { } WGPU_COMMA /*.planeCount=*/ { } WGPU_COMMA /*.planes=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_SHARED_TEXTURE_MEMORY_PROPERTIES_INIT WGPU_MAKE_INIT_STRUCT ( WGPUSharedTextureMemoryProperties , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.usage=*/ { } WGPU_COMMA /*.size=*/ WGPU_EXTENT_3D_INIT WGPU_COMMA /*.format=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_SUPPORTED_LIMITS_INIT WGPU_MAKE_INIT_STRUCT ( WGPUSupportedLimits , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.limits=*/ WGPU_LIMITS_INIT WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_TEXTURE_DESCRIPTOR_INIT WGPU_MAKE_INIT_STRUCT ( WGPUTextureDescriptor , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.label=*/ nullptr WGPU_COMMA /*.usage=*/ { } WGPU_COMMA /*.dimension=*/ WGPUTextureDimension_2D WGPU_COMMA /*.size=*/ WGPU_EXTENT_3D_INIT WGPU_COMMA /*.format=*/ { } WGPU_COMMA /*.mipLevelCount=*/ 1 WGPU_COMMA /*.sampleCount=*/ 1 WGPU_COMMA /*.viewFormatCount=*/ 0 WGPU_COMMA /*.viewFormats=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_VERTEX_BUFFER_LAYOUT_INIT WGPU_MAKE_INIT_STRUCT ( WGPUVertexBufferLayout , { /*.arrayStride=*/ { } WGPU_COMMA /*.stepMode=*/ WGPUVertexStepMode_Vertex WGPU_COMMA /*.attributeCount=*/ { } WGPU_COMMA /*.attributes=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_BIND_GROUP_LAYOUT_DESCRIPTOR_INIT WGPU_MAKE_INIT_STRUCT ( WGPUBindGroupLayoutDescriptor , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.label=*/ nullptr WGPU_COMMA /*.entryCount=*/ { } WGPU_COMMA /*.entries=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_COLOR_TARGET_STATE_INIT WGPU_MAKE_INIT_STRUCT ( WGPUColorTargetState , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.format=*/ { } WGPU_COMMA /*.blend=*/ nullptr WGPU_COMMA /*.writeMask=*/ WGPUColorWriteMask_All WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_COMPUTE_PIPELINE_DESCRIPTOR_INIT WGPU_MAKE_INIT_STRUCT ( WGPUComputePipelineDescriptor , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.label=*/ nullptr WGPU_COMMA /*.layout=*/ nullptr WGPU_COMMA /*.compute=*/ WGPU_PROGRAMMABLE_STAGE_DESCRIPTOR_INIT WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_DEVICE_DESCRIPTOR_INIT WGPU_MAKE_INIT_STRUCT ( WGPUDeviceDescriptor , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.label=*/ nullptr WGPU_COMMA /*.requiredFeatureCount=*/ 0 WGPU_COMMA /*.requiredFeatures=*/ nullptr WGPU_COMMA /*.requiredLimits=*/ nullptr WGPU_COMMA /*.defaultQueue=*/ WGPU_QUEUE_DESCRIPTOR_INIT WGPU_COMMA /*.deviceLostCallback=*/ nullptr WGPU_COMMA /*.deviceLostUserdata=*/ nullptr WGPU_COMMA /*.deviceLostCallbackInfo=*/ WGPU_DEVICE_LOST_CALLBACK_INFO_INIT WGPU_COMMA /*.uncapturedErrorCallbackInfo=*/ WGPU_UNCAPTURED_ERROR_CALLBACK_INFO_INIT WGPU_COMMA /*.deviceLostCallbackInfo2=*/ { } WGPU_COMMA /*.uncapturedErrorCallbackInfo2=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_RENDER_PASS_DESCRIPTOR_INIT WGPU_MAKE_INIT_STRUCT ( WGPURenderPassDescriptor , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.label=*/ nullptr WGPU_COMMA /*.colorAttachmentCount=*/ { } WGPU_COMMA /*.colorAttachments=*/ { } WGPU_COMMA /*.depthStencilAttachment=*/ nullptr WGPU_COMMA /*.occlusionQuerySet=*/ nullptr WGPU_COMMA /*.timestampWrites=*/ nullptr WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_RENDER_PASS_PIXEL_LOCAL_STORAGE_INIT WGPU_MAKE_INIT_STRUCT ( WGPURenderPassPixelLocalStorage , { /*.chain=*/ { } WGPU_COMMA /*.totalPixelLocalStorageSize=*/ { } WGPU_COMMA /*.storageAttachmentCount=*/ 0 WGPU_COMMA /*.storageAttachments=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_VERTEX_STATE_INIT WGPU_MAKE_INIT_STRUCT ( WGPUVertexState , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.module=*/ { } WGPU_COMMA /*.entryPoint=*/ nullptr WGPU_COMMA /*.constantCount=*/ 0 WGPU_COMMA /*.constants=*/ { } WGPU_COMMA /*.bufferCount=*/ 0 WGPU_COMMA /*.buffers=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_FRAGMENT_STATE_INIT WGPU_MAKE_INIT_STRUCT ( WGPUFragmentState , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.module=*/ { } WGPU_COMMA /*.entryPoint=*/ nullptr WGPU_COMMA /*.constantCount=*/ 0 WGPU_COMMA /*.constants=*/ { } WGPU_COMMA /*.targetCount=*/ { } WGPU_COMMA /*.targets=*/ { } WGPU_COMMA \
-} ) *)
-  { TODO : Macro uses commented-out symbol "WGPU_MAKE_INIT_STRUCT": }
-  (* WGPU_RENDER_PIPELINE_DESCRIPTOR_INIT WGPU_MAKE_INIT_STRUCT ( WGPURenderPipelineDescriptor , { /*.nextInChain=*/ nullptr WGPU_COMMA /*.label=*/ nullptr WGPU_COMMA /*.layout=*/ nullptr WGPU_COMMA /*.vertex=*/ WGPU_VERTEX_STATE_INIT WGPU_COMMA /*.primitive=*/ WGPU_PRIMITIVE_STATE_INIT WGPU_COMMA /*.depthStencil=*/ nullptr WGPU_COMMA /*.multisample=*/ WGPU_MULTISAMPLE_STATE_INIT WGPU_COMMA /*.fragment=*/ nullptr WGPU_COMMA \
-} ) *)
 
 type
   // Forward declarations
@@ -851,8 +302,6 @@ type
   PWGPUFragmentState = ^WGPUFragmentState;
   PWGPURenderPipelineDescriptor = ^WGPURenderPipelineDescriptor;
 
-  ptrdiff_t = Int64;
-  size_t = UInt64;
   wchar_t = Word;
   wint_t = Word;
   int8_t = UTF8Char;
@@ -886,6 +335,8 @@ type
   uintptr_t = Cardinal;
   intmax_t = Int64;
   uintmax_t = UInt64;
+  ptrdiff_t = Int64;
+  size_t = UInt64;
   WGPUFlags = UInt64;
   WGPUBool = UInt32;
   WGPUAdapter = Pointer;
@@ -1697,57 +1148,31 @@ type
   WGPUTextureUsage = WGPUFlags;
 
   WGPUBufferMapCallback = procedure(status: WGPUBufferMapAsyncStatus; userdata: Pointer); cdecl;
-
   WGPUCallback = procedure(userdata: Pointer); cdecl;
-
   WGPUCompilationInfoCallback = procedure(status: WGPUCompilationInfoRequestStatus; const compilationInfo: PWGPUCompilationInfo; userdata: Pointer); cdecl;
-
   WGPUCreateComputePipelineAsyncCallback = procedure(status: WGPUCreatePipelineAsyncStatus; pipeline: WGPUComputePipeline; const &message: PUTF8Char; userdata: Pointer); cdecl;
-
   WGPUCreateRenderPipelineAsyncCallback = procedure(status: WGPUCreatePipelineAsyncStatus; pipeline: WGPURenderPipeline; const &message: PUTF8Char; userdata: Pointer); cdecl;
-
   WGPUDawnLoadCacheDataFunction = function(const key: Pointer; keySize: NativeUInt; value: Pointer; valueSize: NativeUInt; userdata: Pointer): NativeUInt; cdecl;
-
   WGPUDawnStoreCacheDataFunction = procedure(const key: Pointer; keySize: NativeUInt; const value: Pointer; valueSize: NativeUInt; userdata: Pointer); cdecl;
-
   WGPUDeviceLostCallback = procedure(reason: WGPUDeviceLostReason; const &message: PUTF8Char; userdata: Pointer); cdecl;
-
   WGPUDeviceLostCallbackNew = procedure(const device: PWGPUDevice; reason: WGPUDeviceLostReason; const &message: PUTF8Char; userdata: Pointer); cdecl;
-
   WGPUErrorCallback = procedure(&type: WGPUErrorType; const &message: PUTF8Char; userdata: Pointer); cdecl;
-
   WGPULoggingCallback = procedure(&type: WGPULoggingType; const &message: PUTF8Char; userdata: Pointer); cdecl;
-
   WGPUPopErrorScopeCallback = procedure(status: WGPUPopErrorScopeStatus; &type: WGPUErrorType; const &message: PUTF8Char; userdata: Pointer); cdecl;
-
   WGPUProc = procedure(); cdecl;
-
   WGPUQueueWorkDoneCallback = procedure(status: WGPUQueueWorkDoneStatus; userdata: Pointer); cdecl;
-
   WGPURequestAdapterCallback = procedure(status: WGPURequestAdapterStatus; adapter: WGPUAdapter; const &message: PUTF8Char; userdata: Pointer); cdecl;
-
   WGPURequestDeviceCallback = procedure(status: WGPURequestDeviceStatus; device: WGPUDevice; const &message: PUTF8Char; userdata: Pointer); cdecl;
-
   WGPUBufferMapCallback2 = procedure(status: WGPUMapAsyncStatus; const &message: PUTF8Char; userdata1: Pointer; userdata2: Pointer); cdecl;
-
   WGPUCompilationInfoCallback2 = procedure(status: WGPUCompilationInfoRequestStatus; const compilationInfo: PWGPUCompilationInfo; userdata1: Pointer; userdata2: Pointer); cdecl;
-
   WGPUCreateComputePipelineAsyncCallback2 = procedure(status: WGPUCreatePipelineAsyncStatus; pipeline: WGPUComputePipeline; const &message: PUTF8Char; userdata1: Pointer; userdata2: Pointer); cdecl;
-
   WGPUCreateRenderPipelineAsyncCallback2 = procedure(status: WGPUCreatePipelineAsyncStatus; pipeline: WGPURenderPipeline; const &message: PUTF8Char; userdata1: Pointer; userdata2: Pointer); cdecl;
-
   WGPUDeviceLostCallback2 = procedure(const device: PWGPUDevice; reason: WGPUDeviceLostReason; const &message: PUTF8Char; userdata1: Pointer; userdata2: Pointer); cdecl;
-
   WGPUPopErrorScopeCallback2 = procedure(status: WGPUPopErrorScopeStatus; &type: WGPUErrorType; const &message: PUTF8Char; userdata1: Pointer; userdata2: Pointer); cdecl;
-
   WGPUQueueWorkDoneCallback2 = procedure(status: WGPUQueueWorkDoneStatus; userdata1: Pointer; userdata2: Pointer); cdecl;
-
   WGPURequestAdapterCallback2 = procedure(status: WGPURequestAdapterStatus; adapter: WGPUAdapter; const &message: PUTF8Char; userdata1: Pointer; userdata2: Pointer); cdecl;
-
   WGPURequestDeviceCallback2 = procedure(status: WGPURequestDeviceStatus; device: WGPUDevice; const &message: PUTF8Char; userdata1: Pointer; userdata2: Pointer); cdecl;
-
   WGPUUncapturedErrorCallback = procedure(const device: PWGPUDevice; &type: WGPUErrorType; const &message: PUTF8Char; userdata1: Pointer; userdata2: Pointer); cdecl;
-
   WGPUChainedStruct = record
     next: PWGPUChainedStruct;
     sType: WGPUSType;
@@ -2978,619 +2403,312 @@ type
   WGPUSurfaceDescriptorFromXlibWindow = WGPUSurfaceSourceXlibWindow;
 
   WGPUProcAdapterInfoFreeMembers = procedure(value: WGPUAdapterInfo); cdecl;
-
   WGPUProcAdapterPropertiesFreeMembers = procedure(value: WGPUAdapterProperties); cdecl;
-
   WGPUProcAdapterPropertiesMemoryHeapsFreeMembers = procedure(value: WGPUAdapterPropertiesMemoryHeaps); cdecl;
-
   WGPUProcCreateInstance = function(const descriptor: PWGPUInstanceDescriptor): WGPUInstance; cdecl;
-
   WGPUProcDrmFormatCapabilitiesFreeMembers = procedure(value: WGPUDrmFormatCapabilities); cdecl;
-
   WGPUProcGetInstanceFeatures = function(features: PWGPUInstanceFeatures): WGPUStatus; cdecl;
-
   WGPUProcGetProcAddress = function(device: WGPUDevice; const procName: PUTF8Char): WGPUProc; cdecl;
-
   WGPUProcGetProcAddress2 = function(device: WGPUDevice; procName: WGPUStringView): WGPUProc; cdecl;
-
   WGPUProcSharedBufferMemoryEndAccessStateFreeMembers = procedure(value: WGPUSharedBufferMemoryEndAccessState); cdecl;
-
   WGPUProcSharedTextureMemoryEndAccessStateFreeMembers = procedure(value: WGPUSharedTextureMemoryEndAccessState); cdecl;
-
   WGPUProcSurfaceCapabilitiesFreeMembers = procedure(value: WGPUSurfaceCapabilities); cdecl;
-
   WGPUProcAdapterCreateDevice = function(adapter: WGPUAdapter; const descriptor: PWGPUDeviceDescriptor): WGPUDevice; cdecl;
-
   WGPUProcAdapterEnumerateFeatures = function(adapter: WGPUAdapter; features: PWGPUFeatureName): NativeUInt; cdecl;
-
   WGPUProcAdapterGetFormatCapabilities = function(adapter: WGPUAdapter; format: WGPUTextureFormat; capabilities: PWGPUFormatCapabilities): WGPUStatus; cdecl;
-
   WGPUProcAdapterGetInfo = function(adapter: WGPUAdapter; info: PWGPUAdapterInfo): WGPUStatus; cdecl;
-
   WGPUProcAdapterGetInstance = function(adapter: WGPUAdapter): WGPUInstance; cdecl;
-
   WGPUProcAdapterGetLimits = function(adapter: WGPUAdapter; limits: PWGPUSupportedLimits): WGPUStatus; cdecl;
-
   WGPUProcAdapterGetProperties = function(adapter: WGPUAdapter; properties: PWGPUAdapterProperties): WGPUStatus; cdecl;
-
   WGPUProcAdapterHasFeature = function(adapter: WGPUAdapter; feature: WGPUFeatureName): WGPUBool; cdecl;
-
   WGPUProcAdapterRequestDevice = procedure(adapter: WGPUAdapter; const descriptor: PWGPUDeviceDescriptor; callback: WGPURequestDeviceCallback; userdata: Pointer); cdecl;
-
   WGPUProcAdapterRequestDevice2 = function(adapter: WGPUAdapter; const options: PWGPUDeviceDescriptor; callbackInfo: WGPURequestDeviceCallbackInfo2): WGPUFuture; cdecl;
-
   WGPUProcAdapterRequestDeviceF = function(adapter: WGPUAdapter; const options: PWGPUDeviceDescriptor; callbackInfo: WGPURequestDeviceCallbackInfo): WGPUFuture; cdecl;
-
   WGPUProcAdapterAddRef = procedure(adapter: WGPUAdapter); cdecl;
-
   WGPUProcAdapterRelease = procedure(adapter: WGPUAdapter); cdecl;
-
   WGPUProcBindGroupSetLabel = procedure(bindGroup: WGPUBindGroup; const &label: PUTF8Char); cdecl;
-
   WGPUProcBindGroupSetLabel2 = procedure(bindGroup: WGPUBindGroup; &label: WGPUStringView); cdecl;
-
   WGPUProcBindGroupAddRef = procedure(bindGroup: WGPUBindGroup); cdecl;
-
   WGPUProcBindGroupRelease = procedure(bindGroup: WGPUBindGroup); cdecl;
-
   WGPUProcBindGroupLayoutSetLabel = procedure(bindGroupLayout: WGPUBindGroupLayout; const &label: PUTF8Char); cdecl;
-
   WGPUProcBindGroupLayoutSetLabel2 = procedure(bindGroupLayout: WGPUBindGroupLayout; &label: WGPUStringView); cdecl;
-
   WGPUProcBindGroupLayoutAddRef = procedure(bindGroupLayout: WGPUBindGroupLayout); cdecl;
-
   WGPUProcBindGroupLayoutRelease = procedure(bindGroupLayout: WGPUBindGroupLayout); cdecl;
-
   WGPUProcBufferDestroy = procedure(buffer: WGPUBuffer); cdecl;
-
   WGPUProcBufferGetConstMappedRange = function(buffer: WGPUBuffer; offset: NativeUInt; size: NativeUInt): Pointer; cdecl;
-
   WGPUProcBufferGetMapState = function(buffer: WGPUBuffer): WGPUBufferMapState; cdecl;
-
   WGPUProcBufferGetMappedRange = function(buffer: WGPUBuffer; offset: NativeUInt; size: NativeUInt): Pointer; cdecl;
-
   WGPUProcBufferGetSize = function(buffer: WGPUBuffer): UInt64; cdecl;
-
   WGPUProcBufferGetUsage = function(buffer: WGPUBuffer): WGPUBufferUsage; cdecl;
-
   WGPUProcBufferMapAsync = procedure(buffer: WGPUBuffer; mode: WGPUMapMode; offset: NativeUInt; size: NativeUInt; callback: WGPUBufferMapCallback; userdata: Pointer); cdecl;
-
   WGPUProcBufferMapAsync2 = function(buffer: WGPUBuffer; mode: WGPUMapMode; offset: NativeUInt; size: NativeUInt; callbackInfo: WGPUBufferMapCallbackInfo2): WGPUFuture; cdecl;
-
   WGPUProcBufferMapAsyncF = function(buffer: WGPUBuffer; mode: WGPUMapMode; offset: NativeUInt; size: NativeUInt; callbackInfo: WGPUBufferMapCallbackInfo): WGPUFuture; cdecl;
-
   WGPUProcBufferSetLabel = procedure(buffer: WGPUBuffer; const &label: PUTF8Char); cdecl;
-
   WGPUProcBufferSetLabel2 = procedure(buffer: WGPUBuffer; &label: WGPUStringView); cdecl;
-
   WGPUProcBufferUnmap = procedure(buffer: WGPUBuffer); cdecl;
-
   WGPUProcBufferAddRef = procedure(buffer: WGPUBuffer); cdecl;
-
   WGPUProcBufferRelease = procedure(buffer: WGPUBuffer); cdecl;
-
   WGPUProcCommandBufferSetLabel = procedure(commandBuffer: WGPUCommandBuffer; const &label: PUTF8Char); cdecl;
-
   WGPUProcCommandBufferSetLabel2 = procedure(commandBuffer: WGPUCommandBuffer; &label: WGPUStringView); cdecl;
-
   WGPUProcCommandBufferAddRef = procedure(commandBuffer: WGPUCommandBuffer); cdecl;
-
   WGPUProcCommandBufferRelease = procedure(commandBuffer: WGPUCommandBuffer); cdecl;
-
   WGPUProcCommandEncoderBeginComputePass = function(commandEncoder: WGPUCommandEncoder; const descriptor: PWGPUComputePassDescriptor): WGPUComputePassEncoder; cdecl;
-
   WGPUProcCommandEncoderBeginRenderPass = function(commandEncoder: WGPUCommandEncoder; const descriptor: PWGPURenderPassDescriptor): WGPURenderPassEncoder; cdecl;
-
   WGPUProcCommandEncoderClearBuffer = procedure(commandEncoder: WGPUCommandEncoder; buffer: WGPUBuffer; offset: UInt64; size: UInt64); cdecl;
-
   WGPUProcCommandEncoderCopyBufferToBuffer = procedure(commandEncoder: WGPUCommandEncoder; source: WGPUBuffer; sourceOffset: UInt64; destination: WGPUBuffer; destinationOffset: UInt64; size: UInt64); cdecl;
-
   WGPUProcCommandEncoderCopyBufferToTexture = procedure(commandEncoder: WGPUCommandEncoder; const source: PWGPUImageCopyBuffer; const destination: PWGPUImageCopyTexture; const copySize: PWGPUExtent3D); cdecl;
-
   WGPUProcCommandEncoderCopyTextureToBuffer = procedure(commandEncoder: WGPUCommandEncoder; const source: PWGPUImageCopyTexture; const destination: PWGPUImageCopyBuffer; const copySize: PWGPUExtent3D); cdecl;
-
   WGPUProcCommandEncoderCopyTextureToTexture = procedure(commandEncoder: WGPUCommandEncoder; const source: PWGPUImageCopyTexture; const destination: PWGPUImageCopyTexture; const copySize: PWGPUExtent3D); cdecl;
-
   WGPUProcCommandEncoderFinish = function(commandEncoder: WGPUCommandEncoder; const descriptor: PWGPUCommandBufferDescriptor): WGPUCommandBuffer; cdecl;
-
   WGPUProcCommandEncoderInjectValidationError = procedure(commandEncoder: WGPUCommandEncoder; const &message: PUTF8Char); cdecl;
-
   WGPUProcCommandEncoderInjectValidationError2 = procedure(commandEncoder: WGPUCommandEncoder; &message: WGPUStringView); cdecl;
-
   WGPUProcCommandEncoderInsertDebugMarker = procedure(commandEncoder: WGPUCommandEncoder; const markerLabel: PUTF8Char); cdecl;
-
   WGPUProcCommandEncoderInsertDebugMarker2 = procedure(commandEncoder: WGPUCommandEncoder; markerLabel: WGPUStringView); cdecl;
-
   WGPUProcCommandEncoderPopDebugGroup = procedure(commandEncoder: WGPUCommandEncoder); cdecl;
-
   WGPUProcCommandEncoderPushDebugGroup = procedure(commandEncoder: WGPUCommandEncoder; const groupLabel: PUTF8Char); cdecl;
-
   WGPUProcCommandEncoderPushDebugGroup2 = procedure(commandEncoder: WGPUCommandEncoder; groupLabel: WGPUStringView); cdecl;
-
   WGPUProcCommandEncoderResolveQuerySet = procedure(commandEncoder: WGPUCommandEncoder; querySet: WGPUQuerySet; firstQuery: UInt32; queryCount: UInt32; destination: WGPUBuffer; destinationOffset: UInt64); cdecl;
-
   WGPUProcCommandEncoderSetLabel = procedure(commandEncoder: WGPUCommandEncoder; const &label: PUTF8Char); cdecl;
-
   WGPUProcCommandEncoderSetLabel2 = procedure(commandEncoder: WGPUCommandEncoder; &label: WGPUStringView); cdecl;
-
   WGPUProcCommandEncoderWriteBuffer = procedure(commandEncoder: WGPUCommandEncoder; buffer: WGPUBuffer; bufferOffset: UInt64; const data: PUInt8; size: UInt64); cdecl;
-
   WGPUProcCommandEncoderWriteTimestamp = procedure(commandEncoder: WGPUCommandEncoder; querySet: WGPUQuerySet; queryIndex: UInt32); cdecl;
-
   WGPUProcCommandEncoderAddRef = procedure(commandEncoder: WGPUCommandEncoder); cdecl;
-
   WGPUProcCommandEncoderRelease = procedure(commandEncoder: WGPUCommandEncoder); cdecl;
-
   WGPUProcComputePassEncoderDispatchWorkgroups = procedure(computePassEncoder: WGPUComputePassEncoder; workgroupCountX: UInt32; workgroupCountY: UInt32; workgroupCountZ: UInt32); cdecl;
-
   WGPUProcComputePassEncoderDispatchWorkgroupsIndirect = procedure(computePassEncoder: WGPUComputePassEncoder; indirectBuffer: WGPUBuffer; indirectOffset: UInt64); cdecl;
-
   WGPUProcComputePassEncoderEnd = procedure(computePassEncoder: WGPUComputePassEncoder); cdecl;
-
   WGPUProcComputePassEncoderInsertDebugMarker = procedure(computePassEncoder: WGPUComputePassEncoder; const markerLabel: PUTF8Char); cdecl;
-
   WGPUProcComputePassEncoderInsertDebugMarker2 = procedure(computePassEncoder: WGPUComputePassEncoder; markerLabel: WGPUStringView); cdecl;
-
   WGPUProcComputePassEncoderPopDebugGroup = procedure(computePassEncoder: WGPUComputePassEncoder); cdecl;
-
   WGPUProcComputePassEncoderPushDebugGroup = procedure(computePassEncoder: WGPUComputePassEncoder; const groupLabel: PUTF8Char); cdecl;
-
   WGPUProcComputePassEncoderPushDebugGroup2 = procedure(computePassEncoder: WGPUComputePassEncoder; groupLabel: WGPUStringView); cdecl;
-
   WGPUProcComputePassEncoderSetBindGroup = procedure(computePassEncoder: WGPUComputePassEncoder; groupIndex: UInt32; group: WGPUBindGroup; dynamicOffsetCount: NativeUInt; const dynamicOffsets: PUInt32); cdecl;
-
   WGPUProcComputePassEncoderSetLabel = procedure(computePassEncoder: WGPUComputePassEncoder; const &label: PUTF8Char); cdecl;
-
   WGPUProcComputePassEncoderSetLabel2 = procedure(computePassEncoder: WGPUComputePassEncoder; &label: WGPUStringView); cdecl;
-
   WGPUProcComputePassEncoderSetPipeline = procedure(computePassEncoder: WGPUComputePassEncoder; pipeline: WGPUComputePipeline); cdecl;
-
   WGPUProcComputePassEncoderWriteTimestamp = procedure(computePassEncoder: WGPUComputePassEncoder; querySet: WGPUQuerySet; queryIndex: UInt32); cdecl;
-
   WGPUProcComputePassEncoderAddRef = procedure(computePassEncoder: WGPUComputePassEncoder); cdecl;
-
   WGPUProcComputePassEncoderRelease = procedure(computePassEncoder: WGPUComputePassEncoder); cdecl;
-
   WGPUProcComputePipelineGetBindGroupLayout = function(computePipeline: WGPUComputePipeline; groupIndex: UInt32): WGPUBindGroupLayout; cdecl;
-
   WGPUProcComputePipelineSetLabel = procedure(computePipeline: WGPUComputePipeline; const &label: PUTF8Char); cdecl;
-
   WGPUProcComputePipelineSetLabel2 = procedure(computePipeline: WGPUComputePipeline; &label: WGPUStringView); cdecl;
-
   WGPUProcComputePipelineAddRef = procedure(computePipeline: WGPUComputePipeline); cdecl;
-
   WGPUProcComputePipelineRelease = procedure(computePipeline: WGPUComputePipeline); cdecl;
-
   WGPUProcDeviceCreateBindGroup = function(device: WGPUDevice; const descriptor: PWGPUBindGroupDescriptor): WGPUBindGroup; cdecl;
-
   WGPUProcDeviceCreateBindGroupLayout = function(device: WGPUDevice; const descriptor: PWGPUBindGroupLayoutDescriptor): WGPUBindGroupLayout; cdecl;
-
   WGPUProcDeviceCreateBuffer = function(device: WGPUDevice; const descriptor: PWGPUBufferDescriptor): WGPUBuffer; cdecl;
-
   WGPUProcDeviceCreateCommandEncoder = function(device: WGPUDevice; const descriptor: PWGPUCommandEncoderDescriptor): WGPUCommandEncoder; cdecl;
-
   WGPUProcDeviceCreateComputePipeline = function(device: WGPUDevice; const descriptor: PWGPUComputePipelineDescriptor): WGPUComputePipeline; cdecl;
-
   WGPUProcDeviceCreateComputePipelineAsync = procedure(device: WGPUDevice; const descriptor: PWGPUComputePipelineDescriptor; callback: WGPUCreateComputePipelineAsyncCallback; userdata: Pointer); cdecl;
-
   WGPUProcDeviceCreateComputePipelineAsync2 = function(device: WGPUDevice; const descriptor: PWGPUComputePipelineDescriptor; callbackInfo: WGPUCreateComputePipelineAsyncCallbackInfo2): WGPUFuture; cdecl;
-
   WGPUProcDeviceCreateComputePipelineAsyncF = function(device: WGPUDevice; const descriptor: PWGPUComputePipelineDescriptor; callbackInfo: WGPUCreateComputePipelineAsyncCallbackInfo): WGPUFuture; cdecl;
-
   WGPUProcDeviceCreateErrorBuffer = function(device: WGPUDevice; const descriptor: PWGPUBufferDescriptor): WGPUBuffer; cdecl;
-
   WGPUProcDeviceCreateErrorExternalTexture = function(device: WGPUDevice): WGPUExternalTexture; cdecl;
-
   WGPUProcDeviceCreateErrorShaderModule = function(device: WGPUDevice; const descriptor: PWGPUShaderModuleDescriptor; const errorMessage: PUTF8Char): WGPUShaderModule; cdecl;
-
   WGPUProcDeviceCreateErrorShaderModule2 = function(device: WGPUDevice; const descriptor: PWGPUShaderModuleDescriptor; errorMessage: WGPUStringView): WGPUShaderModule; cdecl;
-
   WGPUProcDeviceCreateErrorTexture = function(device: WGPUDevice; const descriptor: PWGPUTextureDescriptor): WGPUTexture; cdecl;
-
   WGPUProcDeviceCreateExternalTexture = function(device: WGPUDevice; const externalTextureDescriptor: PWGPUExternalTextureDescriptor): WGPUExternalTexture; cdecl;
-
   WGPUProcDeviceCreatePipelineLayout = function(device: WGPUDevice; const descriptor: PWGPUPipelineLayoutDescriptor): WGPUPipelineLayout; cdecl;
-
   WGPUProcDeviceCreateQuerySet = function(device: WGPUDevice; const descriptor: PWGPUQuerySetDescriptor): WGPUQuerySet; cdecl;
-
   WGPUProcDeviceCreateRenderBundleEncoder = function(device: WGPUDevice; const descriptor: PWGPURenderBundleEncoderDescriptor): WGPURenderBundleEncoder; cdecl;
-
   WGPUProcDeviceCreateRenderPipeline = function(device: WGPUDevice; const descriptor: PWGPURenderPipelineDescriptor): WGPURenderPipeline; cdecl;
-
   WGPUProcDeviceCreateRenderPipelineAsync = procedure(device: WGPUDevice; const descriptor: PWGPURenderPipelineDescriptor; callback: WGPUCreateRenderPipelineAsyncCallback; userdata: Pointer); cdecl;
-
   WGPUProcDeviceCreateRenderPipelineAsync2 = function(device: WGPUDevice; const descriptor: PWGPURenderPipelineDescriptor; callbackInfo: WGPUCreateRenderPipelineAsyncCallbackInfo2): WGPUFuture; cdecl;
-
   WGPUProcDeviceCreateRenderPipelineAsyncF = function(device: WGPUDevice; const descriptor: PWGPURenderPipelineDescriptor; callbackInfo: WGPUCreateRenderPipelineAsyncCallbackInfo): WGPUFuture; cdecl;
-
   WGPUProcDeviceCreateSampler = function(device: WGPUDevice; const descriptor: PWGPUSamplerDescriptor): WGPUSampler; cdecl;
-
   WGPUProcDeviceCreateShaderModule = function(device: WGPUDevice; const descriptor: PWGPUShaderModuleDescriptor): WGPUShaderModule; cdecl;
-
   WGPUProcDeviceCreateSwapChain = function(device: WGPUDevice; surface: WGPUSurface; const descriptor: PWGPUSwapChainDescriptor): WGPUSwapChain; cdecl;
-
   WGPUProcDeviceCreateTexture = function(device: WGPUDevice; const descriptor: PWGPUTextureDescriptor): WGPUTexture; cdecl;
-
   WGPUProcDeviceDestroy = procedure(device: WGPUDevice); cdecl;
-
   WGPUProcDeviceEnumerateFeatures = function(device: WGPUDevice; features: PWGPUFeatureName): NativeUInt; cdecl;
-
   WGPUProcDeviceForceLoss = procedure(device: WGPUDevice; &type: WGPUDeviceLostReason; const &message: PUTF8Char); cdecl;
-
   WGPUProcDeviceForceLoss2 = procedure(device: WGPUDevice; &type: WGPUDeviceLostReason; &message: WGPUStringView); cdecl;
-
   WGPUProcDeviceGetAHardwareBufferProperties = function(device: WGPUDevice; handle: Pointer; properties: PWGPUAHardwareBufferProperties): WGPUStatus; cdecl;
-
   WGPUProcDeviceGetAdapter = function(device: WGPUDevice): WGPUAdapter; cdecl;
-
   WGPUProcDeviceGetLimits = function(device: WGPUDevice; limits: PWGPUSupportedLimits): WGPUStatus; cdecl;
-
   WGPUProcDeviceGetQueue = function(device: WGPUDevice): WGPUQueue; cdecl;
-
   WGPUProcDeviceGetSupportedSurfaceUsage = function(device: WGPUDevice; surface: WGPUSurface): WGPUTextureUsage; cdecl;
-
   WGPUProcDeviceHasFeature = function(device: WGPUDevice; feature: WGPUFeatureName): WGPUBool; cdecl;
-
   WGPUProcDeviceImportSharedBufferMemory = function(device: WGPUDevice; const descriptor: PWGPUSharedBufferMemoryDescriptor): WGPUSharedBufferMemory; cdecl;
-
   WGPUProcDeviceImportSharedFence = function(device: WGPUDevice; const descriptor: PWGPUSharedFenceDescriptor): WGPUSharedFence; cdecl;
-
   WGPUProcDeviceImportSharedTextureMemory = function(device: WGPUDevice; const descriptor: PWGPUSharedTextureMemoryDescriptor): WGPUSharedTextureMemory; cdecl;
-
   WGPUProcDeviceInjectError = procedure(device: WGPUDevice; &type: WGPUErrorType; const &message: PUTF8Char); cdecl;
-
   WGPUProcDeviceInjectError2 = procedure(device: WGPUDevice; &type: WGPUErrorType; &message: WGPUStringView); cdecl;
-
   WGPUProcDevicePopErrorScope = procedure(device: WGPUDevice; oldCallback: WGPUErrorCallback; userdata: Pointer); cdecl;
-
   WGPUProcDevicePopErrorScope2 = function(device: WGPUDevice; callbackInfo: WGPUPopErrorScopeCallbackInfo2): WGPUFuture; cdecl;
-
   WGPUProcDevicePopErrorScopeF = function(device: WGPUDevice; callbackInfo: WGPUPopErrorScopeCallbackInfo): WGPUFuture; cdecl;
-
   WGPUProcDevicePushErrorScope = procedure(device: WGPUDevice; filter: WGPUErrorFilter); cdecl;
-
   WGPUProcDeviceSetDeviceLostCallback = procedure(device: WGPUDevice; callback: WGPUDeviceLostCallback; userdata: Pointer); cdecl;
-
   WGPUProcDeviceSetLabel = procedure(device: WGPUDevice; const &label: PUTF8Char); cdecl;
-
   WGPUProcDeviceSetLabel2 = procedure(device: WGPUDevice; &label: WGPUStringView); cdecl;
-
   WGPUProcDeviceSetLoggingCallback = procedure(device: WGPUDevice; callback: WGPULoggingCallback; userdata: Pointer); cdecl;
-
   WGPUProcDeviceSetUncapturedErrorCallback = procedure(device: WGPUDevice; callback: WGPUErrorCallback; userdata: Pointer); cdecl;
-
   WGPUProcDeviceTick = procedure(device: WGPUDevice); cdecl;
-
   WGPUProcDeviceValidateTextureDescriptor = procedure(device: WGPUDevice; const descriptor: PWGPUTextureDescriptor); cdecl;
-
   WGPUProcDeviceAddRef = procedure(device: WGPUDevice); cdecl;
-
   WGPUProcDeviceRelease = procedure(device: WGPUDevice); cdecl;
-
   WGPUProcExternalTextureDestroy = procedure(externalTexture: WGPUExternalTexture); cdecl;
-
   WGPUProcExternalTextureExpire = procedure(externalTexture: WGPUExternalTexture); cdecl;
-
   WGPUProcExternalTextureRefresh = procedure(externalTexture: WGPUExternalTexture); cdecl;
-
   WGPUProcExternalTextureSetLabel = procedure(externalTexture: WGPUExternalTexture; const &label: PUTF8Char); cdecl;
-
   WGPUProcExternalTextureSetLabel2 = procedure(externalTexture: WGPUExternalTexture; &label: WGPUStringView); cdecl;
-
   WGPUProcExternalTextureAddRef = procedure(externalTexture: WGPUExternalTexture); cdecl;
-
   WGPUProcExternalTextureRelease = procedure(externalTexture: WGPUExternalTexture); cdecl;
-
   WGPUProcInstanceCreateSurface = function(instance: WGPUInstance; const descriptor: PWGPUSurfaceDescriptor): WGPUSurface; cdecl;
-
   WGPUProcInstanceEnumerateWGSLLanguageFeatures = function(instance: WGPUInstance; features: PWGPUWGSLFeatureName): NativeUInt; cdecl;
-
   WGPUProcInstanceHasWGSLLanguageFeature = function(instance: WGPUInstance; feature: WGPUWGSLFeatureName): WGPUBool; cdecl;
-
   WGPUProcInstanceProcessEvents = procedure(instance: WGPUInstance); cdecl;
-
   WGPUProcInstanceRequestAdapter = procedure(instance: WGPUInstance; const options: PWGPURequestAdapterOptions; callback: WGPURequestAdapterCallback; userdata: Pointer); cdecl;
-
   WGPUProcInstanceRequestAdapter2 = function(instance: WGPUInstance; const options: PWGPURequestAdapterOptions; callbackInfo: WGPURequestAdapterCallbackInfo2): WGPUFuture; cdecl;
-
   WGPUProcInstanceRequestAdapterF = function(instance: WGPUInstance; const options: PWGPURequestAdapterOptions; callbackInfo: WGPURequestAdapterCallbackInfo): WGPUFuture; cdecl;
-
   WGPUProcInstanceWaitAny = function(instance: WGPUInstance; futureCount: NativeUInt; futures: PWGPUFutureWaitInfo; timeoutNS: UInt64): WGPUWaitStatus; cdecl;
-
   WGPUProcInstanceAddRef = procedure(instance: WGPUInstance); cdecl;
-
   WGPUProcInstanceRelease = procedure(instance: WGPUInstance); cdecl;
-
   WGPUProcPipelineLayoutSetLabel = procedure(pipelineLayout: WGPUPipelineLayout; const &label: PUTF8Char); cdecl;
-
   WGPUProcPipelineLayoutSetLabel2 = procedure(pipelineLayout: WGPUPipelineLayout; &label: WGPUStringView); cdecl;
-
   WGPUProcPipelineLayoutAddRef = procedure(pipelineLayout: WGPUPipelineLayout); cdecl;
-
   WGPUProcPipelineLayoutRelease = procedure(pipelineLayout: WGPUPipelineLayout); cdecl;
-
   WGPUProcQuerySetDestroy = procedure(querySet: WGPUQuerySet); cdecl;
-
   WGPUProcQuerySetGetCount = function(querySet: WGPUQuerySet): UInt32; cdecl;
-
   WGPUProcQuerySetGetType = function(querySet: WGPUQuerySet): WGPUQueryType; cdecl;
-
   WGPUProcQuerySetSetLabel = procedure(querySet: WGPUQuerySet; const &label: PUTF8Char); cdecl;
-
   WGPUProcQuerySetSetLabel2 = procedure(querySet: WGPUQuerySet; &label: WGPUStringView); cdecl;
-
   WGPUProcQuerySetAddRef = procedure(querySet: WGPUQuerySet); cdecl;
-
   WGPUProcQuerySetRelease = procedure(querySet: WGPUQuerySet); cdecl;
-
   WGPUProcQueueCopyExternalTextureForBrowser = procedure(queue: WGPUQueue; const source: PWGPUImageCopyExternalTexture; const destination: PWGPUImageCopyTexture; const copySize: PWGPUExtent3D; const options: PWGPUCopyTextureForBrowserOptions); cdecl;
-
   WGPUProcQueueCopyTextureForBrowser = procedure(queue: WGPUQueue; const source: PWGPUImageCopyTexture; const destination: PWGPUImageCopyTexture; const copySize: PWGPUExtent3D; const options: PWGPUCopyTextureForBrowserOptions); cdecl;
-
   WGPUProcQueueOnSubmittedWorkDone = procedure(queue: WGPUQueue; callback: WGPUQueueWorkDoneCallback; userdata: Pointer); cdecl;
-
   WGPUProcQueueOnSubmittedWorkDone2 = function(queue: WGPUQueue; callbackInfo: WGPUQueueWorkDoneCallbackInfo2): WGPUFuture; cdecl;
-
   WGPUProcQueueOnSubmittedWorkDoneF = function(queue: WGPUQueue; callbackInfo: WGPUQueueWorkDoneCallbackInfo): WGPUFuture; cdecl;
-
   WGPUProcQueueSetLabel = procedure(queue: WGPUQueue; const &label: PUTF8Char); cdecl;
-
   WGPUProcQueueSetLabel2 = procedure(queue: WGPUQueue; &label: WGPUStringView); cdecl;
-
   WGPUProcQueueSubmit = procedure(queue: WGPUQueue; commandCount: NativeUInt; const commands: PWGPUCommandBuffer); cdecl;
-
   WGPUProcQueueWriteBuffer = procedure(queue: WGPUQueue; buffer: WGPUBuffer; bufferOffset: UInt64; const data: Pointer; size: NativeUInt); cdecl;
-
   WGPUProcQueueWriteTexture = procedure(queue: WGPUQueue; const destination: PWGPUImageCopyTexture; const data: Pointer; dataSize: NativeUInt; const dataLayout: PWGPUTextureDataLayout; const writeSize: PWGPUExtent3D); cdecl;
-
   WGPUProcQueueAddRef = procedure(queue: WGPUQueue); cdecl;
-
   WGPUProcQueueRelease = procedure(queue: WGPUQueue); cdecl;
-
   WGPUProcRenderBundleSetLabel = procedure(renderBundle: WGPURenderBundle; const &label: PUTF8Char); cdecl;
-
   WGPUProcRenderBundleSetLabel2 = procedure(renderBundle: WGPURenderBundle; &label: WGPUStringView); cdecl;
-
   WGPUProcRenderBundleAddRef = procedure(renderBundle: WGPURenderBundle); cdecl;
-
   WGPUProcRenderBundleRelease = procedure(renderBundle: WGPURenderBundle); cdecl;
-
   WGPUProcRenderBundleEncoderDraw = procedure(renderBundleEncoder: WGPURenderBundleEncoder; vertexCount: UInt32; instanceCount: UInt32; firstVertex: UInt32; firstInstance: UInt32); cdecl;
-
   WGPUProcRenderBundleEncoderDrawIndexed = procedure(renderBundleEncoder: WGPURenderBundleEncoder; indexCount: UInt32; instanceCount: UInt32; firstIndex: UInt32; baseVertex: Int32; firstInstance: UInt32); cdecl;
-
   WGPUProcRenderBundleEncoderDrawIndexedIndirect = procedure(renderBundleEncoder: WGPURenderBundleEncoder; indirectBuffer: WGPUBuffer; indirectOffset: UInt64); cdecl;
-
   WGPUProcRenderBundleEncoderDrawIndirect = procedure(renderBundleEncoder: WGPURenderBundleEncoder; indirectBuffer: WGPUBuffer; indirectOffset: UInt64); cdecl;
-
   WGPUProcRenderBundleEncoderFinish = function(renderBundleEncoder: WGPURenderBundleEncoder; const descriptor: PWGPURenderBundleDescriptor): WGPURenderBundle; cdecl;
-
   WGPUProcRenderBundleEncoderInsertDebugMarker = procedure(renderBundleEncoder: WGPURenderBundleEncoder; const markerLabel: PUTF8Char); cdecl;
-
   WGPUProcRenderBundleEncoderInsertDebugMarker2 = procedure(renderBundleEncoder: WGPURenderBundleEncoder; markerLabel: WGPUStringView); cdecl;
-
   WGPUProcRenderBundleEncoderPopDebugGroup = procedure(renderBundleEncoder: WGPURenderBundleEncoder); cdecl;
-
   WGPUProcRenderBundleEncoderPushDebugGroup = procedure(renderBundleEncoder: WGPURenderBundleEncoder; const groupLabel: PUTF8Char); cdecl;
-
   WGPUProcRenderBundleEncoderPushDebugGroup2 = procedure(renderBundleEncoder: WGPURenderBundleEncoder; groupLabel: WGPUStringView); cdecl;
-
   WGPUProcRenderBundleEncoderSetBindGroup = procedure(renderBundleEncoder: WGPURenderBundleEncoder; groupIndex: UInt32; group: WGPUBindGroup; dynamicOffsetCount: NativeUInt; const dynamicOffsets: PUInt32); cdecl;
-
   WGPUProcRenderBundleEncoderSetIndexBuffer = procedure(renderBundleEncoder: WGPURenderBundleEncoder; buffer: WGPUBuffer; format: WGPUIndexFormat; offset: UInt64; size: UInt64); cdecl;
-
   WGPUProcRenderBundleEncoderSetLabel = procedure(renderBundleEncoder: WGPURenderBundleEncoder; const &label: PUTF8Char); cdecl;
-
   WGPUProcRenderBundleEncoderSetLabel2 = procedure(renderBundleEncoder: WGPURenderBundleEncoder; &label: WGPUStringView); cdecl;
-
   WGPUProcRenderBundleEncoderSetPipeline = procedure(renderBundleEncoder: WGPURenderBundleEncoder; pipeline: WGPURenderPipeline); cdecl;
-
   WGPUProcRenderBundleEncoderSetVertexBuffer = procedure(renderBundleEncoder: WGPURenderBundleEncoder; slot: UInt32; buffer: WGPUBuffer; offset: UInt64; size: UInt64); cdecl;
-
   WGPUProcRenderBundleEncoderAddRef = procedure(renderBundleEncoder: WGPURenderBundleEncoder); cdecl;
-
   WGPUProcRenderBundleEncoderRelease = procedure(renderBundleEncoder: WGPURenderBundleEncoder); cdecl;
-
   WGPUProcRenderPassEncoderBeginOcclusionQuery = procedure(renderPassEncoder: WGPURenderPassEncoder; queryIndex: UInt32); cdecl;
-
   WGPUProcRenderPassEncoderDraw = procedure(renderPassEncoder: WGPURenderPassEncoder; vertexCount: UInt32; instanceCount: UInt32; firstVertex: UInt32; firstInstance: UInt32); cdecl;
-
   WGPUProcRenderPassEncoderDrawIndexed = procedure(renderPassEncoder: WGPURenderPassEncoder; indexCount: UInt32; instanceCount: UInt32; firstIndex: UInt32; baseVertex: Int32; firstInstance: UInt32); cdecl;
-
   WGPUProcRenderPassEncoderDrawIndexedIndirect = procedure(renderPassEncoder: WGPURenderPassEncoder; indirectBuffer: WGPUBuffer; indirectOffset: UInt64); cdecl;
-
   WGPUProcRenderPassEncoderDrawIndirect = procedure(renderPassEncoder: WGPURenderPassEncoder; indirectBuffer: WGPUBuffer; indirectOffset: UInt64); cdecl;
-
   WGPUProcRenderPassEncoderEnd = procedure(renderPassEncoder: WGPURenderPassEncoder); cdecl;
-
   WGPUProcRenderPassEncoderEndOcclusionQuery = procedure(renderPassEncoder: WGPURenderPassEncoder); cdecl;
-
   WGPUProcRenderPassEncoderExecuteBundles = procedure(renderPassEncoder: WGPURenderPassEncoder; bundleCount: NativeUInt; const bundles: PWGPURenderBundle); cdecl;
-
   WGPUProcRenderPassEncoderInsertDebugMarker = procedure(renderPassEncoder: WGPURenderPassEncoder; const markerLabel: PUTF8Char); cdecl;
-
   WGPUProcRenderPassEncoderInsertDebugMarker2 = procedure(renderPassEncoder: WGPURenderPassEncoder; markerLabel: WGPUStringView); cdecl;
-
   WGPUProcRenderPassEncoderMultiDrawIndexedIndirect = procedure(renderPassEncoder: WGPURenderPassEncoder; indirectBuffer: WGPUBuffer; indirectOffset: UInt64; maxDrawCount: UInt32; drawCountBuffer: WGPUBuffer; drawCountBufferOffset: UInt64); cdecl;
-
   WGPUProcRenderPassEncoderMultiDrawIndirect = procedure(renderPassEncoder: WGPURenderPassEncoder; indirectBuffer: WGPUBuffer; indirectOffset: UInt64; maxDrawCount: UInt32; drawCountBuffer: WGPUBuffer; drawCountBufferOffset: UInt64); cdecl;
-
   WGPUProcRenderPassEncoderPixelLocalStorageBarrier = procedure(renderPassEncoder: WGPURenderPassEncoder); cdecl;
-
   WGPUProcRenderPassEncoderPopDebugGroup = procedure(renderPassEncoder: WGPURenderPassEncoder); cdecl;
-
   WGPUProcRenderPassEncoderPushDebugGroup = procedure(renderPassEncoder: WGPURenderPassEncoder; const groupLabel: PUTF8Char); cdecl;
-
   WGPUProcRenderPassEncoderPushDebugGroup2 = procedure(renderPassEncoder: WGPURenderPassEncoder; groupLabel: WGPUStringView); cdecl;
-
   WGPUProcRenderPassEncoderSetBindGroup = procedure(renderPassEncoder: WGPURenderPassEncoder; groupIndex: UInt32; group: WGPUBindGroup; dynamicOffsetCount: NativeUInt; const dynamicOffsets: PUInt32); cdecl;
-
   WGPUProcRenderPassEncoderSetBlendConstant = procedure(renderPassEncoder: WGPURenderPassEncoder; const color: PWGPUColor); cdecl;
-
   WGPUProcRenderPassEncoderSetIndexBuffer = procedure(renderPassEncoder: WGPURenderPassEncoder; buffer: WGPUBuffer; format: WGPUIndexFormat; offset: UInt64; size: UInt64); cdecl;
-
   WGPUProcRenderPassEncoderSetLabel = procedure(renderPassEncoder: WGPURenderPassEncoder; const &label: PUTF8Char); cdecl;
-
   WGPUProcRenderPassEncoderSetLabel2 = procedure(renderPassEncoder: WGPURenderPassEncoder; &label: WGPUStringView); cdecl;
-
   WGPUProcRenderPassEncoderSetPipeline = procedure(renderPassEncoder: WGPURenderPassEncoder; pipeline: WGPURenderPipeline); cdecl;
-
   WGPUProcRenderPassEncoderSetScissorRect = procedure(renderPassEncoder: WGPURenderPassEncoder; x: UInt32; y: UInt32; width: UInt32; height: UInt32); cdecl;
-
   WGPUProcRenderPassEncoderSetStencilReference = procedure(renderPassEncoder: WGPURenderPassEncoder; reference: UInt32); cdecl;
-
   WGPUProcRenderPassEncoderSetVertexBuffer = procedure(renderPassEncoder: WGPURenderPassEncoder; slot: UInt32; buffer: WGPUBuffer; offset: UInt64; size: UInt64); cdecl;
-
   WGPUProcRenderPassEncoderSetViewport = procedure(renderPassEncoder: WGPURenderPassEncoder; x: Single; y: Single; width: Single; height: Single; minDepth: Single; maxDepth: Single); cdecl;
-
   WGPUProcRenderPassEncoderWriteTimestamp = procedure(renderPassEncoder: WGPURenderPassEncoder; querySet: WGPUQuerySet; queryIndex: UInt32); cdecl;
-
   WGPUProcRenderPassEncoderAddRef = procedure(renderPassEncoder: WGPURenderPassEncoder); cdecl;
-
   WGPUProcRenderPassEncoderRelease = procedure(renderPassEncoder: WGPURenderPassEncoder); cdecl;
-
   WGPUProcRenderPipelineGetBindGroupLayout = function(renderPipeline: WGPURenderPipeline; groupIndex: UInt32): WGPUBindGroupLayout; cdecl;
-
   WGPUProcRenderPipelineSetLabel = procedure(renderPipeline: WGPURenderPipeline; const &label: PUTF8Char); cdecl;
-
   WGPUProcRenderPipelineSetLabel2 = procedure(renderPipeline: WGPURenderPipeline; &label: WGPUStringView); cdecl;
-
   WGPUProcRenderPipelineAddRef = procedure(renderPipeline: WGPURenderPipeline); cdecl;
-
   WGPUProcRenderPipelineRelease = procedure(renderPipeline: WGPURenderPipeline); cdecl;
-
   WGPUProcSamplerSetLabel = procedure(sampler: WGPUSampler; const &label: PUTF8Char); cdecl;
-
   WGPUProcSamplerSetLabel2 = procedure(sampler: WGPUSampler; &label: WGPUStringView); cdecl;
-
   WGPUProcSamplerAddRef = procedure(sampler: WGPUSampler); cdecl;
-
   WGPUProcSamplerRelease = procedure(sampler: WGPUSampler); cdecl;
-
   WGPUProcShaderModuleGetCompilationInfo = procedure(shaderModule: WGPUShaderModule; callback: WGPUCompilationInfoCallback; userdata: Pointer); cdecl;
-
   WGPUProcShaderModuleGetCompilationInfo2 = function(shaderModule: WGPUShaderModule; callbackInfo: WGPUCompilationInfoCallbackInfo2): WGPUFuture; cdecl;
-
   WGPUProcShaderModuleGetCompilationInfoF = function(shaderModule: WGPUShaderModule; callbackInfo: WGPUCompilationInfoCallbackInfo): WGPUFuture; cdecl;
-
   WGPUProcShaderModuleSetLabel = procedure(shaderModule: WGPUShaderModule; const &label: PUTF8Char); cdecl;
-
   WGPUProcShaderModuleSetLabel2 = procedure(shaderModule: WGPUShaderModule; &label: WGPUStringView); cdecl;
-
   WGPUProcShaderModuleAddRef = procedure(shaderModule: WGPUShaderModule); cdecl;
-
   WGPUProcShaderModuleRelease = procedure(shaderModule: WGPUShaderModule); cdecl;
-
   WGPUProcSharedBufferMemoryBeginAccess = function(sharedBufferMemory: WGPUSharedBufferMemory; buffer: WGPUBuffer; const descriptor: PWGPUSharedBufferMemoryBeginAccessDescriptor): WGPUStatus; cdecl;
-
   WGPUProcSharedBufferMemoryCreateBuffer = function(sharedBufferMemory: WGPUSharedBufferMemory; const descriptor: PWGPUBufferDescriptor): WGPUBuffer; cdecl;
-
   WGPUProcSharedBufferMemoryEndAccess = function(sharedBufferMemory: WGPUSharedBufferMemory; buffer: WGPUBuffer; descriptor: PWGPUSharedBufferMemoryEndAccessState): WGPUStatus; cdecl;
-
   WGPUProcSharedBufferMemoryGetProperties = function(sharedBufferMemory: WGPUSharedBufferMemory; properties: PWGPUSharedBufferMemoryProperties): WGPUStatus; cdecl;
-
   WGPUProcSharedBufferMemoryIsDeviceLost = function(sharedBufferMemory: WGPUSharedBufferMemory): WGPUBool; cdecl;
-
   WGPUProcSharedBufferMemorySetLabel = procedure(sharedBufferMemory: WGPUSharedBufferMemory; const &label: PUTF8Char); cdecl;
-
   WGPUProcSharedBufferMemorySetLabel2 = procedure(sharedBufferMemory: WGPUSharedBufferMemory; &label: WGPUStringView); cdecl;
-
   WGPUProcSharedBufferMemoryAddRef = procedure(sharedBufferMemory: WGPUSharedBufferMemory); cdecl;
-
   WGPUProcSharedBufferMemoryRelease = procedure(sharedBufferMemory: WGPUSharedBufferMemory); cdecl;
-
   WGPUProcSharedFenceExportInfo = procedure(sharedFence: WGPUSharedFence; info: PWGPUSharedFenceExportInfo); cdecl;
-
   WGPUProcSharedFenceAddRef = procedure(sharedFence: WGPUSharedFence); cdecl;
-
   WGPUProcSharedFenceRelease = procedure(sharedFence: WGPUSharedFence); cdecl;
-
   WGPUProcSharedTextureMemoryBeginAccess = function(sharedTextureMemory: WGPUSharedTextureMemory; texture: WGPUTexture; const descriptor: PWGPUSharedTextureMemoryBeginAccessDescriptor): WGPUStatus; cdecl;
-
   WGPUProcSharedTextureMemoryCreateTexture = function(sharedTextureMemory: WGPUSharedTextureMemory; const descriptor: PWGPUTextureDescriptor): WGPUTexture; cdecl;
-
   WGPUProcSharedTextureMemoryEndAccess = function(sharedTextureMemory: WGPUSharedTextureMemory; texture: WGPUTexture; descriptor: PWGPUSharedTextureMemoryEndAccessState): WGPUStatus; cdecl;
-
   WGPUProcSharedTextureMemoryGetProperties = function(sharedTextureMemory: WGPUSharedTextureMemory; properties: PWGPUSharedTextureMemoryProperties): WGPUStatus; cdecl;
-
   WGPUProcSharedTextureMemoryIsDeviceLost = function(sharedTextureMemory: WGPUSharedTextureMemory): WGPUBool; cdecl;
-
   WGPUProcSharedTextureMemorySetLabel = procedure(sharedTextureMemory: WGPUSharedTextureMemory; const &label: PUTF8Char); cdecl;
-
   WGPUProcSharedTextureMemorySetLabel2 = procedure(sharedTextureMemory: WGPUSharedTextureMemory; &label: WGPUStringView); cdecl;
-
   WGPUProcSharedTextureMemoryAddRef = procedure(sharedTextureMemory: WGPUSharedTextureMemory); cdecl;
-
   WGPUProcSharedTextureMemoryRelease = procedure(sharedTextureMemory: WGPUSharedTextureMemory); cdecl;
-
   WGPUProcSurfaceConfigure = procedure(surface: WGPUSurface; const config: PWGPUSurfaceConfiguration); cdecl;
-
   WGPUProcSurfaceGetCapabilities = function(surface: WGPUSurface; adapter: WGPUAdapter; capabilities: PWGPUSurfaceCapabilities): WGPUStatus; cdecl;
-
   WGPUProcSurfaceGetCurrentTexture = procedure(surface: WGPUSurface; surfaceTexture: PWGPUSurfaceTexture); cdecl;
-
   WGPUProcSurfaceGetPreferredFormat = function(surface: WGPUSurface; adapter: WGPUAdapter): WGPUTextureFormat; cdecl;
-
   WGPUProcSurfacePresent = procedure(surface: WGPUSurface); cdecl;
-
   WGPUProcSurfaceSetLabel = procedure(surface: WGPUSurface; const &label: PUTF8Char); cdecl;
-
   WGPUProcSurfaceSetLabel2 = procedure(surface: WGPUSurface; &label: WGPUStringView); cdecl;
-
   WGPUProcSurfaceUnconfigure = procedure(surface: WGPUSurface); cdecl;
-
   WGPUProcSurfaceAddRef = procedure(surface: WGPUSurface); cdecl;
-
   WGPUProcSurfaceRelease = procedure(surface: WGPUSurface); cdecl;
-
   WGPUProcSwapChainGetCurrentTexture = function(swapChain: WGPUSwapChain): WGPUTexture; cdecl;
-
   WGPUProcSwapChainGetCurrentTextureView = function(swapChain: WGPUSwapChain): WGPUTextureView; cdecl;
-
   WGPUProcSwapChainPresent = procedure(swapChain: WGPUSwapChain); cdecl;
-
   WGPUProcSwapChainAddRef = procedure(swapChain: WGPUSwapChain); cdecl;
-
   WGPUProcSwapChainRelease = procedure(swapChain: WGPUSwapChain); cdecl;
-
   WGPUProcTextureCreateErrorView = function(texture: WGPUTexture; const descriptor: PWGPUTextureViewDescriptor): WGPUTextureView; cdecl;
-
   WGPUProcTextureCreateView = function(texture: WGPUTexture; const descriptor: PWGPUTextureViewDescriptor): WGPUTextureView; cdecl;
-
   WGPUProcTextureDestroy = procedure(texture: WGPUTexture); cdecl;
-
   WGPUProcTextureGetDepthOrArrayLayers = function(texture: WGPUTexture): UInt32; cdecl;
-
   WGPUProcTextureGetDimension = function(texture: WGPUTexture): WGPUTextureDimension; cdecl;
-
   WGPUProcTextureGetFormat = function(texture: WGPUTexture): WGPUTextureFormat; cdecl;
-
   WGPUProcTextureGetHeight = function(texture: WGPUTexture): UInt32; cdecl;
-
   WGPUProcTextureGetMipLevelCount = function(texture: WGPUTexture): UInt32; cdecl;
-
   WGPUProcTextureGetSampleCount = function(texture: WGPUTexture): UInt32; cdecl;
-
   WGPUProcTextureGetUsage = function(texture: WGPUTexture): WGPUTextureUsage; cdecl;
-
   WGPUProcTextureGetWidth = function(texture: WGPUTexture): UInt32; cdecl;
-
   WGPUProcTextureSetLabel = procedure(texture: WGPUTexture; const &label: PUTF8Char); cdecl;
-
   WGPUProcTextureSetLabel2 = procedure(texture: WGPUTexture; &label: WGPUStringView); cdecl;
-
   WGPUProcTextureAddRef = procedure(texture: WGPUTexture); cdecl;
-
   WGPUProcTextureRelease = procedure(texture: WGPUTexture); cdecl;
-
   WGPUProcTextureViewSetLabel = procedure(textureView: WGPUTextureView; const &label: PUTF8Char); cdecl;
-
   WGPUProcTextureViewSetLabel2 = procedure(textureView: WGPUTextureView; &label: WGPUStringView); cdecl;
-
   WGPUProcTextureViewAddRef = procedure(textureView: WGPUTextureView); cdecl;
-
   WGPUProcTextureViewRelease = procedure(textureView: WGPUTextureView); cdecl;
-
 const
   WGPUBufferUsage_None: WGPUBufferUsage = $0000000000000000;
   WGPUBufferUsage_MapRead: WGPUBufferUsage = $0000000000000001;
@@ -3630,927 +2748,634 @@ const
   WGPUTextureUsage_TransientAttachment: WGPUTextureUsage = $0000000000000020;
   WGPUTextureUsage_StorageAttachment: WGPUTextureUsage = $0000000000000040;
 
-procedure wgpuAdapterInfoFreeMembers(value: WGPUAdapterInfo); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuAdapterInfoFreeMembers';
-
-procedure wgpuAdapterPropertiesFreeMembers(value: WGPUAdapterProperties); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuAdapterPropertiesFreeMembers';
-
-procedure wgpuAdapterPropertiesMemoryHeapsFreeMembers(value: WGPUAdapterPropertiesMemoryHeaps); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuAdapterPropertiesMemoryHeapsFreeMembers';
-
-function wgpuCreateInstance(const descriptor: PWGPUInstanceDescriptor): WGPUInstance; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuCreateInstance';
-
-procedure wgpuDrmFormatCapabilitiesFreeMembers(value: WGPUDrmFormatCapabilities); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuDrmFormatCapabilitiesFreeMembers';
-
-function wgpuGetInstanceFeatures(features: PWGPUInstanceFeatures): WGPUStatus; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuGetInstanceFeatures';
-
-function wgpuGetProcAddress(device: WGPUDevice; const procName: PUTF8Char): WGPUProc; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuGetProcAddress';
-
-function wgpuGetProcAddress2(device: WGPUDevice; procName: WGPUStringView): WGPUProc; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuGetProcAddress2';
-
-procedure wgpuSharedBufferMemoryEndAccessStateFreeMembers(value: WGPUSharedBufferMemoryEndAccessState); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuSharedBufferMemoryEndAccessStateFreeMembers';
-
-procedure wgpuSharedTextureMemoryEndAccessStateFreeMembers(value: WGPUSharedTextureMemoryEndAccessState); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuSharedTextureMemoryEndAccessStateFreeMembers';
-
-procedure wgpuSurfaceCapabilitiesFreeMembers(value: WGPUSurfaceCapabilities); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuSurfaceCapabilitiesFreeMembers';
-
-function wgpuAdapterCreateDevice(adapter: WGPUAdapter; const descriptor: PWGPUDeviceDescriptor): WGPUDevice; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuAdapterCreateDevice';
-
-function wgpuAdapterEnumerateFeatures(adapter: WGPUAdapter; features: PWGPUFeatureName): NativeUInt; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuAdapterEnumerateFeatures';
-
-function wgpuAdapterGetFormatCapabilities(adapter: WGPUAdapter; format: WGPUTextureFormat; capabilities: PWGPUFormatCapabilities): WGPUStatus; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuAdapterGetFormatCapabilities';
-
-function wgpuAdapterGetInfo(adapter: WGPUAdapter; info: PWGPUAdapterInfo): WGPUStatus; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuAdapterGetInfo';
-
-function wgpuAdapterGetInstance(adapter: WGPUAdapter): WGPUInstance; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuAdapterGetInstance';
-
-function wgpuAdapterGetLimits(adapter: WGPUAdapter; limits: PWGPUSupportedLimits): WGPUStatus; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuAdapterGetLimits';
-
-function wgpuAdapterGetProperties(adapter: WGPUAdapter; properties: PWGPUAdapterProperties): WGPUStatus; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuAdapterGetProperties';
-
-function wgpuAdapterHasFeature(adapter: WGPUAdapter; feature: WGPUFeatureName): WGPUBool; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuAdapterHasFeature';
-
-procedure wgpuAdapterRequestDevice(adapter: WGPUAdapter; const descriptor: PWGPUDeviceDescriptor; callback: WGPURequestDeviceCallback; userdata: Pointer); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuAdapterRequestDevice';
-
-function wgpuAdapterRequestDevice2(adapter: WGPUAdapter; const options: PWGPUDeviceDescriptor; callbackInfo: WGPURequestDeviceCallbackInfo2): WGPUFuture; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuAdapterRequestDevice2';
-
-function wgpuAdapterRequestDeviceF(adapter: WGPUAdapter; const options: PWGPUDeviceDescriptor; callbackInfo: WGPURequestDeviceCallbackInfo): WGPUFuture; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuAdapterRequestDeviceF';
-
-procedure wgpuAdapterAddRef(adapter: WGPUAdapter); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuAdapterAddRef';
-
-procedure wgpuAdapterRelease(adapter: WGPUAdapter); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuAdapterRelease';
-
-procedure wgpuBindGroupSetLabel(bindGroup: WGPUBindGroup; const &label: PUTF8Char); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuBindGroupSetLabel';
-
-procedure wgpuBindGroupSetLabel2(bindGroup: WGPUBindGroup; &label: WGPUStringView); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuBindGroupSetLabel2';
-
-procedure wgpuBindGroupAddRef(bindGroup: WGPUBindGroup); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuBindGroupAddRef';
-
-procedure wgpuBindGroupRelease(bindGroup: WGPUBindGroup); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuBindGroupRelease';
-
-procedure wgpuBindGroupLayoutSetLabel(bindGroupLayout: WGPUBindGroupLayout; const &label: PUTF8Char); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuBindGroupLayoutSetLabel';
-
-procedure wgpuBindGroupLayoutSetLabel2(bindGroupLayout: WGPUBindGroupLayout; &label: WGPUStringView); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuBindGroupLayoutSetLabel2';
-
-procedure wgpuBindGroupLayoutAddRef(bindGroupLayout: WGPUBindGroupLayout); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuBindGroupLayoutAddRef';
-
-procedure wgpuBindGroupLayoutRelease(bindGroupLayout: WGPUBindGroupLayout); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuBindGroupLayoutRelease';
-
-procedure wgpuBufferDestroy(buffer: WGPUBuffer); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuBufferDestroy';
-
-function wgpuBufferGetConstMappedRange(buffer: WGPUBuffer; offset: NativeUInt; size: NativeUInt): Pointer; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuBufferGetConstMappedRange';
-
-function wgpuBufferGetMapState(buffer: WGPUBuffer): WGPUBufferMapState; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuBufferGetMapState';
-
-function wgpuBufferGetMappedRange(buffer: WGPUBuffer; offset: NativeUInt; size: NativeUInt): Pointer; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuBufferGetMappedRange';
-
-function wgpuBufferGetSize(buffer: WGPUBuffer): UInt64; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuBufferGetSize';
-
-function wgpuBufferGetUsage(buffer: WGPUBuffer): WGPUBufferUsage; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuBufferGetUsage';
-
-procedure wgpuBufferMapAsync(buffer: WGPUBuffer; mode: WGPUMapMode; offset: NativeUInt; size: NativeUInt; callback: WGPUBufferMapCallback; userdata: Pointer); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuBufferMapAsync';
-
-function wgpuBufferMapAsync2(buffer: WGPUBuffer; mode: WGPUMapMode; offset: NativeUInt; size: NativeUInt; callbackInfo: WGPUBufferMapCallbackInfo2): WGPUFuture; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuBufferMapAsync2';
-
-function wgpuBufferMapAsyncF(buffer: WGPUBuffer; mode: WGPUMapMode; offset: NativeUInt; size: NativeUInt; callbackInfo: WGPUBufferMapCallbackInfo): WGPUFuture; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuBufferMapAsyncF';
-
-procedure wgpuBufferSetLabel(buffer: WGPUBuffer; const &label: PUTF8Char); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuBufferSetLabel';
-
-procedure wgpuBufferSetLabel2(buffer: WGPUBuffer; &label: WGPUStringView); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuBufferSetLabel2';
-
-procedure wgpuBufferUnmap(buffer: WGPUBuffer); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuBufferUnmap';
-
-procedure wgpuBufferAddRef(buffer: WGPUBuffer); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuBufferAddRef';
-
-procedure wgpuBufferRelease(buffer: WGPUBuffer); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuBufferRelease';
-
-procedure wgpuCommandBufferSetLabel(commandBuffer: WGPUCommandBuffer; const &label: PUTF8Char); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuCommandBufferSetLabel';
-
-procedure wgpuCommandBufferSetLabel2(commandBuffer: WGPUCommandBuffer; &label: WGPUStringView); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuCommandBufferSetLabel2';
-
-procedure wgpuCommandBufferAddRef(commandBuffer: WGPUCommandBuffer); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuCommandBufferAddRef';
-
-procedure wgpuCommandBufferRelease(commandBuffer: WGPUCommandBuffer); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuCommandBufferRelease';
-
-function wgpuCommandEncoderBeginComputePass(commandEncoder: WGPUCommandEncoder; const descriptor: PWGPUComputePassDescriptor): WGPUComputePassEncoder; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuCommandEncoderBeginComputePass';
-
-function wgpuCommandEncoderBeginRenderPass(commandEncoder: WGPUCommandEncoder; const descriptor: PWGPURenderPassDescriptor): WGPURenderPassEncoder; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuCommandEncoderBeginRenderPass';
-
-procedure wgpuCommandEncoderClearBuffer(commandEncoder: WGPUCommandEncoder; buffer: WGPUBuffer; offset: UInt64; size: UInt64); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuCommandEncoderClearBuffer';
-
-procedure wgpuCommandEncoderCopyBufferToBuffer(commandEncoder: WGPUCommandEncoder; source: WGPUBuffer; sourceOffset: UInt64; destination: WGPUBuffer; destinationOffset: UInt64; size: UInt64); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuCommandEncoderCopyBufferToBuffer';
-
-procedure wgpuCommandEncoderCopyBufferToTexture(commandEncoder: WGPUCommandEncoder; const source: PWGPUImageCopyBuffer; const destination: PWGPUImageCopyTexture; const copySize: PWGPUExtent3D); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuCommandEncoderCopyBufferToTexture';
-
-procedure wgpuCommandEncoderCopyTextureToBuffer(commandEncoder: WGPUCommandEncoder; const source: PWGPUImageCopyTexture; const destination: PWGPUImageCopyBuffer; const copySize: PWGPUExtent3D); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuCommandEncoderCopyTextureToBuffer';
-
-procedure wgpuCommandEncoderCopyTextureToTexture(commandEncoder: WGPUCommandEncoder; const source: PWGPUImageCopyTexture; const destination: PWGPUImageCopyTexture; const copySize: PWGPUExtent3D); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuCommandEncoderCopyTextureToTexture';
-
-function wgpuCommandEncoderFinish(commandEncoder: WGPUCommandEncoder; const descriptor: PWGPUCommandBufferDescriptor): WGPUCommandBuffer; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuCommandEncoderFinish';
-
-procedure wgpuCommandEncoderInjectValidationError(commandEncoder: WGPUCommandEncoder; const &message: PUTF8Char); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuCommandEncoderInjectValidationError';
-
-procedure wgpuCommandEncoderInjectValidationError2(commandEncoder: WGPUCommandEncoder; &message: WGPUStringView); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuCommandEncoderInjectValidationError2';
-
-procedure wgpuCommandEncoderInsertDebugMarker(commandEncoder: WGPUCommandEncoder; const markerLabel: PUTF8Char); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuCommandEncoderInsertDebugMarker';
-
-procedure wgpuCommandEncoderInsertDebugMarker2(commandEncoder: WGPUCommandEncoder; markerLabel: WGPUStringView); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuCommandEncoderInsertDebugMarker2';
-
-procedure wgpuCommandEncoderPopDebugGroup(commandEncoder: WGPUCommandEncoder); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuCommandEncoderPopDebugGroup';
-
-procedure wgpuCommandEncoderPushDebugGroup(commandEncoder: WGPUCommandEncoder; const groupLabel: PUTF8Char); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuCommandEncoderPushDebugGroup';
-
-procedure wgpuCommandEncoderPushDebugGroup2(commandEncoder: WGPUCommandEncoder; groupLabel: WGPUStringView); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuCommandEncoderPushDebugGroup2';
-
-procedure wgpuCommandEncoderResolveQuerySet(commandEncoder: WGPUCommandEncoder; querySet: WGPUQuerySet; firstQuery: UInt32; queryCount: UInt32; destination: WGPUBuffer; destinationOffset: UInt64); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuCommandEncoderResolveQuerySet';
-
-procedure wgpuCommandEncoderSetLabel(commandEncoder: WGPUCommandEncoder; const &label: PUTF8Char); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuCommandEncoderSetLabel';
-
-procedure wgpuCommandEncoderSetLabel2(commandEncoder: WGPUCommandEncoder; &label: WGPUStringView); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuCommandEncoderSetLabel2';
-
-procedure wgpuCommandEncoderWriteBuffer(commandEncoder: WGPUCommandEncoder; buffer: WGPUBuffer; bufferOffset: UInt64; const data: PUInt8; size: UInt64); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuCommandEncoderWriteBuffer';
-
-procedure wgpuCommandEncoderWriteTimestamp(commandEncoder: WGPUCommandEncoder; querySet: WGPUQuerySet; queryIndex: UInt32); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuCommandEncoderWriteTimestamp';
-
-procedure wgpuCommandEncoderAddRef(commandEncoder: WGPUCommandEncoder); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuCommandEncoderAddRef';
-
-procedure wgpuCommandEncoderRelease(commandEncoder: WGPUCommandEncoder); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuCommandEncoderRelease';
-
-procedure wgpuComputePassEncoderDispatchWorkgroups(computePassEncoder: WGPUComputePassEncoder; workgroupCountX: UInt32; workgroupCountY: UInt32; workgroupCountZ: UInt32); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuComputePassEncoderDispatchWorkgroups';
-
-procedure wgpuComputePassEncoderDispatchWorkgroupsIndirect(computePassEncoder: WGPUComputePassEncoder; indirectBuffer: WGPUBuffer; indirectOffset: UInt64); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuComputePassEncoderDispatchWorkgroupsIndirect';
-
-procedure wgpuComputePassEncoderEnd(computePassEncoder: WGPUComputePassEncoder); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuComputePassEncoderEnd';
-
-procedure wgpuComputePassEncoderInsertDebugMarker(computePassEncoder: WGPUComputePassEncoder; const markerLabel: PUTF8Char); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuComputePassEncoderInsertDebugMarker';
-
-procedure wgpuComputePassEncoderInsertDebugMarker2(computePassEncoder: WGPUComputePassEncoder; markerLabel: WGPUStringView); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuComputePassEncoderInsertDebugMarker2';
-
-procedure wgpuComputePassEncoderPopDebugGroup(computePassEncoder: WGPUComputePassEncoder); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuComputePassEncoderPopDebugGroup';
-
-procedure wgpuComputePassEncoderPushDebugGroup(computePassEncoder: WGPUComputePassEncoder; const groupLabel: PUTF8Char); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuComputePassEncoderPushDebugGroup';
-
-procedure wgpuComputePassEncoderPushDebugGroup2(computePassEncoder: WGPUComputePassEncoder; groupLabel: WGPUStringView); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuComputePassEncoderPushDebugGroup2';
-
-procedure wgpuComputePassEncoderSetBindGroup(computePassEncoder: WGPUComputePassEncoder; groupIndex: UInt32; group: WGPUBindGroup; dynamicOffsetCount: NativeUInt; const dynamicOffsets: PUInt32); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuComputePassEncoderSetBindGroup';
-
-procedure wgpuComputePassEncoderSetLabel(computePassEncoder: WGPUComputePassEncoder; const &label: PUTF8Char); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuComputePassEncoderSetLabel';
-
-procedure wgpuComputePassEncoderSetLabel2(computePassEncoder: WGPUComputePassEncoder; &label: WGPUStringView); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuComputePassEncoderSetLabel2';
-
-procedure wgpuComputePassEncoderSetPipeline(computePassEncoder: WGPUComputePassEncoder; pipeline: WGPUComputePipeline); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuComputePassEncoderSetPipeline';
-
-procedure wgpuComputePassEncoderWriteTimestamp(computePassEncoder: WGPUComputePassEncoder; querySet: WGPUQuerySet; queryIndex: UInt32); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuComputePassEncoderWriteTimestamp';
-
-procedure wgpuComputePassEncoderAddRef(computePassEncoder: WGPUComputePassEncoder); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuComputePassEncoderAddRef';
-
-procedure wgpuComputePassEncoderRelease(computePassEncoder: WGPUComputePassEncoder); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuComputePassEncoderRelease';
-
-function wgpuComputePipelineGetBindGroupLayout(computePipeline: WGPUComputePipeline; groupIndex: UInt32): WGPUBindGroupLayout; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuComputePipelineGetBindGroupLayout';
-
-procedure wgpuComputePipelineSetLabel(computePipeline: WGPUComputePipeline; const &label: PUTF8Char); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuComputePipelineSetLabel';
-
-procedure wgpuComputePipelineSetLabel2(computePipeline: WGPUComputePipeline; &label: WGPUStringView); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuComputePipelineSetLabel2';
-
-procedure wgpuComputePipelineAddRef(computePipeline: WGPUComputePipeline); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuComputePipelineAddRef';
-
-procedure wgpuComputePipelineRelease(computePipeline: WGPUComputePipeline); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuComputePipelineRelease';
-
-function wgpuDeviceCreateBindGroup(device: WGPUDevice; const descriptor: PWGPUBindGroupDescriptor): WGPUBindGroup; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuDeviceCreateBindGroup';
-
-function wgpuDeviceCreateBindGroupLayout(device: WGPUDevice; const descriptor: PWGPUBindGroupLayoutDescriptor): WGPUBindGroupLayout; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuDeviceCreateBindGroupLayout';
-
-function wgpuDeviceCreateBuffer(device: WGPUDevice; const descriptor: PWGPUBufferDescriptor): WGPUBuffer; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuDeviceCreateBuffer';
-
-function wgpuDeviceCreateCommandEncoder(device: WGPUDevice; const descriptor: PWGPUCommandEncoderDescriptor): WGPUCommandEncoder; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuDeviceCreateCommandEncoder';
-
-function wgpuDeviceCreateComputePipeline(device: WGPUDevice; const descriptor: PWGPUComputePipelineDescriptor): WGPUComputePipeline; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuDeviceCreateComputePipeline';
-
-procedure wgpuDeviceCreateComputePipelineAsync(device: WGPUDevice; const descriptor: PWGPUComputePipelineDescriptor; callback: WGPUCreateComputePipelineAsyncCallback; userdata: Pointer); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuDeviceCreateComputePipelineAsync';
-
-function wgpuDeviceCreateComputePipelineAsync2(device: WGPUDevice; const descriptor: PWGPUComputePipelineDescriptor; callbackInfo: WGPUCreateComputePipelineAsyncCallbackInfo2): WGPUFuture; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuDeviceCreateComputePipelineAsync2';
-
-function wgpuDeviceCreateComputePipelineAsyncF(device: WGPUDevice; const descriptor: PWGPUComputePipelineDescriptor; callbackInfo: WGPUCreateComputePipelineAsyncCallbackInfo): WGPUFuture; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuDeviceCreateComputePipelineAsyncF';
-
-function wgpuDeviceCreateErrorBuffer(device: WGPUDevice; const descriptor: PWGPUBufferDescriptor): WGPUBuffer; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuDeviceCreateErrorBuffer';
-
-function wgpuDeviceCreateErrorExternalTexture(device: WGPUDevice): WGPUExternalTexture; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuDeviceCreateErrorExternalTexture';
-
-function wgpuDeviceCreateErrorShaderModule(device: WGPUDevice; const descriptor: PWGPUShaderModuleDescriptor; const errorMessage: PUTF8Char): WGPUShaderModule; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuDeviceCreateErrorShaderModule';
-
-function wgpuDeviceCreateErrorShaderModule2(device: WGPUDevice; const descriptor: PWGPUShaderModuleDescriptor; errorMessage: WGPUStringView): WGPUShaderModule; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuDeviceCreateErrorShaderModule2';
-
-function wgpuDeviceCreateErrorTexture(device: WGPUDevice; const descriptor: PWGPUTextureDescriptor): WGPUTexture; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuDeviceCreateErrorTexture';
-
-function wgpuDeviceCreateExternalTexture(device: WGPUDevice; const externalTextureDescriptor: PWGPUExternalTextureDescriptor): WGPUExternalTexture; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuDeviceCreateExternalTexture';
-
-function wgpuDeviceCreatePipelineLayout(device: WGPUDevice; const descriptor: PWGPUPipelineLayoutDescriptor): WGPUPipelineLayout; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuDeviceCreatePipelineLayout';
-
-function wgpuDeviceCreateQuerySet(device: WGPUDevice; const descriptor: PWGPUQuerySetDescriptor): WGPUQuerySet; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuDeviceCreateQuerySet';
-
-function wgpuDeviceCreateRenderBundleEncoder(device: WGPUDevice; const descriptor: PWGPURenderBundleEncoderDescriptor): WGPURenderBundleEncoder; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuDeviceCreateRenderBundleEncoder';
-
-function wgpuDeviceCreateRenderPipeline(device: WGPUDevice; const descriptor: PWGPURenderPipelineDescriptor): WGPURenderPipeline; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuDeviceCreateRenderPipeline';
-
-procedure wgpuDeviceCreateRenderPipelineAsync(device: WGPUDevice; const descriptor: PWGPURenderPipelineDescriptor; callback: WGPUCreateRenderPipelineAsyncCallback; userdata: Pointer); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuDeviceCreateRenderPipelineAsync';
-
-function wgpuDeviceCreateRenderPipelineAsync2(device: WGPUDevice; const descriptor: PWGPURenderPipelineDescriptor; callbackInfo: WGPUCreateRenderPipelineAsyncCallbackInfo2): WGPUFuture; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuDeviceCreateRenderPipelineAsync2';
-
-function wgpuDeviceCreateRenderPipelineAsyncF(device: WGPUDevice; const descriptor: PWGPURenderPipelineDescriptor; callbackInfo: WGPUCreateRenderPipelineAsyncCallbackInfo): WGPUFuture; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuDeviceCreateRenderPipelineAsyncF';
-
-function wgpuDeviceCreateSampler(device: WGPUDevice; const descriptor: PWGPUSamplerDescriptor): WGPUSampler; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuDeviceCreateSampler';
-
-function wgpuDeviceCreateShaderModule(device: WGPUDevice; const descriptor: PWGPUShaderModuleDescriptor): WGPUShaderModule; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuDeviceCreateShaderModule';
-
-function wgpuDeviceCreateSwapChain(device: WGPUDevice; surface: WGPUSurface; const descriptor: PWGPUSwapChainDescriptor): WGPUSwapChain; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuDeviceCreateSwapChain';
-
-function wgpuDeviceCreateTexture(device: WGPUDevice; const descriptor: PWGPUTextureDescriptor): WGPUTexture; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuDeviceCreateTexture';
-
-procedure wgpuDeviceDestroy(device: WGPUDevice); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuDeviceDestroy';
-
-function wgpuDeviceEnumerateFeatures(device: WGPUDevice; features: PWGPUFeatureName): NativeUInt; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuDeviceEnumerateFeatures';
-
-procedure wgpuDeviceForceLoss(device: WGPUDevice; &type: WGPUDeviceLostReason; const &message: PUTF8Char); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuDeviceForceLoss';
-
-procedure wgpuDeviceForceLoss2(device: WGPUDevice; &type: WGPUDeviceLostReason; &message: WGPUStringView); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuDeviceForceLoss2';
-
-function wgpuDeviceGetAHardwareBufferProperties(device: WGPUDevice; handle: Pointer; properties: PWGPUAHardwareBufferProperties): WGPUStatus; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuDeviceGetAHardwareBufferProperties';
-
-function wgpuDeviceGetAdapter(device: WGPUDevice): WGPUAdapter; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuDeviceGetAdapter';
-
-function wgpuDeviceGetLimits(device: WGPUDevice; limits: PWGPUSupportedLimits): WGPUStatus; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuDeviceGetLimits';
-
-function wgpuDeviceGetQueue(device: WGPUDevice): WGPUQueue; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuDeviceGetQueue';
-
-function wgpuDeviceGetSupportedSurfaceUsage(device: WGPUDevice; surface: WGPUSurface): WGPUTextureUsage; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuDeviceGetSupportedSurfaceUsage';
-
-function wgpuDeviceHasFeature(device: WGPUDevice; feature: WGPUFeatureName): WGPUBool; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuDeviceHasFeature';
-
-function wgpuDeviceImportSharedBufferMemory(device: WGPUDevice; const descriptor: PWGPUSharedBufferMemoryDescriptor): WGPUSharedBufferMemory; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuDeviceImportSharedBufferMemory';
-
-function wgpuDeviceImportSharedFence(device: WGPUDevice; const descriptor: PWGPUSharedFenceDescriptor): WGPUSharedFence; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuDeviceImportSharedFence';
-
-function wgpuDeviceImportSharedTextureMemory(device: WGPUDevice; const descriptor: PWGPUSharedTextureMemoryDescriptor): WGPUSharedTextureMemory; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuDeviceImportSharedTextureMemory';
-
-procedure wgpuDeviceInjectError(device: WGPUDevice; &type: WGPUErrorType; const &message: PUTF8Char); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuDeviceInjectError';
-
-procedure wgpuDeviceInjectError2(device: WGPUDevice; &type: WGPUErrorType; &message: WGPUStringView); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuDeviceInjectError2';
-
-procedure wgpuDevicePopErrorScope(device: WGPUDevice; oldCallback: WGPUErrorCallback; userdata: Pointer); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuDevicePopErrorScope';
-
-function wgpuDevicePopErrorScope2(device: WGPUDevice; callbackInfo: WGPUPopErrorScopeCallbackInfo2): WGPUFuture; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuDevicePopErrorScope2';
-
-function wgpuDevicePopErrorScopeF(device: WGPUDevice; callbackInfo: WGPUPopErrorScopeCallbackInfo): WGPUFuture; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuDevicePopErrorScopeF';
-
-procedure wgpuDevicePushErrorScope(device: WGPUDevice; filter: WGPUErrorFilter); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuDevicePushErrorScope';
-
-procedure wgpuDeviceSetDeviceLostCallback(device: WGPUDevice; callback: WGPUDeviceLostCallback; userdata: Pointer); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuDeviceSetDeviceLostCallback';
-
-procedure wgpuDeviceSetLabel(device: WGPUDevice; const &label: PUTF8Char); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuDeviceSetLabel';
-
-procedure wgpuDeviceSetLabel2(device: WGPUDevice; &label: WGPUStringView); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuDeviceSetLabel2';
-
-procedure wgpuDeviceSetLoggingCallback(device: WGPUDevice; callback: WGPULoggingCallback; userdata: Pointer); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuDeviceSetLoggingCallback';
-
-procedure wgpuDeviceSetUncapturedErrorCallback(device: WGPUDevice; callback: WGPUErrorCallback; userdata: Pointer); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuDeviceSetUncapturedErrorCallback';
-
-procedure wgpuDeviceTick(device: WGPUDevice); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuDeviceTick';
-
-procedure wgpuDeviceValidateTextureDescriptor(device: WGPUDevice; const descriptor: PWGPUTextureDescriptor); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuDeviceValidateTextureDescriptor';
-
-procedure wgpuDeviceAddRef(device: WGPUDevice); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuDeviceAddRef';
-
-procedure wgpuDeviceRelease(device: WGPUDevice); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuDeviceRelease';
-
-procedure wgpuExternalTextureDestroy(externalTexture: WGPUExternalTexture); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuExternalTextureDestroy';
-
-procedure wgpuExternalTextureExpire(externalTexture: WGPUExternalTexture); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuExternalTextureExpire';
-
-procedure wgpuExternalTextureRefresh(externalTexture: WGPUExternalTexture); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuExternalTextureRefresh';
-
-procedure wgpuExternalTextureSetLabel(externalTexture: WGPUExternalTexture; const &label: PUTF8Char); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuExternalTextureSetLabel';
-
-procedure wgpuExternalTextureSetLabel2(externalTexture: WGPUExternalTexture; &label: WGPUStringView); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuExternalTextureSetLabel2';
-
-procedure wgpuExternalTextureAddRef(externalTexture: WGPUExternalTexture); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuExternalTextureAddRef';
-
-procedure wgpuExternalTextureRelease(externalTexture: WGPUExternalTexture); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuExternalTextureRelease';
-
-function wgpuInstanceCreateSurface(instance: WGPUInstance; const descriptor: PWGPUSurfaceDescriptor): WGPUSurface; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuInstanceCreateSurface';
-
-function wgpuInstanceEnumerateWGSLLanguageFeatures(instance: WGPUInstance; features: PWGPUWGSLFeatureName): NativeUInt; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuInstanceEnumerateWGSLLanguageFeatures';
-
-function wgpuInstanceHasWGSLLanguageFeature(instance: WGPUInstance; feature: WGPUWGSLFeatureName): WGPUBool; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuInstanceHasWGSLLanguageFeature';
-
-procedure wgpuInstanceProcessEvents(instance: WGPUInstance); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuInstanceProcessEvents';
-
-procedure wgpuInstanceRequestAdapter(instance: WGPUInstance; const options: PWGPURequestAdapterOptions; callback: WGPURequestAdapterCallback; userdata: Pointer); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuInstanceRequestAdapter';
-
-function wgpuInstanceRequestAdapter2(instance: WGPUInstance; const options: PWGPURequestAdapterOptions; callbackInfo: WGPURequestAdapterCallbackInfo2): WGPUFuture; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuInstanceRequestAdapter2';
-
-function wgpuInstanceRequestAdapterF(instance: WGPUInstance; const options: PWGPURequestAdapterOptions; callbackInfo: WGPURequestAdapterCallbackInfo): WGPUFuture; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuInstanceRequestAdapterF';
-
-function wgpuInstanceWaitAny(instance: WGPUInstance; futureCount: NativeUInt; futures: PWGPUFutureWaitInfo; timeoutNS: UInt64): WGPUWaitStatus; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuInstanceWaitAny';
-
-procedure wgpuInstanceAddRef(instance: WGPUInstance); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuInstanceAddRef';
-
-procedure wgpuInstanceRelease(instance: WGPUInstance); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuInstanceRelease';
-
-procedure wgpuPipelineLayoutSetLabel(pipelineLayout: WGPUPipelineLayout; const &label: PUTF8Char); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuPipelineLayoutSetLabel';
-
-procedure wgpuPipelineLayoutSetLabel2(pipelineLayout: WGPUPipelineLayout; &label: WGPUStringView); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuPipelineLayoutSetLabel2';
-
-procedure wgpuPipelineLayoutAddRef(pipelineLayout: WGPUPipelineLayout); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuPipelineLayoutAddRef';
-
-procedure wgpuPipelineLayoutRelease(pipelineLayout: WGPUPipelineLayout); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuPipelineLayoutRelease';
-
-procedure wgpuQuerySetDestroy(querySet: WGPUQuerySet); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuQuerySetDestroy';
-
-function wgpuQuerySetGetCount(querySet: WGPUQuerySet): UInt32; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuQuerySetGetCount';
-
-function wgpuQuerySetGetType(querySet: WGPUQuerySet): WGPUQueryType; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuQuerySetGetType';
-
-procedure wgpuQuerySetSetLabel(querySet: WGPUQuerySet; const &label: PUTF8Char); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuQuerySetSetLabel';
-
-procedure wgpuQuerySetSetLabel2(querySet: WGPUQuerySet; &label: WGPUStringView); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuQuerySetSetLabel2';
-
-procedure wgpuQuerySetAddRef(querySet: WGPUQuerySet); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuQuerySetAddRef';
-
-procedure wgpuQuerySetRelease(querySet: WGPUQuerySet); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuQuerySetRelease';
-
-procedure wgpuQueueCopyExternalTextureForBrowser(queue: WGPUQueue; const source: PWGPUImageCopyExternalTexture; const destination: PWGPUImageCopyTexture; const copySize: PWGPUExtent3D; const options: PWGPUCopyTextureForBrowserOptions); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuQueueCopyExternalTextureForBrowser';
-
-procedure wgpuQueueCopyTextureForBrowser(queue: WGPUQueue; const source: PWGPUImageCopyTexture; const destination: PWGPUImageCopyTexture; const copySize: PWGPUExtent3D; const options: PWGPUCopyTextureForBrowserOptions); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuQueueCopyTextureForBrowser';
-
-procedure wgpuQueueOnSubmittedWorkDone(queue: WGPUQueue; callback: WGPUQueueWorkDoneCallback; userdata: Pointer); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuQueueOnSubmittedWorkDone';
-
-function wgpuQueueOnSubmittedWorkDone2(queue: WGPUQueue; callbackInfo: WGPUQueueWorkDoneCallbackInfo2): WGPUFuture; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuQueueOnSubmittedWorkDone2';
-
-function wgpuQueueOnSubmittedWorkDoneF(queue: WGPUQueue; callbackInfo: WGPUQueueWorkDoneCallbackInfo): WGPUFuture; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuQueueOnSubmittedWorkDoneF';
-
-procedure wgpuQueueSetLabel(queue: WGPUQueue; const &label: PUTF8Char); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuQueueSetLabel';
-
-procedure wgpuQueueSetLabel2(queue: WGPUQueue; &label: WGPUStringView); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuQueueSetLabel2';
-
-procedure wgpuQueueSubmit(queue: WGPUQueue; commandCount: NativeUInt; const commands: PWGPUCommandBuffer); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuQueueSubmit';
-
-procedure wgpuQueueWriteBuffer(queue: WGPUQueue; buffer: WGPUBuffer; bufferOffset: UInt64; const data: Pointer; size: NativeUInt); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuQueueWriteBuffer';
-
-procedure wgpuQueueWriteTexture(queue: WGPUQueue; const destination: PWGPUImageCopyTexture; const data: Pointer; dataSize: NativeUInt; const dataLayout: PWGPUTextureDataLayout; const writeSize: PWGPUExtent3D); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuQueueWriteTexture';
-
-procedure wgpuQueueAddRef(queue: WGPUQueue); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuQueueAddRef';
-
-procedure wgpuQueueRelease(queue: WGPUQueue); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuQueueRelease';
-
-procedure wgpuRenderBundleSetLabel(renderBundle: WGPURenderBundle; const &label: PUTF8Char); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuRenderBundleSetLabel';
-
-procedure wgpuRenderBundleSetLabel2(renderBundle: WGPURenderBundle; &label: WGPUStringView); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuRenderBundleSetLabel2';
-
-procedure wgpuRenderBundleAddRef(renderBundle: WGPURenderBundle); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuRenderBundleAddRef';
-
-procedure wgpuRenderBundleRelease(renderBundle: WGPURenderBundle); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuRenderBundleRelease';
-
-procedure wgpuRenderBundleEncoderDraw(renderBundleEncoder: WGPURenderBundleEncoder; vertexCount: UInt32; instanceCount: UInt32; firstVertex: UInt32; firstInstance: UInt32); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuRenderBundleEncoderDraw';
-
-procedure wgpuRenderBundleEncoderDrawIndexed(renderBundleEncoder: WGPURenderBundleEncoder; indexCount: UInt32; instanceCount: UInt32; firstIndex: UInt32; baseVertex: Int32; firstInstance: UInt32); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuRenderBundleEncoderDrawIndexed';
-
-procedure wgpuRenderBundleEncoderDrawIndexedIndirect(renderBundleEncoder: WGPURenderBundleEncoder; indirectBuffer: WGPUBuffer; indirectOffset: UInt64); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuRenderBundleEncoderDrawIndexedIndirect';
-
-procedure wgpuRenderBundleEncoderDrawIndirect(renderBundleEncoder: WGPURenderBundleEncoder; indirectBuffer: WGPUBuffer; indirectOffset: UInt64); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuRenderBundleEncoderDrawIndirect';
-
-function wgpuRenderBundleEncoderFinish(renderBundleEncoder: WGPURenderBundleEncoder; const descriptor: PWGPURenderBundleDescriptor): WGPURenderBundle; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuRenderBundleEncoderFinish';
-
-procedure wgpuRenderBundleEncoderInsertDebugMarker(renderBundleEncoder: WGPURenderBundleEncoder; const markerLabel: PUTF8Char); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuRenderBundleEncoderInsertDebugMarker';
-
-procedure wgpuRenderBundleEncoderInsertDebugMarker2(renderBundleEncoder: WGPURenderBundleEncoder; markerLabel: WGPUStringView); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuRenderBundleEncoderInsertDebugMarker2';
-
-procedure wgpuRenderBundleEncoderPopDebugGroup(renderBundleEncoder: WGPURenderBundleEncoder); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuRenderBundleEncoderPopDebugGroup';
-
-procedure wgpuRenderBundleEncoderPushDebugGroup(renderBundleEncoder: WGPURenderBundleEncoder; const groupLabel: PUTF8Char); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuRenderBundleEncoderPushDebugGroup';
-
-procedure wgpuRenderBundleEncoderPushDebugGroup2(renderBundleEncoder: WGPURenderBundleEncoder; groupLabel: WGPUStringView); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuRenderBundleEncoderPushDebugGroup2';
-
-procedure wgpuRenderBundleEncoderSetBindGroup(renderBundleEncoder: WGPURenderBundleEncoder; groupIndex: UInt32; group: WGPUBindGroup; dynamicOffsetCount: NativeUInt; const dynamicOffsets: PUInt32); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuRenderBundleEncoderSetBindGroup';
-
-procedure wgpuRenderBundleEncoderSetIndexBuffer(renderBundleEncoder: WGPURenderBundleEncoder; buffer: WGPUBuffer; format: WGPUIndexFormat; offset: UInt64; size: UInt64); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuRenderBundleEncoderSetIndexBuffer';
-
-procedure wgpuRenderBundleEncoderSetLabel(renderBundleEncoder: WGPURenderBundleEncoder; const &label: PUTF8Char); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuRenderBundleEncoderSetLabel';
-
-procedure wgpuRenderBundleEncoderSetLabel2(renderBundleEncoder: WGPURenderBundleEncoder; &label: WGPUStringView); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuRenderBundleEncoderSetLabel2';
-
-procedure wgpuRenderBundleEncoderSetPipeline(renderBundleEncoder: WGPURenderBundleEncoder; pipeline: WGPURenderPipeline); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuRenderBundleEncoderSetPipeline';
-
-procedure wgpuRenderBundleEncoderSetVertexBuffer(renderBundleEncoder: WGPURenderBundleEncoder; slot: UInt32; buffer: WGPUBuffer; offset: UInt64; size: UInt64); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuRenderBundleEncoderSetVertexBuffer';
-
-procedure wgpuRenderBundleEncoderAddRef(renderBundleEncoder: WGPURenderBundleEncoder); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuRenderBundleEncoderAddRef';
-
-procedure wgpuRenderBundleEncoderRelease(renderBundleEncoder: WGPURenderBundleEncoder); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuRenderBundleEncoderRelease';
-
-procedure wgpuRenderPassEncoderBeginOcclusionQuery(renderPassEncoder: WGPURenderPassEncoder; queryIndex: UInt32); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuRenderPassEncoderBeginOcclusionQuery';
-
-procedure wgpuRenderPassEncoderDraw(renderPassEncoder: WGPURenderPassEncoder; vertexCount: UInt32; instanceCount: UInt32; firstVertex: UInt32; firstInstance: UInt32); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuRenderPassEncoderDraw';
-
-procedure wgpuRenderPassEncoderDrawIndexed(renderPassEncoder: WGPURenderPassEncoder; indexCount: UInt32; instanceCount: UInt32; firstIndex: UInt32; baseVertex: Int32; firstInstance: UInt32); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuRenderPassEncoderDrawIndexed';
-
-procedure wgpuRenderPassEncoderDrawIndexedIndirect(renderPassEncoder: WGPURenderPassEncoder; indirectBuffer: WGPUBuffer; indirectOffset: UInt64); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuRenderPassEncoderDrawIndexedIndirect';
-
-procedure wgpuRenderPassEncoderDrawIndirect(renderPassEncoder: WGPURenderPassEncoder; indirectBuffer: WGPUBuffer; indirectOffset: UInt64); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuRenderPassEncoderDrawIndirect';
-
-procedure wgpuRenderPassEncoderEnd(renderPassEncoder: WGPURenderPassEncoder); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuRenderPassEncoderEnd';
-
-procedure wgpuRenderPassEncoderEndOcclusionQuery(renderPassEncoder: WGPURenderPassEncoder); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuRenderPassEncoderEndOcclusionQuery';
-
-procedure wgpuRenderPassEncoderExecuteBundles(renderPassEncoder: WGPURenderPassEncoder; bundleCount: NativeUInt; const bundles: PWGPURenderBundle); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuRenderPassEncoderExecuteBundles';
-
-procedure wgpuRenderPassEncoderInsertDebugMarker(renderPassEncoder: WGPURenderPassEncoder; const markerLabel: PUTF8Char); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuRenderPassEncoderInsertDebugMarker';
-
-procedure wgpuRenderPassEncoderInsertDebugMarker2(renderPassEncoder: WGPURenderPassEncoder; markerLabel: WGPUStringView); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuRenderPassEncoderInsertDebugMarker2';
-
-procedure wgpuRenderPassEncoderMultiDrawIndexedIndirect(renderPassEncoder: WGPURenderPassEncoder; indirectBuffer: WGPUBuffer; indirectOffset: UInt64; maxDrawCount: UInt32; drawCountBuffer: WGPUBuffer; drawCountBufferOffset: UInt64); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuRenderPassEncoderMultiDrawIndexedIndirect';
-
-procedure wgpuRenderPassEncoderMultiDrawIndirect(renderPassEncoder: WGPURenderPassEncoder; indirectBuffer: WGPUBuffer; indirectOffset: UInt64; maxDrawCount: UInt32; drawCountBuffer: WGPUBuffer; drawCountBufferOffset: UInt64); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuRenderPassEncoderMultiDrawIndirect';
-
-procedure wgpuRenderPassEncoderPixelLocalStorageBarrier(renderPassEncoder: WGPURenderPassEncoder); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuRenderPassEncoderPixelLocalStorageBarrier';
-
-procedure wgpuRenderPassEncoderPopDebugGroup(renderPassEncoder: WGPURenderPassEncoder); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuRenderPassEncoderPopDebugGroup';
-
-procedure wgpuRenderPassEncoderPushDebugGroup(renderPassEncoder: WGPURenderPassEncoder; const groupLabel: PUTF8Char); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuRenderPassEncoderPushDebugGroup';
-
-procedure wgpuRenderPassEncoderPushDebugGroup2(renderPassEncoder: WGPURenderPassEncoder; groupLabel: WGPUStringView); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuRenderPassEncoderPushDebugGroup2';
-
-procedure wgpuRenderPassEncoderSetBindGroup(renderPassEncoder: WGPURenderPassEncoder; groupIndex: UInt32; group: WGPUBindGroup; dynamicOffsetCount: NativeUInt; const dynamicOffsets: PUInt32); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuRenderPassEncoderSetBindGroup';
-
-procedure wgpuRenderPassEncoderSetBlendConstant(renderPassEncoder: WGPURenderPassEncoder; const color: PWGPUColor); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuRenderPassEncoderSetBlendConstant';
-
-procedure wgpuRenderPassEncoderSetIndexBuffer(renderPassEncoder: WGPURenderPassEncoder; buffer: WGPUBuffer; format: WGPUIndexFormat; offset: UInt64; size: UInt64); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuRenderPassEncoderSetIndexBuffer';
-
-procedure wgpuRenderPassEncoderSetLabel(renderPassEncoder: WGPURenderPassEncoder; const &label: PUTF8Char); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuRenderPassEncoderSetLabel';
-
-procedure wgpuRenderPassEncoderSetLabel2(renderPassEncoder: WGPURenderPassEncoder; &label: WGPUStringView); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuRenderPassEncoderSetLabel2';
-
-procedure wgpuRenderPassEncoderSetPipeline(renderPassEncoder: WGPURenderPassEncoder; pipeline: WGPURenderPipeline); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuRenderPassEncoderSetPipeline';
-
-procedure wgpuRenderPassEncoderSetScissorRect(renderPassEncoder: WGPURenderPassEncoder; x: UInt32; y: UInt32; width: UInt32; height: UInt32); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuRenderPassEncoderSetScissorRect';
-
-procedure wgpuRenderPassEncoderSetStencilReference(renderPassEncoder: WGPURenderPassEncoder; reference: UInt32); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuRenderPassEncoderSetStencilReference';
-
-procedure wgpuRenderPassEncoderSetVertexBuffer(renderPassEncoder: WGPURenderPassEncoder; slot: UInt32; buffer: WGPUBuffer; offset: UInt64; size: UInt64); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuRenderPassEncoderSetVertexBuffer';
-
-procedure wgpuRenderPassEncoderSetViewport(renderPassEncoder: WGPURenderPassEncoder; x: Single; y: Single; width: Single; height: Single; minDepth: Single; maxDepth: Single); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuRenderPassEncoderSetViewport';
-
-procedure wgpuRenderPassEncoderWriteTimestamp(renderPassEncoder: WGPURenderPassEncoder; querySet: WGPUQuerySet; queryIndex: UInt32); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuRenderPassEncoderWriteTimestamp';
-
-procedure wgpuRenderPassEncoderAddRef(renderPassEncoder: WGPURenderPassEncoder); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuRenderPassEncoderAddRef';
-
-procedure wgpuRenderPassEncoderRelease(renderPassEncoder: WGPURenderPassEncoder); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuRenderPassEncoderRelease';
-
-function wgpuRenderPipelineGetBindGroupLayout(renderPipeline: WGPURenderPipeline; groupIndex: UInt32): WGPUBindGroupLayout; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuRenderPipelineGetBindGroupLayout';
-
-procedure wgpuRenderPipelineSetLabel(renderPipeline: WGPURenderPipeline; const &label: PUTF8Char); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuRenderPipelineSetLabel';
-
-procedure wgpuRenderPipelineSetLabel2(renderPipeline: WGPURenderPipeline; &label: WGPUStringView); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuRenderPipelineSetLabel2';
-
-procedure wgpuRenderPipelineAddRef(renderPipeline: WGPURenderPipeline); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuRenderPipelineAddRef';
-
-procedure wgpuRenderPipelineRelease(renderPipeline: WGPURenderPipeline); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuRenderPipelineRelease';
-
-procedure wgpuSamplerSetLabel(sampler: WGPUSampler; const &label: PUTF8Char); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuSamplerSetLabel';
-
-procedure wgpuSamplerSetLabel2(sampler: WGPUSampler; &label: WGPUStringView); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuSamplerSetLabel2';
-
-procedure wgpuSamplerAddRef(sampler: WGPUSampler); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuSamplerAddRef';
-
-procedure wgpuSamplerRelease(sampler: WGPUSampler); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuSamplerRelease';
-
-procedure wgpuShaderModuleGetCompilationInfo(shaderModule: WGPUShaderModule; callback: WGPUCompilationInfoCallback; userdata: Pointer); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuShaderModuleGetCompilationInfo';
-
-function wgpuShaderModuleGetCompilationInfo2(shaderModule: WGPUShaderModule; callbackInfo: WGPUCompilationInfoCallbackInfo2): WGPUFuture; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuShaderModuleGetCompilationInfo2';
-
-function wgpuShaderModuleGetCompilationInfoF(shaderModule: WGPUShaderModule; callbackInfo: WGPUCompilationInfoCallbackInfo): WGPUFuture; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuShaderModuleGetCompilationInfoF';
-
-procedure wgpuShaderModuleSetLabel(shaderModule: WGPUShaderModule; const &label: PUTF8Char); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuShaderModuleSetLabel';
-
-procedure wgpuShaderModuleSetLabel2(shaderModule: WGPUShaderModule; &label: WGPUStringView); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuShaderModuleSetLabel2';
-
-procedure wgpuShaderModuleAddRef(shaderModule: WGPUShaderModule); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuShaderModuleAddRef';
-
-procedure wgpuShaderModuleRelease(shaderModule: WGPUShaderModule); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuShaderModuleRelease';
-
-function wgpuSharedBufferMemoryBeginAccess(sharedBufferMemory: WGPUSharedBufferMemory; buffer: WGPUBuffer; const descriptor: PWGPUSharedBufferMemoryBeginAccessDescriptor): WGPUStatus; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuSharedBufferMemoryBeginAccess';
-
-function wgpuSharedBufferMemoryCreateBuffer(sharedBufferMemory: WGPUSharedBufferMemory; const descriptor: PWGPUBufferDescriptor): WGPUBuffer; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuSharedBufferMemoryCreateBuffer';
-
-function wgpuSharedBufferMemoryEndAccess(sharedBufferMemory: WGPUSharedBufferMemory; buffer: WGPUBuffer; descriptor: PWGPUSharedBufferMemoryEndAccessState): WGPUStatus; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuSharedBufferMemoryEndAccess';
-
-function wgpuSharedBufferMemoryGetProperties(sharedBufferMemory: WGPUSharedBufferMemory; properties: PWGPUSharedBufferMemoryProperties): WGPUStatus; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuSharedBufferMemoryGetProperties';
-
-function wgpuSharedBufferMemoryIsDeviceLost(sharedBufferMemory: WGPUSharedBufferMemory): WGPUBool; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuSharedBufferMemoryIsDeviceLost';
-
-procedure wgpuSharedBufferMemorySetLabel(sharedBufferMemory: WGPUSharedBufferMemory; const &label: PUTF8Char); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuSharedBufferMemorySetLabel';
-
-procedure wgpuSharedBufferMemorySetLabel2(sharedBufferMemory: WGPUSharedBufferMemory; &label: WGPUStringView); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuSharedBufferMemorySetLabel2';
-
-procedure wgpuSharedBufferMemoryAddRef(sharedBufferMemory: WGPUSharedBufferMemory); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuSharedBufferMemoryAddRef';
-
-procedure wgpuSharedBufferMemoryRelease(sharedBufferMemory: WGPUSharedBufferMemory); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuSharedBufferMemoryRelease';
-
-procedure wgpuSharedFenceExportInfo(sharedFence: WGPUSharedFence; info: PWGPUSharedFenceExportInfo); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuSharedFenceExportInfo';
-
-procedure wgpuSharedFenceAddRef(sharedFence: WGPUSharedFence); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuSharedFenceAddRef';
-
-procedure wgpuSharedFenceRelease(sharedFence: WGPUSharedFence); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuSharedFenceRelease';
-
-function wgpuSharedTextureMemoryBeginAccess(sharedTextureMemory: WGPUSharedTextureMemory; texture: WGPUTexture; const descriptor: PWGPUSharedTextureMemoryBeginAccessDescriptor): WGPUStatus; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuSharedTextureMemoryBeginAccess';
-
-function wgpuSharedTextureMemoryCreateTexture(sharedTextureMemory: WGPUSharedTextureMemory; const descriptor: PWGPUTextureDescriptor): WGPUTexture; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuSharedTextureMemoryCreateTexture';
-
-function wgpuSharedTextureMemoryEndAccess(sharedTextureMemory: WGPUSharedTextureMemory; texture: WGPUTexture; descriptor: PWGPUSharedTextureMemoryEndAccessState): WGPUStatus; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuSharedTextureMemoryEndAccess';
-
-function wgpuSharedTextureMemoryGetProperties(sharedTextureMemory: WGPUSharedTextureMemory; properties: PWGPUSharedTextureMemoryProperties): WGPUStatus; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuSharedTextureMemoryGetProperties';
-
-function wgpuSharedTextureMemoryIsDeviceLost(sharedTextureMemory: WGPUSharedTextureMemory): WGPUBool; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuSharedTextureMemoryIsDeviceLost';
-
-procedure wgpuSharedTextureMemorySetLabel(sharedTextureMemory: WGPUSharedTextureMemory; const &label: PUTF8Char); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuSharedTextureMemorySetLabel';
-
-procedure wgpuSharedTextureMemorySetLabel2(sharedTextureMemory: WGPUSharedTextureMemory; &label: WGPUStringView); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuSharedTextureMemorySetLabel2';
-
-procedure wgpuSharedTextureMemoryAddRef(sharedTextureMemory: WGPUSharedTextureMemory); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuSharedTextureMemoryAddRef';
-
-procedure wgpuSharedTextureMemoryRelease(sharedTextureMemory: WGPUSharedTextureMemory); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuSharedTextureMemoryRelease';
-
-procedure wgpuSurfaceConfigure(surface: WGPUSurface; const config: PWGPUSurfaceConfiguration); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuSurfaceConfigure';
-
-function wgpuSurfaceGetCapabilities(surface: WGPUSurface; adapter: WGPUAdapter; capabilities: PWGPUSurfaceCapabilities): WGPUStatus; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuSurfaceGetCapabilities';
-
-procedure wgpuSurfaceGetCurrentTexture(surface: WGPUSurface; surfaceTexture: PWGPUSurfaceTexture); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuSurfaceGetCurrentTexture';
-
-function wgpuSurfaceGetPreferredFormat(surface: WGPUSurface; adapter: WGPUAdapter): WGPUTextureFormat; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuSurfaceGetPreferredFormat';
-
-procedure wgpuSurfacePresent(surface: WGPUSurface); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuSurfacePresent';
-
-procedure wgpuSurfaceSetLabel(surface: WGPUSurface; const &label: PUTF8Char); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuSurfaceSetLabel';
-
-procedure wgpuSurfaceSetLabel2(surface: WGPUSurface; &label: WGPUStringView); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuSurfaceSetLabel2';
-
-procedure wgpuSurfaceUnconfigure(surface: WGPUSurface); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuSurfaceUnconfigure';
-
-procedure wgpuSurfaceAddRef(surface: WGPUSurface); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuSurfaceAddRef';
-
-procedure wgpuSurfaceRelease(surface: WGPUSurface); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuSurfaceRelease';
-
-function wgpuSwapChainGetCurrentTexture(swapChain: WGPUSwapChain): WGPUTexture; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuSwapChainGetCurrentTexture';
-
-function wgpuSwapChainGetCurrentTextureView(swapChain: WGPUSwapChain): WGPUTextureView; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuSwapChainGetCurrentTextureView';
-
-procedure wgpuSwapChainPresent(swapChain: WGPUSwapChain); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuSwapChainPresent';
-
-procedure wgpuSwapChainAddRef(swapChain: WGPUSwapChain); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuSwapChainAddRef';
-
-procedure wgpuSwapChainRelease(swapChain: WGPUSwapChain); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuSwapChainRelease';
-
-function wgpuTextureCreateErrorView(texture: WGPUTexture; const descriptor: PWGPUTextureViewDescriptor): WGPUTextureView; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuTextureCreateErrorView';
-
-function wgpuTextureCreateView(texture: WGPUTexture; const descriptor: PWGPUTextureViewDescriptor): WGPUTextureView; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuTextureCreateView';
-
-procedure wgpuTextureDestroy(texture: WGPUTexture); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuTextureDestroy';
-
-function wgpuTextureGetDepthOrArrayLayers(texture: WGPUTexture): UInt32; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuTextureGetDepthOrArrayLayers';
-
-function wgpuTextureGetDimension(texture: WGPUTexture): WGPUTextureDimension; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuTextureGetDimension';
-
-function wgpuTextureGetFormat(texture: WGPUTexture): WGPUTextureFormat; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuTextureGetFormat';
-
-function wgpuTextureGetHeight(texture: WGPUTexture): UInt32; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuTextureGetHeight';
-
-function wgpuTextureGetMipLevelCount(texture: WGPUTexture): UInt32; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuTextureGetMipLevelCount';
-
-function wgpuTextureGetSampleCount(texture: WGPUTexture): UInt32; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuTextureGetSampleCount';
-
-function wgpuTextureGetUsage(texture: WGPUTexture): WGPUTextureUsage; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuTextureGetUsage';
-
-function wgpuTextureGetWidth(texture: WGPUTexture): UInt32; cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuTextureGetWidth';
-
-procedure wgpuTextureSetLabel(texture: WGPUTexture; const &label: PUTF8Char); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuTextureSetLabel';
-
-procedure wgpuTextureSetLabel2(texture: WGPUTexture; &label: WGPUStringView); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuTextureSetLabel2';
-
-procedure wgpuTextureAddRef(texture: WGPUTexture); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuTextureAddRef';
-
-procedure wgpuTextureRelease(texture: WGPUTexture); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuTextureRelease';
-
-procedure wgpuTextureViewSetLabel(textureView: WGPUTextureView; const &label: PUTF8Char); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuTextureViewSetLabel';
-
-procedure wgpuTextureViewSetLabel2(textureView: WGPUTextureView; &label: WGPUStringView); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuTextureViewSetLabel2';
-
-procedure wgpuTextureViewAddRef(textureView: WGPUTextureView); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuTextureViewAddRef';
-
-procedure wgpuTextureViewRelease(textureView: WGPUTextureView); cdecl;
-  external WEBGPU_LIB name _PU + 'wgpuTextureViewRelease';
+var
+   wgpuAdapterInfoFreeMembers : procedure(value: WGPUAdapterInfo); cdecl;
+   wgpuAdapterPropertiesFreeMembers : procedure(value: WGPUAdapterProperties); cdecl;
+   wgpuAdapterPropertiesMemoryHeapsFreeMembers : procedure(value: WGPUAdapterPropertiesMemoryHeaps); cdecl;
+   wgpuCreateInstance : function(const descriptor: PWGPUInstanceDescriptor): WGPUInstance; cdecl;
+   wgpuDrmFormatCapabilitiesFreeMembers : procedure(value: WGPUDrmFormatCapabilities); cdecl;
+   wgpuGetInstanceFeatures : function(features: PWGPUInstanceFeatures): WGPUStatus; cdecl;
+   wgpuGetProcAddress : function(device: WGPUDevice; const procName: PUTF8Char): WGPUProc; cdecl;
+   wgpuGetProcAddress2 : function(device: WGPUDevice; procName: WGPUStringView): WGPUProc; cdecl;
+   wgpuSharedBufferMemoryEndAccessStateFreeMembers : procedure(value: WGPUSharedBufferMemoryEndAccessState); cdecl;
+   wgpuSharedTextureMemoryEndAccessStateFreeMembers : procedure(value: WGPUSharedTextureMemoryEndAccessState); cdecl;
+   wgpuSurfaceCapabilitiesFreeMembers : procedure(value: WGPUSurfaceCapabilities); cdecl;
+   wgpuAdapterCreateDevice : function(adapter: WGPUAdapter; const descriptor: PWGPUDeviceDescriptor): WGPUDevice; cdecl;
+   wgpuAdapterEnumerateFeatures : function(adapter: WGPUAdapter; features: PWGPUFeatureName): NativeUInt; cdecl;
+   wgpuAdapterGetFormatCapabilities : function(adapter: WGPUAdapter; format: WGPUTextureFormat; capabilities: PWGPUFormatCapabilities): WGPUStatus; cdecl;
+   wgpuAdapterGetInfo : function(adapter: WGPUAdapter; info: PWGPUAdapterInfo): WGPUStatus; cdecl;
+   wgpuAdapterGetInstance : function(adapter: WGPUAdapter): WGPUInstance; cdecl;
+   wgpuAdapterGetLimits : function(adapter: WGPUAdapter; limits: PWGPUSupportedLimits): WGPUStatus; cdecl;
+   wgpuAdapterGetProperties : function(adapter: WGPUAdapter; properties: PWGPUAdapterProperties): WGPUStatus; cdecl;
+   wgpuAdapterHasFeature : function(adapter: WGPUAdapter; feature: WGPUFeatureName): WGPUBool; cdecl;
+   wgpuAdapterRequestDevice : procedure(adapter: WGPUAdapter; const descriptor: PWGPUDeviceDescriptor; callback: WGPURequestDeviceCallback; userdata: Pointer); cdecl;
+   wgpuAdapterRequestDevice2 : function(adapter: WGPUAdapter; const options: PWGPUDeviceDescriptor; callbackInfo: WGPURequestDeviceCallbackInfo2): WGPUFuture; cdecl;
+   wgpuAdapterRequestDeviceF : function(adapter: WGPUAdapter; const options: PWGPUDeviceDescriptor; callbackInfo: WGPURequestDeviceCallbackInfo): WGPUFuture; cdecl;
+   wgpuAdapterAddRef : procedure(adapter: WGPUAdapter); cdecl;
+   wgpuAdapterRelease : procedure(adapter: WGPUAdapter); cdecl;
+   wgpuBindGroupSetLabel : procedure(bindGroup: WGPUBindGroup; const &label: PUTF8Char); cdecl;
+   wgpuBindGroupSetLabel2 : procedure(bindGroup: WGPUBindGroup; &label: WGPUStringView); cdecl;
+   wgpuBindGroupAddRef : procedure(bindGroup: WGPUBindGroup); cdecl;
+   wgpuBindGroupRelease : procedure(bindGroup: WGPUBindGroup); cdecl;
+   wgpuBindGroupLayoutSetLabel : procedure(bindGroupLayout: WGPUBindGroupLayout; const &label: PUTF8Char); cdecl;
+   wgpuBindGroupLayoutSetLabel2 : procedure(bindGroupLayout: WGPUBindGroupLayout; &label: WGPUStringView); cdecl;
+   wgpuBindGroupLayoutAddRef : procedure(bindGroupLayout: WGPUBindGroupLayout); cdecl;
+   wgpuBindGroupLayoutRelease : procedure(bindGroupLayout: WGPUBindGroupLayout); cdecl;
+   wgpuBufferDestroy : procedure(buffer: WGPUBuffer); cdecl;
+   wgpuBufferGetConstMappedRange : function(buffer: WGPUBuffer; offset: NativeUInt; size: NativeUInt): Pointer; cdecl;
+   wgpuBufferGetMapState : function(buffer: WGPUBuffer): WGPUBufferMapState; cdecl;
+   wgpuBufferGetMappedRange : function(buffer: WGPUBuffer; offset: NativeUInt; size: NativeUInt): Pointer; cdecl;
+   wgpuBufferGetSize : function(buffer: WGPUBuffer): UInt64; cdecl;
+   wgpuBufferGetUsage : function(buffer: WGPUBuffer): WGPUBufferUsage; cdecl;
+   wgpuBufferMapAsync : procedure(buffer: WGPUBuffer; mode: WGPUMapMode; offset: NativeUInt; size: NativeUInt; callback: WGPUBufferMapCallback; userdata: Pointer); cdecl;
+   wgpuBufferMapAsync2 : function(buffer: WGPUBuffer; mode: WGPUMapMode; offset: NativeUInt; size: NativeUInt; callbackInfo: WGPUBufferMapCallbackInfo2): WGPUFuture; cdecl;
+   wgpuBufferMapAsyncF : function(buffer: WGPUBuffer; mode: WGPUMapMode; offset: NativeUInt; size: NativeUInt; callbackInfo: WGPUBufferMapCallbackInfo): WGPUFuture; cdecl;
+   wgpuBufferSetLabel : procedure(buffer: WGPUBuffer; const &label: PUTF8Char); cdecl;
+   wgpuBufferSetLabel2 : procedure(buffer: WGPUBuffer; &label: WGPUStringView); cdecl;
+   wgpuBufferUnmap : procedure(buffer: WGPUBuffer); cdecl;
+   wgpuBufferAddRef : procedure(buffer: WGPUBuffer); cdecl;
+   wgpuBufferRelease : procedure(buffer: WGPUBuffer); cdecl;
+   wgpuCommandBufferSetLabel : procedure(commandBuffer: WGPUCommandBuffer; const &label: PUTF8Char); cdecl;
+   wgpuCommandBufferSetLabel2 : procedure(commandBuffer: WGPUCommandBuffer; &label: WGPUStringView); cdecl;
+   wgpuCommandBufferAddRef : procedure(commandBuffer: WGPUCommandBuffer); cdecl;
+   wgpuCommandBufferRelease : procedure(commandBuffer: WGPUCommandBuffer); cdecl;
+   wgpuCommandEncoderBeginComputePass : function(commandEncoder: WGPUCommandEncoder; const descriptor: PWGPUComputePassDescriptor): WGPUComputePassEncoder; cdecl;
+   wgpuCommandEncoderBeginRenderPass : function(commandEncoder: WGPUCommandEncoder; const descriptor: PWGPURenderPassDescriptor): WGPURenderPassEncoder; cdecl;
+   wgpuCommandEncoderClearBuffer : procedure(commandEncoder: WGPUCommandEncoder; buffer: WGPUBuffer; offset: UInt64; size: UInt64); cdecl;
+   wgpuCommandEncoderCopyBufferToBuffer : procedure(commandEncoder: WGPUCommandEncoder; source: WGPUBuffer; sourceOffset: UInt64; destination: WGPUBuffer; destinationOffset: UInt64; size: UInt64); cdecl;
+   wgpuCommandEncoderCopyBufferToTexture : procedure(commandEncoder: WGPUCommandEncoder; const source: PWGPUImageCopyBuffer; const destination: PWGPUImageCopyTexture; const copySize: PWGPUExtent3D); cdecl;
+   wgpuCommandEncoderCopyTextureToBuffer : procedure(commandEncoder: WGPUCommandEncoder; const source: PWGPUImageCopyTexture; const destination: PWGPUImageCopyBuffer; const copySize: PWGPUExtent3D); cdecl;
+   wgpuCommandEncoderCopyTextureToTexture : procedure(commandEncoder: WGPUCommandEncoder; const source: PWGPUImageCopyTexture; const destination: PWGPUImageCopyTexture; const copySize: PWGPUExtent3D); cdecl;
+   wgpuCommandEncoderFinish : function(commandEncoder: WGPUCommandEncoder; const descriptor: PWGPUCommandBufferDescriptor): WGPUCommandBuffer; cdecl;
+   wgpuCommandEncoderInjectValidationError : procedure(commandEncoder: WGPUCommandEncoder; const &message: PUTF8Char); cdecl;
+   wgpuCommandEncoderInjectValidationError2 : procedure(commandEncoder: WGPUCommandEncoder; &message: WGPUStringView); cdecl;
+   wgpuCommandEncoderInsertDebugMarker : procedure(commandEncoder: WGPUCommandEncoder; const markerLabel: PUTF8Char); cdecl;
+   wgpuCommandEncoderInsertDebugMarker2 : procedure(commandEncoder: WGPUCommandEncoder; markerLabel: WGPUStringView); cdecl;
+   wgpuCommandEncoderPopDebugGroup : procedure(commandEncoder: WGPUCommandEncoder); cdecl;
+   wgpuCommandEncoderPushDebugGroup : procedure(commandEncoder: WGPUCommandEncoder; const groupLabel: PUTF8Char); cdecl;
+   wgpuCommandEncoderPushDebugGroup2 : procedure(commandEncoder: WGPUCommandEncoder; groupLabel: WGPUStringView); cdecl;
+   wgpuCommandEncoderResolveQuerySet : procedure(commandEncoder: WGPUCommandEncoder; querySet: WGPUQuerySet; firstQuery: UInt32; queryCount: UInt32; destination: WGPUBuffer; destinationOffset: UInt64); cdecl;
+   wgpuCommandEncoderSetLabel : procedure(commandEncoder: WGPUCommandEncoder; const &label: PUTF8Char); cdecl;
+   wgpuCommandEncoderSetLabel2 : procedure(commandEncoder: WGPUCommandEncoder; &label: WGPUStringView); cdecl;
+   wgpuCommandEncoderWriteBuffer : procedure(commandEncoder: WGPUCommandEncoder; buffer: WGPUBuffer; bufferOffset: UInt64; const data: PUInt8; size: UInt64); cdecl;
+   wgpuCommandEncoderWriteTimestamp : procedure(commandEncoder: WGPUCommandEncoder; querySet: WGPUQuerySet; queryIndex: UInt32); cdecl;
+   wgpuCommandEncoderAddRef : procedure(commandEncoder: WGPUCommandEncoder); cdecl;
+   wgpuCommandEncoderRelease : procedure(commandEncoder: WGPUCommandEncoder); cdecl;
+   wgpuComputePassEncoderDispatchWorkgroups : procedure(computePassEncoder: WGPUComputePassEncoder; workgroupCountX: UInt32; workgroupCountY: UInt32; workgroupCountZ: UInt32); cdecl;
+   wgpuComputePassEncoderDispatchWorkgroupsIndirect : procedure(computePassEncoder: WGPUComputePassEncoder; indirectBuffer: WGPUBuffer; indirectOffset: UInt64); cdecl;
+   wgpuComputePassEncoderEnd : procedure(computePassEncoder: WGPUComputePassEncoder); cdecl;
+   wgpuComputePassEncoderInsertDebugMarker : procedure(computePassEncoder: WGPUComputePassEncoder; const markerLabel: PUTF8Char); cdecl;
+   wgpuComputePassEncoderInsertDebugMarker2 : procedure(computePassEncoder: WGPUComputePassEncoder; markerLabel: WGPUStringView); cdecl;
+   wgpuComputePassEncoderPopDebugGroup : procedure(computePassEncoder: WGPUComputePassEncoder); cdecl;
+   wgpuComputePassEncoderPushDebugGroup : procedure(computePassEncoder: WGPUComputePassEncoder; const groupLabel: PUTF8Char); cdecl;
+   wgpuComputePassEncoderPushDebugGroup2 : procedure(computePassEncoder: WGPUComputePassEncoder; groupLabel: WGPUStringView); cdecl;
+   wgpuComputePassEncoderSetBindGroup : procedure(computePassEncoder: WGPUComputePassEncoder; groupIndex: UInt32; group: WGPUBindGroup; dynamicOffsetCount: NativeUInt; const dynamicOffsets: PUInt32); cdecl;
+   wgpuComputePassEncoderSetLabel : procedure(computePassEncoder: WGPUComputePassEncoder; const &label: PUTF8Char); cdecl;
+   wgpuComputePassEncoderSetLabel2 : procedure(computePassEncoder: WGPUComputePassEncoder; &label: WGPUStringView); cdecl;
+   wgpuComputePassEncoderSetPipeline : procedure(computePassEncoder: WGPUComputePassEncoder; pipeline: WGPUComputePipeline); cdecl;
+   wgpuComputePassEncoderWriteTimestamp : procedure(computePassEncoder: WGPUComputePassEncoder; querySet: WGPUQuerySet; queryIndex: UInt32); cdecl;
+   wgpuComputePassEncoderAddRef : procedure(computePassEncoder: WGPUComputePassEncoder); cdecl;
+   wgpuComputePassEncoderRelease : procedure(computePassEncoder: WGPUComputePassEncoder); cdecl;
+   wgpuComputePipelineGetBindGroupLayout : function(computePipeline: WGPUComputePipeline; groupIndex: UInt32): WGPUBindGroupLayout; cdecl;
+   wgpuComputePipelineSetLabel : procedure(computePipeline: WGPUComputePipeline; const &label: PUTF8Char); cdecl;
+   wgpuComputePipelineSetLabel2 : procedure(computePipeline: WGPUComputePipeline; &label: WGPUStringView); cdecl;
+   wgpuComputePipelineAddRef : procedure(computePipeline: WGPUComputePipeline); cdecl;
+   wgpuComputePipelineRelease : procedure(computePipeline: WGPUComputePipeline); cdecl;
+   wgpuDeviceCreateBindGroup : function(device: WGPUDevice; const descriptor: PWGPUBindGroupDescriptor): WGPUBindGroup; cdecl;
+   wgpuDeviceCreateBindGroupLayout : function(device: WGPUDevice; const descriptor: PWGPUBindGroupLayoutDescriptor): WGPUBindGroupLayout; cdecl;
+   wgpuDeviceCreateBuffer : function(device: WGPUDevice; const descriptor: PWGPUBufferDescriptor): WGPUBuffer; cdecl;
+   wgpuDeviceCreateCommandEncoder : function(device: WGPUDevice; const descriptor: PWGPUCommandEncoderDescriptor): WGPUCommandEncoder; cdecl;
+   wgpuDeviceCreateComputePipeline : function(device: WGPUDevice; const descriptor: PWGPUComputePipelineDescriptor): WGPUComputePipeline; cdecl;
+   wgpuDeviceCreateComputePipelineAsync : procedure(device: WGPUDevice; const descriptor: PWGPUComputePipelineDescriptor; callback: WGPUCreateComputePipelineAsyncCallback; userdata: Pointer); cdecl;
+   wgpuDeviceCreateComputePipelineAsync2 : function(device: WGPUDevice; const descriptor: PWGPUComputePipelineDescriptor; callbackInfo: WGPUCreateComputePipelineAsyncCallbackInfo2): WGPUFuture; cdecl;
+   wgpuDeviceCreateComputePipelineAsyncF : function(device: WGPUDevice; const descriptor: PWGPUComputePipelineDescriptor; callbackInfo: WGPUCreateComputePipelineAsyncCallbackInfo): WGPUFuture; cdecl;
+   wgpuDeviceCreateErrorBuffer : function(device: WGPUDevice; const descriptor: PWGPUBufferDescriptor): WGPUBuffer; cdecl;
+   wgpuDeviceCreateErrorExternalTexture : function(device: WGPUDevice): WGPUExternalTexture; cdecl;
+   wgpuDeviceCreateErrorShaderModule : function(device: WGPUDevice; const descriptor: PWGPUShaderModuleDescriptor; const errorMessage: PUTF8Char): WGPUShaderModule; cdecl;
+   wgpuDeviceCreateErrorShaderModule2 : function(device: WGPUDevice; const descriptor: PWGPUShaderModuleDescriptor; errorMessage: WGPUStringView): WGPUShaderModule; cdecl;
+   wgpuDeviceCreateErrorTexture : function(device: WGPUDevice; const descriptor: PWGPUTextureDescriptor): WGPUTexture; cdecl;
+   wgpuDeviceCreateExternalTexture : function(device: WGPUDevice; const externalTextureDescriptor: PWGPUExternalTextureDescriptor): WGPUExternalTexture; cdecl;
+   wgpuDeviceCreatePipelineLayout : function(device: WGPUDevice; const descriptor: PWGPUPipelineLayoutDescriptor): WGPUPipelineLayout; cdecl;
+   wgpuDeviceCreateQuerySet : function(device: WGPUDevice; const descriptor: PWGPUQuerySetDescriptor): WGPUQuerySet; cdecl;
+   wgpuDeviceCreateRenderBundleEncoder : function(device: WGPUDevice; const descriptor: PWGPURenderBundleEncoderDescriptor): WGPURenderBundleEncoder; cdecl;
+   wgpuDeviceCreateRenderPipeline : function(device: WGPUDevice; const descriptor: PWGPURenderPipelineDescriptor): WGPURenderPipeline; cdecl;
+   wgpuDeviceCreateRenderPipelineAsync : procedure(device: WGPUDevice; const descriptor: PWGPURenderPipelineDescriptor; callback: WGPUCreateRenderPipelineAsyncCallback; userdata: Pointer); cdecl;
+   wgpuDeviceCreateRenderPipelineAsync2 : function(device: WGPUDevice; const descriptor: PWGPURenderPipelineDescriptor; callbackInfo: WGPUCreateRenderPipelineAsyncCallbackInfo2): WGPUFuture; cdecl;
+   wgpuDeviceCreateRenderPipelineAsyncF : function(device: WGPUDevice; const descriptor: PWGPURenderPipelineDescriptor; callbackInfo: WGPUCreateRenderPipelineAsyncCallbackInfo): WGPUFuture; cdecl;
+   wgpuDeviceCreateSampler : function(device: WGPUDevice; const descriptor: PWGPUSamplerDescriptor): WGPUSampler; cdecl;
+   wgpuDeviceCreateShaderModule : function(device: WGPUDevice; const descriptor: PWGPUShaderModuleDescriptor): WGPUShaderModule; cdecl;
+   wgpuDeviceCreateSwapChain : function(device: WGPUDevice; surface: WGPUSurface; const descriptor: PWGPUSwapChainDescriptor): WGPUSwapChain; cdecl;
+   wgpuDeviceCreateTexture : function(device: WGPUDevice; const descriptor: PWGPUTextureDescriptor): WGPUTexture; cdecl;
+   wgpuDeviceDestroy : procedure(device: WGPUDevice); cdecl;
+   wgpuDeviceEnumerateFeatures : function(device: WGPUDevice; features: PWGPUFeatureName): NativeUInt; cdecl;
+   wgpuDeviceForceLoss : procedure(device: WGPUDevice; &type: WGPUDeviceLostReason; const &message: PUTF8Char); cdecl;
+   wgpuDeviceForceLoss2 : procedure(device: WGPUDevice; &type: WGPUDeviceLostReason; &message: WGPUStringView); cdecl;
+   wgpuDeviceGetAHardwareBufferProperties : function(device: WGPUDevice; handle: Pointer; properties: PWGPUAHardwareBufferProperties): WGPUStatus; cdecl;
+   wgpuDeviceGetAdapter : function(device: WGPUDevice): WGPUAdapter; cdecl;
+   wgpuDeviceGetLimits : function(device: WGPUDevice; limits: PWGPUSupportedLimits): WGPUStatus; cdecl;
+   wgpuDeviceGetQueue : function(device: WGPUDevice): WGPUQueue; cdecl;
+   wgpuDeviceGetSupportedSurfaceUsage : function(device: WGPUDevice; surface: WGPUSurface): WGPUTextureUsage; cdecl;
+   wgpuDeviceHasFeature : function(device: WGPUDevice; feature: WGPUFeatureName): WGPUBool; cdecl;
+   wgpuDeviceImportSharedBufferMemory : function(device: WGPUDevice; const descriptor: PWGPUSharedBufferMemoryDescriptor): WGPUSharedBufferMemory; cdecl;
+   wgpuDeviceImportSharedFence : function(device: WGPUDevice; const descriptor: PWGPUSharedFenceDescriptor): WGPUSharedFence; cdecl;
+   wgpuDeviceImportSharedTextureMemory : function(device: WGPUDevice; const descriptor: PWGPUSharedTextureMemoryDescriptor): WGPUSharedTextureMemory; cdecl;
+   wgpuDeviceInjectError : procedure(device: WGPUDevice; &type: WGPUErrorType; const &message: PUTF8Char); cdecl;
+   wgpuDeviceInjectError2 : procedure(device: WGPUDevice; &type: WGPUErrorType; &message: WGPUStringView); cdecl;
+   wgpuDevicePopErrorScope : procedure(device: WGPUDevice; oldCallback: WGPUErrorCallback; userdata: Pointer); cdecl;
+   wgpuDevicePopErrorScope2 : function(device: WGPUDevice; callbackInfo: WGPUPopErrorScopeCallbackInfo2): WGPUFuture; cdecl;
+   wgpuDevicePopErrorScopeF : function(device: WGPUDevice; callbackInfo: WGPUPopErrorScopeCallbackInfo): WGPUFuture; cdecl;
+   wgpuDevicePushErrorScope : procedure(device: WGPUDevice; filter: WGPUErrorFilter); cdecl;
+   wgpuDeviceSetDeviceLostCallback : procedure(device: WGPUDevice; callback: WGPUDeviceLostCallback; userdata: Pointer); cdecl;
+   wgpuDeviceSetLabel : procedure(device: WGPUDevice; const &label: PUTF8Char); cdecl;
+   wgpuDeviceSetLabel2 : procedure(device: WGPUDevice; &label: WGPUStringView); cdecl;
+   wgpuDeviceSetLoggingCallback : procedure(device: WGPUDevice; callback: WGPULoggingCallback; userdata: Pointer); cdecl;
+   wgpuDeviceSetUncapturedErrorCallback : procedure(device: WGPUDevice; callback: WGPUErrorCallback; userdata: Pointer); cdecl;
+   wgpuDeviceTick : procedure(device: WGPUDevice); cdecl;
+   wgpuDeviceValidateTextureDescriptor : procedure(device: WGPUDevice; const descriptor: PWGPUTextureDescriptor); cdecl;
+   wgpuDeviceAddRef : procedure(device: WGPUDevice); cdecl;
+   wgpuDeviceRelease : procedure(device: WGPUDevice); cdecl;
+   wgpuExternalTextureDestroy : procedure(externalTexture: WGPUExternalTexture); cdecl;
+   wgpuExternalTextureExpire : procedure(externalTexture: WGPUExternalTexture); cdecl;
+   wgpuExternalTextureRefresh : procedure(externalTexture: WGPUExternalTexture); cdecl;
+   wgpuExternalTextureSetLabel : procedure(externalTexture: WGPUExternalTexture; const &label: PUTF8Char); cdecl;
+   wgpuExternalTextureSetLabel2 : procedure(externalTexture: WGPUExternalTexture; &label: WGPUStringView); cdecl;
+   wgpuExternalTextureAddRef : procedure(externalTexture: WGPUExternalTexture); cdecl;
+   wgpuExternalTextureRelease : procedure(externalTexture: WGPUExternalTexture); cdecl;
+   wgpuInstanceCreateSurface : function(instance: WGPUInstance; const descriptor: PWGPUSurfaceDescriptor): WGPUSurface; cdecl;
+   wgpuInstanceEnumerateWGSLLanguageFeatures : function(instance: WGPUInstance; features: PWGPUWGSLFeatureName): NativeUInt; cdecl;
+   wgpuInstanceHasWGSLLanguageFeature : function(instance: WGPUInstance; feature: WGPUWGSLFeatureName): WGPUBool; cdecl;
+   wgpuInstanceProcessEvents : procedure(instance: WGPUInstance); cdecl;
+   wgpuInstanceRequestAdapter : procedure(instance: WGPUInstance; const options: PWGPURequestAdapterOptions; callback: WGPURequestAdapterCallback; userdata: Pointer); cdecl;
+   wgpuInstanceRequestAdapter2 : function(instance: WGPUInstance; const options: PWGPURequestAdapterOptions; callbackInfo: WGPURequestAdapterCallbackInfo2): WGPUFuture; cdecl;
+   wgpuInstanceRequestAdapterF : function(instance: WGPUInstance; const options: PWGPURequestAdapterOptions; callbackInfo: WGPURequestAdapterCallbackInfo): WGPUFuture; cdecl;
+   wgpuInstanceWaitAny : function(instance: WGPUInstance; futureCount: NativeUInt; futures: PWGPUFutureWaitInfo; timeoutNS: UInt64): WGPUWaitStatus; cdecl;
+   wgpuInstanceAddRef : procedure(instance: WGPUInstance); cdecl;
+   wgpuInstanceRelease : procedure(instance: WGPUInstance); cdecl;
+   wgpuPipelineLayoutSetLabel : procedure(pipelineLayout: WGPUPipelineLayout; const &label: PUTF8Char); cdecl;
+   wgpuPipelineLayoutSetLabel2 : procedure(pipelineLayout: WGPUPipelineLayout; &label: WGPUStringView); cdecl;
+   wgpuPipelineLayoutAddRef : procedure(pipelineLayout: WGPUPipelineLayout); cdecl;
+   wgpuPipelineLayoutRelease : procedure(pipelineLayout: WGPUPipelineLayout); cdecl;
+   wgpuQuerySetDestroy : procedure(querySet: WGPUQuerySet); cdecl;
+   wgpuQuerySetGetCount : function(querySet: WGPUQuerySet): UInt32; cdecl;
+   wgpuQuerySetGetType : function(querySet: WGPUQuerySet): WGPUQueryType; cdecl;
+   wgpuQuerySetSetLabel : procedure(querySet: WGPUQuerySet; const &label: PUTF8Char); cdecl;
+   wgpuQuerySetSetLabel2 : procedure(querySet: WGPUQuerySet; &label: WGPUStringView); cdecl;
+   wgpuQuerySetAddRef : procedure(querySet: WGPUQuerySet); cdecl;
+   wgpuQuerySetRelease : procedure(querySet: WGPUQuerySet); cdecl;
+   wgpuQueueCopyExternalTextureForBrowser : procedure(queue: WGPUQueue; const source: PWGPUImageCopyExternalTexture; const destination: PWGPUImageCopyTexture; const copySize: PWGPUExtent3D; const options: PWGPUCopyTextureForBrowserOptions); cdecl;
+   wgpuQueueCopyTextureForBrowser : procedure(queue: WGPUQueue; const source: PWGPUImageCopyTexture; const destination: PWGPUImageCopyTexture; const copySize: PWGPUExtent3D; const options: PWGPUCopyTextureForBrowserOptions); cdecl;
+   wgpuQueueOnSubmittedWorkDone : procedure(queue: WGPUQueue; callback: WGPUQueueWorkDoneCallback; userdata: Pointer); cdecl;
+   wgpuQueueOnSubmittedWorkDone2 : function(queue: WGPUQueue; callbackInfo: WGPUQueueWorkDoneCallbackInfo2): WGPUFuture; cdecl;
+   wgpuQueueOnSubmittedWorkDoneF : function(queue: WGPUQueue; callbackInfo: WGPUQueueWorkDoneCallbackInfo): WGPUFuture; cdecl;
+   wgpuQueueSetLabel : procedure(queue: WGPUQueue; const &label: PUTF8Char); cdecl;
+   wgpuQueueSetLabel2 : procedure(queue: WGPUQueue; &label: WGPUStringView); cdecl;
+   wgpuQueueSubmit : procedure(queue: WGPUQueue; commandCount: NativeUInt; const commands: PWGPUCommandBuffer); cdecl;
+   wgpuQueueWriteBuffer : procedure(queue: WGPUQueue; buffer: WGPUBuffer; bufferOffset: UInt64; const data: Pointer; size: NativeUInt); cdecl;
+   wgpuQueueWriteTexture : procedure(queue: WGPUQueue; const destination: PWGPUImageCopyTexture; const data: Pointer; dataSize: NativeUInt; const dataLayout: PWGPUTextureDataLayout; const writeSize: PWGPUExtent3D); cdecl;
+   wgpuQueueAddRef : procedure(queue: WGPUQueue); cdecl;
+   wgpuQueueRelease : procedure(queue: WGPUQueue); cdecl;
+   wgpuRenderBundleSetLabel : procedure(renderBundle: WGPURenderBundle; const &label: PUTF8Char); cdecl;
+   wgpuRenderBundleSetLabel2 : procedure(renderBundle: WGPURenderBundle; &label: WGPUStringView); cdecl;
+   wgpuRenderBundleAddRef : procedure(renderBundle: WGPURenderBundle); cdecl;
+   wgpuRenderBundleRelease : procedure(renderBundle: WGPURenderBundle); cdecl;
+   wgpuRenderBundleEncoderDraw : procedure(renderBundleEncoder: WGPURenderBundleEncoder; vertexCount: UInt32; instanceCount: UInt32; firstVertex: UInt32; firstInstance: UInt32); cdecl;
+   wgpuRenderBundleEncoderDrawIndexed : procedure(renderBundleEncoder: WGPURenderBundleEncoder; indexCount: UInt32; instanceCount: UInt32; firstIndex: UInt32; baseVertex: Int32; firstInstance: UInt32); cdecl;
+   wgpuRenderBundleEncoderDrawIndexedIndirect : procedure(renderBundleEncoder: WGPURenderBundleEncoder; indirectBuffer: WGPUBuffer; indirectOffset: UInt64); cdecl;
+   wgpuRenderBundleEncoderDrawIndirect : procedure(renderBundleEncoder: WGPURenderBundleEncoder; indirectBuffer: WGPUBuffer; indirectOffset: UInt64); cdecl;
+   wgpuRenderBundleEncoderFinish : function(renderBundleEncoder: WGPURenderBundleEncoder; const descriptor: PWGPURenderBundleDescriptor): WGPURenderBundle; cdecl;
+   wgpuRenderBundleEncoderInsertDebugMarker : procedure(renderBundleEncoder: WGPURenderBundleEncoder; const markerLabel: PUTF8Char); cdecl;
+   wgpuRenderBundleEncoderInsertDebugMarker2 : procedure(renderBundleEncoder: WGPURenderBundleEncoder; markerLabel: WGPUStringView); cdecl;
+   wgpuRenderBundleEncoderPopDebugGroup : procedure(renderBundleEncoder: WGPURenderBundleEncoder); cdecl;
+   wgpuRenderBundleEncoderPushDebugGroup : procedure(renderBundleEncoder: WGPURenderBundleEncoder; const groupLabel: PUTF8Char); cdecl;
+   wgpuRenderBundleEncoderPushDebugGroup2 : procedure(renderBundleEncoder: WGPURenderBundleEncoder; groupLabel: WGPUStringView); cdecl;
+   wgpuRenderBundleEncoderSetBindGroup : procedure(renderBundleEncoder: WGPURenderBundleEncoder; groupIndex: UInt32; group: WGPUBindGroup; dynamicOffsetCount: NativeUInt; const dynamicOffsets: PUInt32); cdecl;
+   wgpuRenderBundleEncoderSetIndexBuffer : procedure(renderBundleEncoder: WGPURenderBundleEncoder; buffer: WGPUBuffer; format: WGPUIndexFormat; offset: UInt64; size: UInt64); cdecl;
+   wgpuRenderBundleEncoderSetLabel : procedure(renderBundleEncoder: WGPURenderBundleEncoder; const &label: PUTF8Char); cdecl;
+   wgpuRenderBundleEncoderSetLabel2 : procedure(renderBundleEncoder: WGPURenderBundleEncoder; &label: WGPUStringView); cdecl;
+   wgpuRenderBundleEncoderSetPipeline : procedure(renderBundleEncoder: WGPURenderBundleEncoder; pipeline: WGPURenderPipeline); cdecl;
+   wgpuRenderBundleEncoderSetVertexBuffer : procedure(renderBundleEncoder: WGPURenderBundleEncoder; slot: UInt32; buffer: WGPUBuffer; offset: UInt64; size: UInt64); cdecl;
+   wgpuRenderBundleEncoderAddRef : procedure(renderBundleEncoder: WGPURenderBundleEncoder); cdecl;
+   wgpuRenderBundleEncoderRelease : procedure(renderBundleEncoder: WGPURenderBundleEncoder); cdecl;
+   wgpuRenderPassEncoderBeginOcclusionQuery : procedure(renderPassEncoder: WGPURenderPassEncoder; queryIndex: UInt32); cdecl;
+   wgpuRenderPassEncoderDraw : procedure(renderPassEncoder: WGPURenderPassEncoder; vertexCount: UInt32; instanceCount: UInt32; firstVertex: UInt32; firstInstance: UInt32); cdecl;
+   wgpuRenderPassEncoderDrawIndexed : procedure(renderPassEncoder: WGPURenderPassEncoder; indexCount: UInt32; instanceCount: UInt32; firstIndex: UInt32; baseVertex: Int32; firstInstance: UInt32); cdecl;
+   wgpuRenderPassEncoderDrawIndexedIndirect : procedure(renderPassEncoder: WGPURenderPassEncoder; indirectBuffer: WGPUBuffer; indirectOffset: UInt64); cdecl;
+   wgpuRenderPassEncoderDrawIndirect : procedure(renderPassEncoder: WGPURenderPassEncoder; indirectBuffer: WGPUBuffer; indirectOffset: UInt64); cdecl;
+   wgpuRenderPassEncoderEnd : procedure(renderPassEncoder: WGPURenderPassEncoder); cdecl;
+   wgpuRenderPassEncoderEndOcclusionQuery : procedure(renderPassEncoder: WGPURenderPassEncoder); cdecl;
+   wgpuRenderPassEncoderExecuteBundles : procedure(renderPassEncoder: WGPURenderPassEncoder; bundleCount: NativeUInt; const bundles: PWGPURenderBundle); cdecl;
+   wgpuRenderPassEncoderInsertDebugMarker : procedure(renderPassEncoder: WGPURenderPassEncoder; const markerLabel: PUTF8Char); cdecl;
+   wgpuRenderPassEncoderInsertDebugMarker2 : procedure(renderPassEncoder: WGPURenderPassEncoder; markerLabel: WGPUStringView); cdecl;
+   wgpuRenderPassEncoderMultiDrawIndexedIndirect : procedure(renderPassEncoder: WGPURenderPassEncoder; indirectBuffer: WGPUBuffer; indirectOffset: UInt64; maxDrawCount: UInt32; drawCountBuffer: WGPUBuffer; drawCountBufferOffset: UInt64); cdecl;
+   wgpuRenderPassEncoderMultiDrawIndirect : procedure(renderPassEncoder: WGPURenderPassEncoder; indirectBuffer: WGPUBuffer; indirectOffset: UInt64; maxDrawCount: UInt32; drawCountBuffer: WGPUBuffer; drawCountBufferOffset: UInt64); cdecl;
+   wgpuRenderPassEncoderPixelLocalStorageBarrier : procedure(renderPassEncoder: WGPURenderPassEncoder); cdecl;
+   wgpuRenderPassEncoderPopDebugGroup : procedure(renderPassEncoder: WGPURenderPassEncoder); cdecl;
+   wgpuRenderPassEncoderPushDebugGroup : procedure(renderPassEncoder: WGPURenderPassEncoder; const groupLabel: PUTF8Char); cdecl;
+   wgpuRenderPassEncoderPushDebugGroup2 : procedure(renderPassEncoder: WGPURenderPassEncoder; groupLabel: WGPUStringView); cdecl;
+   wgpuRenderPassEncoderSetBindGroup : procedure(renderPassEncoder: WGPURenderPassEncoder; groupIndex: UInt32; group: WGPUBindGroup; dynamicOffsetCount: NativeUInt; const dynamicOffsets: PUInt32); cdecl;
+   wgpuRenderPassEncoderSetBlendConstant : procedure(renderPassEncoder: WGPURenderPassEncoder; const color: PWGPUColor); cdecl;
+   wgpuRenderPassEncoderSetIndexBuffer : procedure(renderPassEncoder: WGPURenderPassEncoder; buffer: WGPUBuffer; format: WGPUIndexFormat; offset: UInt64; size: UInt64); cdecl;
+   wgpuRenderPassEncoderSetLabel : procedure(renderPassEncoder: WGPURenderPassEncoder; const &label: PUTF8Char); cdecl;
+   wgpuRenderPassEncoderSetLabel2 : procedure(renderPassEncoder: WGPURenderPassEncoder; &label: WGPUStringView); cdecl;
+   wgpuRenderPassEncoderSetPipeline : procedure(renderPassEncoder: WGPURenderPassEncoder; pipeline: WGPURenderPipeline); cdecl;
+   wgpuRenderPassEncoderSetScissorRect : procedure(renderPassEncoder: WGPURenderPassEncoder; x: UInt32; y: UInt32; width: UInt32; height: UInt32); cdecl;
+   wgpuRenderPassEncoderSetStencilReference : procedure(renderPassEncoder: WGPURenderPassEncoder; reference: UInt32); cdecl;
+   wgpuRenderPassEncoderSetVertexBuffer : procedure(renderPassEncoder: WGPURenderPassEncoder; slot: UInt32; buffer: WGPUBuffer; offset: UInt64; size: UInt64); cdecl;
+   wgpuRenderPassEncoderSetViewport : procedure(renderPassEncoder: WGPURenderPassEncoder; x: Single; y: Single; width: Single; height: Single; minDepth: Single; maxDepth: Single); cdecl;
+   wgpuRenderPassEncoderWriteTimestamp : procedure(renderPassEncoder: WGPURenderPassEncoder; querySet: WGPUQuerySet; queryIndex: UInt32); cdecl;
+   wgpuRenderPassEncoderAddRef : procedure(renderPassEncoder: WGPURenderPassEncoder); cdecl;
+   wgpuRenderPassEncoderRelease : procedure(renderPassEncoder: WGPURenderPassEncoder); cdecl;
+   wgpuRenderPipelineGetBindGroupLayout : function(renderPipeline: WGPURenderPipeline; groupIndex: UInt32): WGPUBindGroupLayout; cdecl;
+   wgpuRenderPipelineSetLabel : procedure(renderPipeline: WGPURenderPipeline; const &label: PUTF8Char); cdecl;
+   wgpuRenderPipelineSetLabel2 : procedure(renderPipeline: WGPURenderPipeline; &label: WGPUStringView); cdecl;
+   wgpuRenderPipelineAddRef : procedure(renderPipeline: WGPURenderPipeline); cdecl;
+   wgpuRenderPipelineRelease : procedure(renderPipeline: WGPURenderPipeline); cdecl;
+   wgpuSamplerSetLabel : procedure(sampler: WGPUSampler; const &label: PUTF8Char); cdecl;
+   wgpuSamplerSetLabel2 : procedure(sampler: WGPUSampler; &label: WGPUStringView); cdecl;
+   wgpuSamplerAddRef : procedure(sampler: WGPUSampler); cdecl;
+   wgpuSamplerRelease : procedure(sampler: WGPUSampler); cdecl;
+   wgpuShaderModuleGetCompilationInfo : procedure(shaderModule: WGPUShaderModule; callback: WGPUCompilationInfoCallback; userdata: Pointer); cdecl;
+   wgpuShaderModuleGetCompilationInfo2 : function(shaderModule: WGPUShaderModule; callbackInfo: WGPUCompilationInfoCallbackInfo2): WGPUFuture; cdecl;
+   wgpuShaderModuleGetCompilationInfoF : function(shaderModule: WGPUShaderModule; callbackInfo: WGPUCompilationInfoCallbackInfo): WGPUFuture; cdecl;
+   wgpuShaderModuleSetLabel : procedure(shaderModule: WGPUShaderModule; const &label: PUTF8Char); cdecl;
+   wgpuShaderModuleSetLabel2 : procedure(shaderModule: WGPUShaderModule; &label: WGPUStringView); cdecl;
+   wgpuShaderModuleAddRef : procedure(shaderModule: WGPUShaderModule); cdecl;
+   wgpuShaderModuleRelease : procedure(shaderModule: WGPUShaderModule); cdecl;
+   wgpuSharedBufferMemoryBeginAccess : function(sharedBufferMemory: WGPUSharedBufferMemory; buffer: WGPUBuffer; const descriptor: PWGPUSharedBufferMemoryBeginAccessDescriptor): WGPUStatus; cdecl;
+   wgpuSharedBufferMemoryCreateBuffer : function(sharedBufferMemory: WGPUSharedBufferMemory; const descriptor: PWGPUBufferDescriptor): WGPUBuffer; cdecl;
+   wgpuSharedBufferMemoryEndAccess : function(sharedBufferMemory: WGPUSharedBufferMemory; buffer: WGPUBuffer; descriptor: PWGPUSharedBufferMemoryEndAccessState): WGPUStatus; cdecl;
+   wgpuSharedBufferMemoryGetProperties : function(sharedBufferMemory: WGPUSharedBufferMemory; properties: PWGPUSharedBufferMemoryProperties): WGPUStatus; cdecl;
+   wgpuSharedBufferMemoryIsDeviceLost : function(sharedBufferMemory: WGPUSharedBufferMemory): WGPUBool; cdecl;
+   wgpuSharedBufferMemorySetLabel : procedure(sharedBufferMemory: WGPUSharedBufferMemory; const &label: PUTF8Char); cdecl;
+   wgpuSharedBufferMemorySetLabel2 : procedure(sharedBufferMemory: WGPUSharedBufferMemory; &label: WGPUStringView); cdecl;
+   wgpuSharedBufferMemoryAddRef : procedure(sharedBufferMemory: WGPUSharedBufferMemory); cdecl;
+   wgpuSharedBufferMemoryRelease : procedure(sharedBufferMemory: WGPUSharedBufferMemory); cdecl;
+   wgpuSharedFenceExportInfo : procedure(sharedFence: WGPUSharedFence; info: PWGPUSharedFenceExportInfo); cdecl;
+   wgpuSharedFenceAddRef : procedure(sharedFence: WGPUSharedFence); cdecl;
+   wgpuSharedFenceRelease : procedure(sharedFence: WGPUSharedFence); cdecl;
+   wgpuSharedTextureMemoryBeginAccess : function(sharedTextureMemory: WGPUSharedTextureMemory; texture: WGPUTexture; const descriptor: PWGPUSharedTextureMemoryBeginAccessDescriptor): WGPUStatus; cdecl;
+   wgpuSharedTextureMemoryCreateTexture : function(sharedTextureMemory: WGPUSharedTextureMemory; const descriptor: PWGPUTextureDescriptor): WGPUTexture; cdecl;
+   wgpuSharedTextureMemoryEndAccess : function(sharedTextureMemory: WGPUSharedTextureMemory; texture: WGPUTexture; descriptor: PWGPUSharedTextureMemoryEndAccessState): WGPUStatus; cdecl;
+   wgpuSharedTextureMemoryGetProperties : function(sharedTextureMemory: WGPUSharedTextureMemory; properties: PWGPUSharedTextureMemoryProperties): WGPUStatus; cdecl;
+   wgpuSharedTextureMemoryIsDeviceLost : function(sharedTextureMemory: WGPUSharedTextureMemory): WGPUBool; cdecl;
+   wgpuSharedTextureMemorySetLabel : procedure(sharedTextureMemory: WGPUSharedTextureMemory; const &label: PUTF8Char); cdecl;
+   wgpuSharedTextureMemorySetLabel2 : procedure(sharedTextureMemory: WGPUSharedTextureMemory; &label: WGPUStringView); cdecl;
+   wgpuSharedTextureMemoryAddRef : procedure(sharedTextureMemory: WGPUSharedTextureMemory); cdecl;
+   wgpuSharedTextureMemoryRelease : procedure(sharedTextureMemory: WGPUSharedTextureMemory); cdecl;
+   wgpuSurfaceConfigure : procedure(surface: WGPUSurface; const config: PWGPUSurfaceConfiguration); cdecl;
+   wgpuSurfaceGetCapabilities : function(surface: WGPUSurface; adapter: WGPUAdapter; capabilities: PWGPUSurfaceCapabilities): WGPUStatus; cdecl;
+   wgpuSurfaceGetCurrentTexture : procedure(surface: WGPUSurface; surfaceTexture: PWGPUSurfaceTexture); cdecl;
+   wgpuSurfaceGetPreferredFormat : function(surface: WGPUSurface; adapter: WGPUAdapter): WGPUTextureFormat; cdecl;
+   wgpuSurfacePresent : procedure(surface: WGPUSurface); cdecl;
+   wgpuSurfaceSetLabel : procedure(surface: WGPUSurface; const &label: PUTF8Char); cdecl;
+   wgpuSurfaceSetLabel2 : procedure(surface: WGPUSurface; &label: WGPUStringView); cdecl;
+   wgpuSurfaceUnconfigure : procedure(surface: WGPUSurface); cdecl;
+   wgpuSurfaceAddRef : procedure(surface: WGPUSurface); cdecl;
+   wgpuSurfaceRelease : procedure(surface: WGPUSurface); cdecl;
+   wgpuSwapChainGetCurrentTexture : function(swapChain: WGPUSwapChain): WGPUTexture; cdecl;
+   wgpuSwapChainGetCurrentTextureView : function(swapChain: WGPUSwapChain): WGPUTextureView; cdecl;
+   wgpuSwapChainPresent : procedure(swapChain: WGPUSwapChain); cdecl;
+   wgpuSwapChainAddRef : procedure(swapChain: WGPUSwapChain); cdecl;
+   wgpuSwapChainRelease : procedure(swapChain: WGPUSwapChain); cdecl;
+   wgpuTextureCreateErrorView : function(texture: WGPUTexture; const descriptor: PWGPUTextureViewDescriptor): WGPUTextureView; cdecl;
+   wgpuTextureCreateView : function(texture: WGPUTexture; const descriptor: PWGPUTextureViewDescriptor): WGPUTextureView; cdecl;
+   wgpuTextureDestroy : procedure(texture: WGPUTexture); cdecl;
+   wgpuTextureGetDepthOrArrayLayers : function(texture: WGPUTexture): UInt32; cdecl;
+   wgpuTextureGetDimension : function(texture: WGPUTexture): WGPUTextureDimension; cdecl;
+   wgpuTextureGetFormat : function(texture: WGPUTexture): WGPUTextureFormat; cdecl;
+   wgpuTextureGetHeight : function(texture: WGPUTexture): UInt32; cdecl;
+   wgpuTextureGetMipLevelCount : function(texture: WGPUTexture): UInt32; cdecl;
+   wgpuTextureGetSampleCount : function(texture: WGPUTexture): UInt32; cdecl;
+   wgpuTextureGetUsage : function(texture: WGPUTexture): WGPUTextureUsage; cdecl;
+   wgpuTextureGetWidth : function(texture: WGPUTexture): UInt32; cdecl;
+   wgpuTextureSetLabel : procedure(texture: WGPUTexture; const &label: PUTF8Char); cdecl;
+   wgpuTextureSetLabel2 : procedure(texture: WGPUTexture; &label: WGPUStringView); cdecl;
+   wgpuTextureAddRef : procedure(texture: WGPUTexture); cdecl;
+   wgpuTextureRelease : procedure(texture: WGPUTexture); cdecl;
+   wgpuTextureViewSetLabel : procedure(textureView: WGPUTextureView; const &label: PUTF8Char); cdecl;
+   wgpuTextureViewSetLabel2 : procedure(textureView: WGPUTextureView; &label: WGPUStringView); cdecl;
+   wgpuTextureViewAddRef : procedure(textureView: WGPUTextureView); cdecl;
+   wgpuTextureViewRelease : procedure(textureView: WGPUTextureView); cdecl;
+
+procedure Load_webgpu_Library(const dllPathName : String);
 
 implementation
+
+var vLib : HMODULE;
+
+procedure Load_webgpu_Library(const dllPathName : String);
+begin
+   if vLib <> 0 then Exit;
+   vLib := LoadLibraryW(PChar(dllPathName));
+   if vLib = 0 then RaiseLastOSError;
+
+   wgpuAdapterInfoFreeMembers := GetProcAddress(vLib, 'wgpuAdapterInfoFreeMembers');
+   wgpuAdapterPropertiesFreeMembers := GetProcAddress(vLib, 'wgpuAdapterPropertiesFreeMembers');
+   wgpuAdapterPropertiesMemoryHeapsFreeMembers := GetProcAddress(vLib, 'wgpuAdapterPropertiesMemoryHeapsFreeMembers');
+   wgpuCreateInstance := GetProcAddress(vLib, 'wgpuCreateInstance');
+   wgpuDrmFormatCapabilitiesFreeMembers := GetProcAddress(vLib, 'wgpuDrmFormatCapabilitiesFreeMembers');
+   wgpuGetInstanceFeatures := GetProcAddress(vLib, 'wgpuGetInstanceFeatures');
+   wgpuGetProcAddress := GetProcAddress(vLib, 'wgpuGetProcAddress');
+   wgpuGetProcAddress2 := GetProcAddress(vLib, 'wgpuGetProcAddress2');
+   wgpuSharedBufferMemoryEndAccessStateFreeMembers := GetProcAddress(vLib, 'wgpuSharedBufferMemoryEndAccessStateFreeMembers');
+   wgpuSharedTextureMemoryEndAccessStateFreeMembers := GetProcAddress(vLib, 'wgpuSharedTextureMemoryEndAccessStateFreeMembers');
+   wgpuSurfaceCapabilitiesFreeMembers := GetProcAddress(vLib, 'wgpuSurfaceCapabilitiesFreeMembers');
+   wgpuAdapterCreateDevice := GetProcAddress(vLib, 'wgpuAdapterCreateDevice');
+   wgpuAdapterEnumerateFeatures := GetProcAddress(vLib, 'wgpuAdapterEnumerateFeatures');
+   wgpuAdapterGetFormatCapabilities := GetProcAddress(vLib, 'wgpuAdapterGetFormatCapabilities');
+   wgpuAdapterGetInfo := GetProcAddress(vLib, 'wgpuAdapterGetInfo');
+   wgpuAdapterGetInstance := GetProcAddress(vLib, 'wgpuAdapterGetInstance');
+   wgpuAdapterGetLimits := GetProcAddress(vLib, 'wgpuAdapterGetLimits');
+   wgpuAdapterGetProperties := GetProcAddress(vLib, 'wgpuAdapterGetProperties');
+   wgpuAdapterHasFeature := GetProcAddress(vLib, 'wgpuAdapterHasFeature');
+   wgpuAdapterRequestDevice := GetProcAddress(vLib, 'wgpuAdapterRequestDevice');
+   wgpuAdapterRequestDevice2 := GetProcAddress(vLib, 'wgpuAdapterRequestDevice2');
+   wgpuAdapterRequestDeviceF := GetProcAddress(vLib, 'wgpuAdapterRequestDeviceF');
+   wgpuAdapterAddRef := GetProcAddress(vLib, 'wgpuAdapterAddRef');
+   wgpuAdapterRelease := GetProcAddress(vLib, 'wgpuAdapterRelease');
+   wgpuBindGroupSetLabel := GetProcAddress(vLib, 'wgpuBindGroupSetLabel');
+   wgpuBindGroupSetLabel2 := GetProcAddress(vLib, 'wgpuBindGroupSetLabel2');
+   wgpuBindGroupAddRef := GetProcAddress(vLib, 'wgpuBindGroupAddRef');
+   wgpuBindGroupRelease := GetProcAddress(vLib, 'wgpuBindGroupRelease');
+   wgpuBindGroupLayoutSetLabel := GetProcAddress(vLib, 'wgpuBindGroupLayoutSetLabel');
+   wgpuBindGroupLayoutSetLabel2 := GetProcAddress(vLib, 'wgpuBindGroupLayoutSetLabel2');
+   wgpuBindGroupLayoutAddRef := GetProcAddress(vLib, 'wgpuBindGroupLayoutAddRef');
+   wgpuBindGroupLayoutRelease := GetProcAddress(vLib, 'wgpuBindGroupLayoutRelease');
+   wgpuBufferDestroy := GetProcAddress(vLib, 'wgpuBufferDestroy');
+   wgpuBufferGetConstMappedRange := GetProcAddress(vLib, 'wgpuBufferGetConstMappedRange');
+   wgpuBufferGetMapState := GetProcAddress(vLib, 'wgpuBufferGetMapState');
+   wgpuBufferGetMappedRange := GetProcAddress(vLib, 'wgpuBufferGetMappedRange');
+   wgpuBufferGetSize := GetProcAddress(vLib, 'wgpuBufferGetSize');
+   wgpuBufferGetUsage := GetProcAddress(vLib, 'wgpuBufferGetUsage');
+   wgpuBufferMapAsync := GetProcAddress(vLib, 'wgpuBufferMapAsync');
+   wgpuBufferMapAsync2 := GetProcAddress(vLib, 'wgpuBufferMapAsync2');
+   wgpuBufferMapAsyncF := GetProcAddress(vLib, 'wgpuBufferMapAsyncF');
+   wgpuBufferSetLabel := GetProcAddress(vLib, 'wgpuBufferSetLabel');
+   wgpuBufferSetLabel2 := GetProcAddress(vLib, 'wgpuBufferSetLabel2');
+   wgpuBufferUnmap := GetProcAddress(vLib, 'wgpuBufferUnmap');
+   wgpuBufferAddRef := GetProcAddress(vLib, 'wgpuBufferAddRef');
+   wgpuBufferRelease := GetProcAddress(vLib, 'wgpuBufferRelease');
+   wgpuCommandBufferSetLabel := GetProcAddress(vLib, 'wgpuCommandBufferSetLabel');
+   wgpuCommandBufferSetLabel2 := GetProcAddress(vLib, 'wgpuCommandBufferSetLabel2');
+   wgpuCommandBufferAddRef := GetProcAddress(vLib, 'wgpuCommandBufferAddRef');
+   wgpuCommandBufferRelease := GetProcAddress(vLib, 'wgpuCommandBufferRelease');
+   wgpuCommandEncoderBeginComputePass := GetProcAddress(vLib, 'wgpuCommandEncoderBeginComputePass');
+   wgpuCommandEncoderBeginRenderPass := GetProcAddress(vLib, 'wgpuCommandEncoderBeginRenderPass');
+   wgpuCommandEncoderClearBuffer := GetProcAddress(vLib, 'wgpuCommandEncoderClearBuffer');
+   wgpuCommandEncoderCopyBufferToBuffer := GetProcAddress(vLib, 'wgpuCommandEncoderCopyBufferToBuffer');
+   wgpuCommandEncoderCopyBufferToTexture := GetProcAddress(vLib, 'wgpuCommandEncoderCopyBufferToTexture');
+   wgpuCommandEncoderCopyTextureToBuffer := GetProcAddress(vLib, 'wgpuCommandEncoderCopyTextureToBuffer');
+   wgpuCommandEncoderCopyTextureToTexture := GetProcAddress(vLib, 'wgpuCommandEncoderCopyTextureToTexture');
+   wgpuCommandEncoderFinish := GetProcAddress(vLib, 'wgpuCommandEncoderFinish');
+   wgpuCommandEncoderInjectValidationError := GetProcAddress(vLib, 'wgpuCommandEncoderInjectValidationError');
+   wgpuCommandEncoderInjectValidationError2 := GetProcAddress(vLib, 'wgpuCommandEncoderInjectValidationError2');
+   wgpuCommandEncoderInsertDebugMarker := GetProcAddress(vLib, 'wgpuCommandEncoderInsertDebugMarker');
+   wgpuCommandEncoderInsertDebugMarker2 := GetProcAddress(vLib, 'wgpuCommandEncoderInsertDebugMarker2');
+   wgpuCommandEncoderPopDebugGroup := GetProcAddress(vLib, 'wgpuCommandEncoderPopDebugGroup');
+   wgpuCommandEncoderPushDebugGroup := GetProcAddress(vLib, 'wgpuCommandEncoderPushDebugGroup');
+   wgpuCommandEncoderPushDebugGroup2 := GetProcAddress(vLib, 'wgpuCommandEncoderPushDebugGroup2');
+   wgpuCommandEncoderResolveQuerySet := GetProcAddress(vLib, 'wgpuCommandEncoderResolveQuerySet');
+   wgpuCommandEncoderSetLabel := GetProcAddress(vLib, 'wgpuCommandEncoderSetLabel');
+   wgpuCommandEncoderSetLabel2 := GetProcAddress(vLib, 'wgpuCommandEncoderSetLabel2');
+   wgpuCommandEncoderWriteBuffer := GetProcAddress(vLib, 'wgpuCommandEncoderWriteBuffer');
+   wgpuCommandEncoderWriteTimestamp := GetProcAddress(vLib, 'wgpuCommandEncoderWriteTimestamp');
+   wgpuCommandEncoderAddRef := GetProcAddress(vLib, 'wgpuCommandEncoderAddRef');
+   wgpuCommandEncoderRelease := GetProcAddress(vLib, 'wgpuCommandEncoderRelease');
+   wgpuComputePassEncoderDispatchWorkgroups := GetProcAddress(vLib, 'wgpuComputePassEncoderDispatchWorkgroups');
+   wgpuComputePassEncoderDispatchWorkgroupsIndirect := GetProcAddress(vLib, 'wgpuComputePassEncoderDispatchWorkgroupsIndirect');
+   wgpuComputePassEncoderEnd := GetProcAddress(vLib, 'wgpuComputePassEncoderEnd');
+   wgpuComputePassEncoderInsertDebugMarker := GetProcAddress(vLib, 'wgpuComputePassEncoderInsertDebugMarker');
+   wgpuComputePassEncoderInsertDebugMarker2 := GetProcAddress(vLib, 'wgpuComputePassEncoderInsertDebugMarker2');
+   wgpuComputePassEncoderPopDebugGroup := GetProcAddress(vLib, 'wgpuComputePassEncoderPopDebugGroup');
+   wgpuComputePassEncoderPushDebugGroup := GetProcAddress(vLib, 'wgpuComputePassEncoderPushDebugGroup');
+   wgpuComputePassEncoderPushDebugGroup2 := GetProcAddress(vLib, 'wgpuComputePassEncoderPushDebugGroup2');
+   wgpuComputePassEncoderSetBindGroup := GetProcAddress(vLib, 'wgpuComputePassEncoderSetBindGroup');
+   wgpuComputePassEncoderSetLabel := GetProcAddress(vLib, 'wgpuComputePassEncoderSetLabel');
+   wgpuComputePassEncoderSetLabel2 := GetProcAddress(vLib, 'wgpuComputePassEncoderSetLabel2');
+   wgpuComputePassEncoderSetPipeline := GetProcAddress(vLib, 'wgpuComputePassEncoderSetPipeline');
+   wgpuComputePassEncoderWriteTimestamp := GetProcAddress(vLib, 'wgpuComputePassEncoderWriteTimestamp');
+   wgpuComputePassEncoderAddRef := GetProcAddress(vLib, 'wgpuComputePassEncoderAddRef');
+   wgpuComputePassEncoderRelease := GetProcAddress(vLib, 'wgpuComputePassEncoderRelease');
+   wgpuComputePipelineGetBindGroupLayout := GetProcAddress(vLib, 'wgpuComputePipelineGetBindGroupLayout');
+   wgpuComputePipelineSetLabel := GetProcAddress(vLib, 'wgpuComputePipelineSetLabel');
+   wgpuComputePipelineSetLabel2 := GetProcAddress(vLib, 'wgpuComputePipelineSetLabel2');
+   wgpuComputePipelineAddRef := GetProcAddress(vLib, 'wgpuComputePipelineAddRef');
+   wgpuComputePipelineRelease := GetProcAddress(vLib, 'wgpuComputePipelineRelease');
+   wgpuDeviceCreateBindGroup := GetProcAddress(vLib, 'wgpuDeviceCreateBindGroup');
+   wgpuDeviceCreateBindGroupLayout := GetProcAddress(vLib, 'wgpuDeviceCreateBindGroupLayout');
+   wgpuDeviceCreateBuffer := GetProcAddress(vLib, 'wgpuDeviceCreateBuffer');
+   wgpuDeviceCreateCommandEncoder := GetProcAddress(vLib, 'wgpuDeviceCreateCommandEncoder');
+   wgpuDeviceCreateComputePipeline := GetProcAddress(vLib, 'wgpuDeviceCreateComputePipeline');
+   wgpuDeviceCreateComputePipelineAsync := GetProcAddress(vLib, 'wgpuDeviceCreateComputePipelineAsync');
+   wgpuDeviceCreateComputePipelineAsync2 := GetProcAddress(vLib, 'wgpuDeviceCreateComputePipelineAsync2');
+   wgpuDeviceCreateComputePipelineAsyncF := GetProcAddress(vLib, 'wgpuDeviceCreateComputePipelineAsyncF');
+   wgpuDeviceCreateErrorBuffer := GetProcAddress(vLib, 'wgpuDeviceCreateErrorBuffer');
+   wgpuDeviceCreateErrorExternalTexture := GetProcAddress(vLib, 'wgpuDeviceCreateErrorExternalTexture');
+   wgpuDeviceCreateErrorShaderModule := GetProcAddress(vLib, 'wgpuDeviceCreateErrorShaderModule');
+   wgpuDeviceCreateErrorShaderModule2 := GetProcAddress(vLib, 'wgpuDeviceCreateErrorShaderModule2');
+   wgpuDeviceCreateErrorTexture := GetProcAddress(vLib, 'wgpuDeviceCreateErrorTexture');
+   wgpuDeviceCreateExternalTexture := GetProcAddress(vLib, 'wgpuDeviceCreateExternalTexture');
+   wgpuDeviceCreatePipelineLayout := GetProcAddress(vLib, 'wgpuDeviceCreatePipelineLayout');
+   wgpuDeviceCreateQuerySet := GetProcAddress(vLib, 'wgpuDeviceCreateQuerySet');
+   wgpuDeviceCreateRenderBundleEncoder := GetProcAddress(vLib, 'wgpuDeviceCreateRenderBundleEncoder');
+   wgpuDeviceCreateRenderPipeline := GetProcAddress(vLib, 'wgpuDeviceCreateRenderPipeline');
+   wgpuDeviceCreateRenderPipelineAsync := GetProcAddress(vLib, 'wgpuDeviceCreateRenderPipelineAsync');
+   wgpuDeviceCreateRenderPipelineAsync2 := GetProcAddress(vLib, 'wgpuDeviceCreateRenderPipelineAsync2');
+   wgpuDeviceCreateRenderPipelineAsyncF := GetProcAddress(vLib, 'wgpuDeviceCreateRenderPipelineAsyncF');
+   wgpuDeviceCreateSampler := GetProcAddress(vLib, 'wgpuDeviceCreateSampler');
+   wgpuDeviceCreateShaderModule := GetProcAddress(vLib, 'wgpuDeviceCreateShaderModule');
+   wgpuDeviceCreateSwapChain := GetProcAddress(vLib, 'wgpuDeviceCreateSwapChain');
+   wgpuDeviceCreateTexture := GetProcAddress(vLib, 'wgpuDeviceCreateTexture');
+   wgpuDeviceDestroy := GetProcAddress(vLib, 'wgpuDeviceDestroy');
+   wgpuDeviceEnumerateFeatures := GetProcAddress(vLib, 'wgpuDeviceEnumerateFeatures');
+   wgpuDeviceForceLoss := GetProcAddress(vLib, 'wgpuDeviceForceLoss');
+   wgpuDeviceForceLoss2 := GetProcAddress(vLib, 'wgpuDeviceForceLoss2');
+   wgpuDeviceGetAHardwareBufferProperties := GetProcAddress(vLib, 'wgpuDeviceGetAHardwareBufferProperties');
+   wgpuDeviceGetAdapter := GetProcAddress(vLib, 'wgpuDeviceGetAdapter');
+   wgpuDeviceGetLimits := GetProcAddress(vLib, 'wgpuDeviceGetLimits');
+   wgpuDeviceGetQueue := GetProcAddress(vLib, 'wgpuDeviceGetQueue');
+   wgpuDeviceGetSupportedSurfaceUsage := GetProcAddress(vLib, 'wgpuDeviceGetSupportedSurfaceUsage');
+   wgpuDeviceHasFeature := GetProcAddress(vLib, 'wgpuDeviceHasFeature');
+   wgpuDeviceImportSharedBufferMemory := GetProcAddress(vLib, 'wgpuDeviceImportSharedBufferMemory');
+   wgpuDeviceImportSharedFence := GetProcAddress(vLib, 'wgpuDeviceImportSharedFence');
+   wgpuDeviceImportSharedTextureMemory := GetProcAddress(vLib, 'wgpuDeviceImportSharedTextureMemory');
+   wgpuDeviceInjectError := GetProcAddress(vLib, 'wgpuDeviceInjectError');
+   wgpuDeviceInjectError2 := GetProcAddress(vLib, 'wgpuDeviceInjectError2');
+   wgpuDevicePopErrorScope := GetProcAddress(vLib, 'wgpuDevicePopErrorScope');
+   wgpuDevicePopErrorScope2 := GetProcAddress(vLib, 'wgpuDevicePopErrorScope2');
+   wgpuDevicePopErrorScopeF := GetProcAddress(vLib, 'wgpuDevicePopErrorScopeF');
+   wgpuDevicePushErrorScope := GetProcAddress(vLib, 'wgpuDevicePushErrorScope');
+   wgpuDeviceSetDeviceLostCallback := GetProcAddress(vLib, 'wgpuDeviceSetDeviceLostCallback');
+   wgpuDeviceSetLabel := GetProcAddress(vLib, 'wgpuDeviceSetLabel');
+   wgpuDeviceSetLabel2 := GetProcAddress(vLib, 'wgpuDeviceSetLabel2');
+   wgpuDeviceSetLoggingCallback := GetProcAddress(vLib, 'wgpuDeviceSetLoggingCallback');
+   wgpuDeviceSetUncapturedErrorCallback := GetProcAddress(vLib, 'wgpuDeviceSetUncapturedErrorCallback');
+   wgpuDeviceTick := GetProcAddress(vLib, 'wgpuDeviceTick');
+   wgpuDeviceValidateTextureDescriptor := GetProcAddress(vLib, 'wgpuDeviceValidateTextureDescriptor');
+   wgpuDeviceAddRef := GetProcAddress(vLib, 'wgpuDeviceAddRef');
+   wgpuDeviceRelease := GetProcAddress(vLib, 'wgpuDeviceRelease');
+   wgpuExternalTextureDestroy := GetProcAddress(vLib, 'wgpuExternalTextureDestroy');
+   wgpuExternalTextureExpire := GetProcAddress(vLib, 'wgpuExternalTextureExpire');
+   wgpuExternalTextureRefresh := GetProcAddress(vLib, 'wgpuExternalTextureRefresh');
+   wgpuExternalTextureSetLabel := GetProcAddress(vLib, 'wgpuExternalTextureSetLabel');
+   wgpuExternalTextureSetLabel2 := GetProcAddress(vLib, 'wgpuExternalTextureSetLabel2');
+   wgpuExternalTextureAddRef := GetProcAddress(vLib, 'wgpuExternalTextureAddRef');
+   wgpuExternalTextureRelease := GetProcAddress(vLib, 'wgpuExternalTextureRelease');
+   wgpuInstanceCreateSurface := GetProcAddress(vLib, 'wgpuInstanceCreateSurface');
+   wgpuInstanceEnumerateWGSLLanguageFeatures := GetProcAddress(vLib, 'wgpuInstanceEnumerateWGSLLanguageFeatures');
+   wgpuInstanceHasWGSLLanguageFeature := GetProcAddress(vLib, 'wgpuInstanceHasWGSLLanguageFeature');
+   wgpuInstanceProcessEvents := GetProcAddress(vLib, 'wgpuInstanceProcessEvents');
+   wgpuInstanceRequestAdapter := GetProcAddress(vLib, 'wgpuInstanceRequestAdapter');
+   wgpuInstanceRequestAdapter2 := GetProcAddress(vLib, 'wgpuInstanceRequestAdapter2');
+   wgpuInstanceRequestAdapterF := GetProcAddress(vLib, 'wgpuInstanceRequestAdapterF');
+   wgpuInstanceWaitAny := GetProcAddress(vLib, 'wgpuInstanceWaitAny');
+   wgpuInstanceAddRef := GetProcAddress(vLib, 'wgpuInstanceAddRef');
+   wgpuInstanceRelease := GetProcAddress(vLib, 'wgpuInstanceRelease');
+   wgpuPipelineLayoutSetLabel := GetProcAddress(vLib, 'wgpuPipelineLayoutSetLabel');
+   wgpuPipelineLayoutSetLabel2 := GetProcAddress(vLib, 'wgpuPipelineLayoutSetLabel2');
+   wgpuPipelineLayoutAddRef := GetProcAddress(vLib, 'wgpuPipelineLayoutAddRef');
+   wgpuPipelineLayoutRelease := GetProcAddress(vLib, 'wgpuPipelineLayoutRelease');
+   wgpuQuerySetDestroy := GetProcAddress(vLib, 'wgpuQuerySetDestroy');
+   wgpuQuerySetGetCount := GetProcAddress(vLib, 'wgpuQuerySetGetCount');
+   wgpuQuerySetGetType := GetProcAddress(vLib, 'wgpuQuerySetGetType');
+   wgpuQuerySetSetLabel := GetProcAddress(vLib, 'wgpuQuerySetSetLabel');
+   wgpuQuerySetSetLabel2 := GetProcAddress(vLib, 'wgpuQuerySetSetLabel2');
+   wgpuQuerySetAddRef := GetProcAddress(vLib, 'wgpuQuerySetAddRef');
+   wgpuQuerySetRelease := GetProcAddress(vLib, 'wgpuQuerySetRelease');
+   wgpuQueueCopyExternalTextureForBrowser := GetProcAddress(vLib, 'wgpuQueueCopyExternalTextureForBrowser');
+   wgpuQueueCopyTextureForBrowser := GetProcAddress(vLib, 'wgpuQueueCopyTextureForBrowser');
+   wgpuQueueOnSubmittedWorkDone := GetProcAddress(vLib, 'wgpuQueueOnSubmittedWorkDone');
+   wgpuQueueOnSubmittedWorkDone2 := GetProcAddress(vLib, 'wgpuQueueOnSubmittedWorkDone2');
+   wgpuQueueOnSubmittedWorkDoneF := GetProcAddress(vLib, 'wgpuQueueOnSubmittedWorkDoneF');
+   wgpuQueueSetLabel := GetProcAddress(vLib, 'wgpuQueueSetLabel');
+   wgpuQueueSetLabel2 := GetProcAddress(vLib, 'wgpuQueueSetLabel2');
+   wgpuQueueSubmit := GetProcAddress(vLib, 'wgpuQueueSubmit');
+   wgpuQueueWriteBuffer := GetProcAddress(vLib, 'wgpuQueueWriteBuffer');
+   wgpuQueueWriteTexture := GetProcAddress(vLib, 'wgpuQueueWriteTexture');
+   wgpuQueueAddRef := GetProcAddress(vLib, 'wgpuQueueAddRef');
+   wgpuQueueRelease := GetProcAddress(vLib, 'wgpuQueueRelease');
+   wgpuRenderBundleSetLabel := GetProcAddress(vLib, 'wgpuRenderBundleSetLabel');
+   wgpuRenderBundleSetLabel2 := GetProcAddress(vLib, 'wgpuRenderBundleSetLabel2');
+   wgpuRenderBundleAddRef := GetProcAddress(vLib, 'wgpuRenderBundleAddRef');
+   wgpuRenderBundleRelease := GetProcAddress(vLib, 'wgpuRenderBundleRelease');
+   wgpuRenderBundleEncoderDraw := GetProcAddress(vLib, 'wgpuRenderBundleEncoderDraw');
+   wgpuRenderBundleEncoderDrawIndexed := GetProcAddress(vLib, 'wgpuRenderBundleEncoderDrawIndexed');
+   wgpuRenderBundleEncoderDrawIndexedIndirect := GetProcAddress(vLib, 'wgpuRenderBundleEncoderDrawIndexedIndirect');
+   wgpuRenderBundleEncoderDrawIndirect := GetProcAddress(vLib, 'wgpuRenderBundleEncoderDrawIndirect');
+   wgpuRenderBundleEncoderFinish := GetProcAddress(vLib, 'wgpuRenderBundleEncoderFinish');
+   wgpuRenderBundleEncoderInsertDebugMarker := GetProcAddress(vLib, 'wgpuRenderBundleEncoderInsertDebugMarker');
+   wgpuRenderBundleEncoderInsertDebugMarker2 := GetProcAddress(vLib, 'wgpuRenderBundleEncoderInsertDebugMarker2');
+   wgpuRenderBundleEncoderPopDebugGroup := GetProcAddress(vLib, 'wgpuRenderBundleEncoderPopDebugGroup');
+   wgpuRenderBundleEncoderPushDebugGroup := GetProcAddress(vLib, 'wgpuRenderBundleEncoderPushDebugGroup');
+   wgpuRenderBundleEncoderPushDebugGroup2 := GetProcAddress(vLib, 'wgpuRenderBundleEncoderPushDebugGroup2');
+   wgpuRenderBundleEncoderSetBindGroup := GetProcAddress(vLib, 'wgpuRenderBundleEncoderSetBindGroup');
+   wgpuRenderBundleEncoderSetIndexBuffer := GetProcAddress(vLib, 'wgpuRenderBundleEncoderSetIndexBuffer');
+   wgpuRenderBundleEncoderSetLabel := GetProcAddress(vLib, 'wgpuRenderBundleEncoderSetLabel');
+   wgpuRenderBundleEncoderSetLabel2 := GetProcAddress(vLib, 'wgpuRenderBundleEncoderSetLabel2');
+   wgpuRenderBundleEncoderSetPipeline := GetProcAddress(vLib, 'wgpuRenderBundleEncoderSetPipeline');
+   wgpuRenderBundleEncoderSetVertexBuffer := GetProcAddress(vLib, 'wgpuRenderBundleEncoderSetVertexBuffer');
+   wgpuRenderBundleEncoderAddRef := GetProcAddress(vLib, 'wgpuRenderBundleEncoderAddRef');
+   wgpuRenderBundleEncoderRelease := GetProcAddress(vLib, 'wgpuRenderBundleEncoderRelease');
+   wgpuRenderPassEncoderBeginOcclusionQuery := GetProcAddress(vLib, 'wgpuRenderPassEncoderBeginOcclusionQuery');
+   wgpuRenderPassEncoderDraw := GetProcAddress(vLib, 'wgpuRenderPassEncoderDraw');
+   wgpuRenderPassEncoderDrawIndexed := GetProcAddress(vLib, 'wgpuRenderPassEncoderDrawIndexed');
+   wgpuRenderPassEncoderDrawIndexedIndirect := GetProcAddress(vLib, 'wgpuRenderPassEncoderDrawIndexedIndirect');
+   wgpuRenderPassEncoderDrawIndirect := GetProcAddress(vLib, 'wgpuRenderPassEncoderDrawIndirect');
+   wgpuRenderPassEncoderEnd := GetProcAddress(vLib, 'wgpuRenderPassEncoderEnd');
+   wgpuRenderPassEncoderEndOcclusionQuery := GetProcAddress(vLib, 'wgpuRenderPassEncoderEndOcclusionQuery');
+   wgpuRenderPassEncoderExecuteBundles := GetProcAddress(vLib, 'wgpuRenderPassEncoderExecuteBundles');
+   wgpuRenderPassEncoderInsertDebugMarker := GetProcAddress(vLib, 'wgpuRenderPassEncoderInsertDebugMarker');
+   wgpuRenderPassEncoderInsertDebugMarker2 := GetProcAddress(vLib, 'wgpuRenderPassEncoderInsertDebugMarker2');
+   wgpuRenderPassEncoderMultiDrawIndexedIndirect := GetProcAddress(vLib, 'wgpuRenderPassEncoderMultiDrawIndexedIndirect');
+   wgpuRenderPassEncoderMultiDrawIndirect := GetProcAddress(vLib, 'wgpuRenderPassEncoderMultiDrawIndirect');
+   wgpuRenderPassEncoderPixelLocalStorageBarrier := GetProcAddress(vLib, 'wgpuRenderPassEncoderPixelLocalStorageBarrier');
+   wgpuRenderPassEncoderPopDebugGroup := GetProcAddress(vLib, 'wgpuRenderPassEncoderPopDebugGroup');
+   wgpuRenderPassEncoderPushDebugGroup := GetProcAddress(vLib, 'wgpuRenderPassEncoderPushDebugGroup');
+   wgpuRenderPassEncoderPushDebugGroup2 := GetProcAddress(vLib, 'wgpuRenderPassEncoderPushDebugGroup2');
+   wgpuRenderPassEncoderSetBindGroup := GetProcAddress(vLib, 'wgpuRenderPassEncoderSetBindGroup');
+   wgpuRenderPassEncoderSetBlendConstant := GetProcAddress(vLib, 'wgpuRenderPassEncoderSetBlendConstant');
+   wgpuRenderPassEncoderSetIndexBuffer := GetProcAddress(vLib, 'wgpuRenderPassEncoderSetIndexBuffer');
+   wgpuRenderPassEncoderSetLabel := GetProcAddress(vLib, 'wgpuRenderPassEncoderSetLabel');
+   wgpuRenderPassEncoderSetLabel2 := GetProcAddress(vLib, 'wgpuRenderPassEncoderSetLabel2');
+   wgpuRenderPassEncoderSetPipeline := GetProcAddress(vLib, 'wgpuRenderPassEncoderSetPipeline');
+   wgpuRenderPassEncoderSetScissorRect := GetProcAddress(vLib, 'wgpuRenderPassEncoderSetScissorRect');
+   wgpuRenderPassEncoderSetStencilReference := GetProcAddress(vLib, 'wgpuRenderPassEncoderSetStencilReference');
+   wgpuRenderPassEncoderSetVertexBuffer := GetProcAddress(vLib, 'wgpuRenderPassEncoderSetVertexBuffer');
+   wgpuRenderPassEncoderSetViewport := GetProcAddress(vLib, 'wgpuRenderPassEncoderSetViewport');
+   wgpuRenderPassEncoderWriteTimestamp := GetProcAddress(vLib, 'wgpuRenderPassEncoderWriteTimestamp');
+   wgpuRenderPassEncoderAddRef := GetProcAddress(vLib, 'wgpuRenderPassEncoderAddRef');
+   wgpuRenderPassEncoderRelease := GetProcAddress(vLib, 'wgpuRenderPassEncoderRelease');
+   wgpuRenderPipelineGetBindGroupLayout := GetProcAddress(vLib, 'wgpuRenderPipelineGetBindGroupLayout');
+   wgpuRenderPipelineSetLabel := GetProcAddress(vLib, 'wgpuRenderPipelineSetLabel');
+   wgpuRenderPipelineSetLabel2 := GetProcAddress(vLib, 'wgpuRenderPipelineSetLabel2');
+   wgpuRenderPipelineAddRef := GetProcAddress(vLib, 'wgpuRenderPipelineAddRef');
+   wgpuRenderPipelineRelease := GetProcAddress(vLib, 'wgpuRenderPipelineRelease');
+   wgpuSamplerSetLabel := GetProcAddress(vLib, 'wgpuSamplerSetLabel');
+   wgpuSamplerSetLabel2 := GetProcAddress(vLib, 'wgpuSamplerSetLabel2');
+   wgpuSamplerAddRef := GetProcAddress(vLib, 'wgpuSamplerAddRef');
+   wgpuSamplerRelease := GetProcAddress(vLib, 'wgpuSamplerRelease');
+   wgpuShaderModuleGetCompilationInfo := GetProcAddress(vLib, 'wgpuShaderModuleGetCompilationInfo');
+   wgpuShaderModuleGetCompilationInfo2 := GetProcAddress(vLib, 'wgpuShaderModuleGetCompilationInfo2');
+   wgpuShaderModuleGetCompilationInfoF := GetProcAddress(vLib, 'wgpuShaderModuleGetCompilationInfoF');
+   wgpuShaderModuleSetLabel := GetProcAddress(vLib, 'wgpuShaderModuleSetLabel');
+   wgpuShaderModuleSetLabel2 := GetProcAddress(vLib, 'wgpuShaderModuleSetLabel2');
+   wgpuShaderModuleAddRef := GetProcAddress(vLib, 'wgpuShaderModuleAddRef');
+   wgpuShaderModuleRelease := GetProcAddress(vLib, 'wgpuShaderModuleRelease');
+   wgpuSharedBufferMemoryBeginAccess := GetProcAddress(vLib, 'wgpuSharedBufferMemoryBeginAccess');
+   wgpuSharedBufferMemoryCreateBuffer := GetProcAddress(vLib, 'wgpuSharedBufferMemoryCreateBuffer');
+   wgpuSharedBufferMemoryEndAccess := GetProcAddress(vLib, 'wgpuSharedBufferMemoryEndAccess');
+   wgpuSharedBufferMemoryGetProperties := GetProcAddress(vLib, 'wgpuSharedBufferMemoryGetProperties');
+   wgpuSharedBufferMemoryIsDeviceLost := GetProcAddress(vLib, 'wgpuSharedBufferMemoryIsDeviceLost');
+   wgpuSharedBufferMemorySetLabel := GetProcAddress(vLib, 'wgpuSharedBufferMemorySetLabel');
+   wgpuSharedBufferMemorySetLabel2 := GetProcAddress(vLib, 'wgpuSharedBufferMemorySetLabel2');
+   wgpuSharedBufferMemoryAddRef := GetProcAddress(vLib, 'wgpuSharedBufferMemoryAddRef');
+   wgpuSharedBufferMemoryRelease := GetProcAddress(vLib, 'wgpuSharedBufferMemoryRelease');
+   wgpuSharedFenceExportInfo := GetProcAddress(vLib, 'wgpuSharedFenceExportInfo');
+   wgpuSharedFenceAddRef := GetProcAddress(vLib, 'wgpuSharedFenceAddRef');
+   wgpuSharedFenceRelease := GetProcAddress(vLib, 'wgpuSharedFenceRelease');
+   wgpuSharedTextureMemoryBeginAccess := GetProcAddress(vLib, 'wgpuSharedTextureMemoryBeginAccess');
+   wgpuSharedTextureMemoryCreateTexture := GetProcAddress(vLib, 'wgpuSharedTextureMemoryCreateTexture');
+   wgpuSharedTextureMemoryEndAccess := GetProcAddress(vLib, 'wgpuSharedTextureMemoryEndAccess');
+   wgpuSharedTextureMemoryGetProperties := GetProcAddress(vLib, 'wgpuSharedTextureMemoryGetProperties');
+   wgpuSharedTextureMemoryIsDeviceLost := GetProcAddress(vLib, 'wgpuSharedTextureMemoryIsDeviceLost');
+   wgpuSharedTextureMemorySetLabel := GetProcAddress(vLib, 'wgpuSharedTextureMemorySetLabel');
+   wgpuSharedTextureMemorySetLabel2 := GetProcAddress(vLib, 'wgpuSharedTextureMemorySetLabel2');
+   wgpuSharedTextureMemoryAddRef := GetProcAddress(vLib, 'wgpuSharedTextureMemoryAddRef');
+   wgpuSharedTextureMemoryRelease := GetProcAddress(vLib, 'wgpuSharedTextureMemoryRelease');
+   wgpuSurfaceConfigure := GetProcAddress(vLib, 'wgpuSurfaceConfigure');
+   wgpuSurfaceGetCapabilities := GetProcAddress(vLib, 'wgpuSurfaceGetCapabilities');
+   wgpuSurfaceGetCurrentTexture := GetProcAddress(vLib, 'wgpuSurfaceGetCurrentTexture');
+   wgpuSurfaceGetPreferredFormat := GetProcAddress(vLib, 'wgpuSurfaceGetPreferredFormat');
+   wgpuSurfacePresent := GetProcAddress(vLib, 'wgpuSurfacePresent');
+   wgpuSurfaceSetLabel := GetProcAddress(vLib, 'wgpuSurfaceSetLabel');
+   wgpuSurfaceSetLabel2 := GetProcAddress(vLib, 'wgpuSurfaceSetLabel2');
+   wgpuSurfaceUnconfigure := GetProcAddress(vLib, 'wgpuSurfaceUnconfigure');
+   wgpuSurfaceAddRef := GetProcAddress(vLib, 'wgpuSurfaceAddRef');
+   wgpuSurfaceRelease := GetProcAddress(vLib, 'wgpuSurfaceRelease');
+   wgpuSwapChainGetCurrentTexture := GetProcAddress(vLib, 'wgpuSwapChainGetCurrentTexture');
+   wgpuSwapChainGetCurrentTextureView := GetProcAddress(vLib, 'wgpuSwapChainGetCurrentTextureView');
+   wgpuSwapChainPresent := GetProcAddress(vLib, 'wgpuSwapChainPresent');
+   wgpuSwapChainAddRef := GetProcAddress(vLib, 'wgpuSwapChainAddRef');
+   wgpuSwapChainRelease := GetProcAddress(vLib, 'wgpuSwapChainRelease');
+   wgpuTextureCreateErrorView := GetProcAddress(vLib, 'wgpuTextureCreateErrorView');
+   wgpuTextureCreateView := GetProcAddress(vLib, 'wgpuTextureCreateView');
+   wgpuTextureDestroy := GetProcAddress(vLib, 'wgpuTextureDestroy');
+   wgpuTextureGetDepthOrArrayLayers := GetProcAddress(vLib, 'wgpuTextureGetDepthOrArrayLayers');
+   wgpuTextureGetDimension := GetProcAddress(vLib, 'wgpuTextureGetDimension');
+   wgpuTextureGetFormat := GetProcAddress(vLib, 'wgpuTextureGetFormat');
+   wgpuTextureGetHeight := GetProcAddress(vLib, 'wgpuTextureGetHeight');
+   wgpuTextureGetMipLevelCount := GetProcAddress(vLib, 'wgpuTextureGetMipLevelCount');
+   wgpuTextureGetSampleCount := GetProcAddress(vLib, 'wgpuTextureGetSampleCount');
+   wgpuTextureGetUsage := GetProcAddress(vLib, 'wgpuTextureGetUsage');
+   wgpuTextureGetWidth := GetProcAddress(vLib, 'wgpuTextureGetWidth');
+   wgpuTextureSetLabel := GetProcAddress(vLib, 'wgpuTextureSetLabel');
+   wgpuTextureSetLabel2 := GetProcAddress(vLib, 'wgpuTextureSetLabel2');
+   wgpuTextureAddRef := GetProcAddress(vLib, 'wgpuTextureAddRef');
+   wgpuTextureRelease := GetProcAddress(vLib, 'wgpuTextureRelease');
+   wgpuTextureViewSetLabel := GetProcAddress(vLib, 'wgpuTextureViewSetLabel');
+   wgpuTextureViewSetLabel2 := GetProcAddress(vLib, 'wgpuTextureViewSetLabel2');
+   wgpuTextureViewAddRef := GetProcAddress(vLib, 'wgpuTextureViewAddRef');
+   wgpuTextureViewRelease := GetProcAddress(vLib, 'wgpuTextureViewRelease');
+end;
 
 end.

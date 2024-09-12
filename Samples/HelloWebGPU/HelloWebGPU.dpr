@@ -472,6 +472,7 @@ end;
 
 begin
    try
+      Load_webgpu_Library('webgpu_dawn.dll');
       InitializeWindow;
       InitializeWebGPU;
       CreateBuffers;
