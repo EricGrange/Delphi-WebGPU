@@ -130,7 +130,6 @@ typedef struct WGPUTextureViewImpl* WGPUTextureView WGPU_OBJECT_ATTRIBUTE;
 // Structure forward declarations
 struct WGPUINTERNAL__HAVE_EMDAWNWEBGPU_HEADER;
 struct WGPUAdapterInfo;
-struct WGPUAdapterProperties;
 struct WGPUAdapterPropertiesD3D;
 struct WGPUAdapterPropertiesVk;
 struct WGPUBindGroupEntry;
@@ -1259,34 +1258,7 @@ typedef struct WGPUAdapterInfo {
     /*.compatibilityMode=*/false WGPU_COMMA \
 })
 
-typedef struct WGPUAdapterProperties {
-    WGPUChainedStructOut * nextInChain;
-    uint32_t vendorID;
-    char const * vendorName;
-    char const * architecture;
-    uint32_t deviceID;
-    char const * name;
-    char const * driverDescription;
-    WGPUAdapterType adapterType;
-    WGPUBackendType backendType;
-    WGPUBool compatibilityMode;
-} WGPUAdapterProperties WGPU_STRUCTURE_ATTRIBUTE;
-
-#define WGPU_ADAPTER_PROPERTIES_INIT WGPU_MAKE_INIT_STRUCT(WGPUAdapterProperties, { \
-    /*.nextInChain=*/nullptr WGPU_COMMA \
-    /*.vendorID=*/{} WGPU_COMMA \
-    /*.vendorName=*/nullptr WGPU_COMMA \
-    /*.architecture=*/nullptr WGPU_COMMA \
-    /*.deviceID=*/{} WGPU_COMMA \
-    /*.name=*/nullptr WGPU_COMMA \
-    /*.driverDescription=*/nullptr WGPU_COMMA \
-    /*.adapterType=*/{} WGPU_COMMA \
-    /*.backendType=*/{} WGPU_COMMA \
-    /*.compatibilityMode=*/false WGPU_COMMA \
-})
-
 // Can be chained in WGPUAdapterInfo
-// Can be chained in WGPUAdapterProperties
 typedef struct WGPUAdapterPropertiesD3D {
     WGPUChainedStructOut chain;
     uint32_t shaderModel;
@@ -1298,7 +1270,6 @@ typedef struct WGPUAdapterPropertiesD3D {
 })
 
 // Can be chained in WGPUAdapterInfo
-// Can be chained in WGPUAdapterProperties
 typedef struct WGPUAdapterPropertiesVk {
     WGPUChainedStructOut chain;
     uint32_t driverVersion;
@@ -1575,7 +1546,6 @@ typedef struct WGPUDawnWGSLBlocklist {
 })
 
 // Can be chained in WGPUAdapterInfo
-// Can be chained in WGPUAdapterProperties
 typedef struct WGPUDawnAdapterPropertiesPowerPreference {
     WGPUChainedStructOut chain;
     WGPUPowerPreference powerPreference;
@@ -2997,7 +2967,6 @@ typedef struct WGPUAHardwareBufferProperties {
 })
 
 // Can be chained in WGPUAdapterInfo
-// Can be chained in WGPUAdapterProperties
 typedef struct WGPUAdapterPropertiesMemoryHeaps {
     WGPUChainedStructOut chain;
     size_t heapCount;
@@ -3600,7 +3569,6 @@ extern "C" {
 #if !defined(WGPU_SKIP_PROCS)
 
 typedef void (*WGPUProcAdapterInfoFreeMembers)(WGPUAdapterInfo value) WGPU_FUNCTION_ATTRIBUTE;
-typedef void (*WGPUProcAdapterPropertiesFreeMembers)(WGPUAdapterProperties value) WGPU_FUNCTION_ATTRIBUTE;
 typedef void (*WGPUProcAdapterPropertiesMemoryHeapsFreeMembers)(WGPUAdapterPropertiesMemoryHeaps value) WGPU_FUNCTION_ATTRIBUTE;
 typedef WGPUInstance (*WGPUProcCreateInstance)(WGPUInstanceDescriptor const * descriptor) WGPU_FUNCTION_ATTRIBUTE;
 typedef void (*WGPUProcDrmFormatCapabilitiesFreeMembers)(WGPUDrmFormatCapabilities value) WGPU_FUNCTION_ATTRIBUTE;
@@ -3618,7 +3586,6 @@ typedef WGPUStatus (*WGPUProcAdapterGetFormatCapabilities)(WGPUAdapter adapter, 
 typedef WGPUStatus (*WGPUProcAdapterGetInfo)(WGPUAdapter adapter, WGPUAdapterInfo * info) WGPU_FUNCTION_ATTRIBUTE;
 typedef WGPUInstance (*WGPUProcAdapterGetInstance)(WGPUAdapter adapter) WGPU_FUNCTION_ATTRIBUTE;
 typedef WGPUStatus (*WGPUProcAdapterGetLimits)(WGPUAdapter adapter, WGPUSupportedLimits * limits) WGPU_FUNCTION_ATTRIBUTE;
-typedef WGPUStatus (*WGPUProcAdapterGetProperties)(WGPUAdapter adapter, WGPUAdapterProperties * properties) WGPU_FUNCTION_ATTRIBUTE;
 typedef WGPUBool (*WGPUProcAdapterHasFeature)(WGPUAdapter adapter, WGPUFeatureName feature) WGPU_FUNCTION_ATTRIBUTE;
 typedef void (*WGPUProcAdapterRequestDevice)(WGPUAdapter adapter, WGPU_NULLABLE WGPUDeviceDescriptor const * descriptor, WGPURequestDeviceCallback callback, void * userdata) WGPU_FUNCTION_ATTRIBUTE;
 typedef WGPUFuture (*WGPUProcAdapterRequestDevice2)(WGPUAdapter adapter, WGPU_NULLABLE WGPUDeviceDescriptor const * options, WGPURequestDeviceCallbackInfo2 callbackInfo) WGPU_FUNCTION_ATTRIBUTE;
@@ -3967,7 +3934,6 @@ typedef void (*WGPUProcTextureViewRelease)(WGPUTextureView textureView) WGPU_FUN
 #if !defined(WGPU_SKIP_DECLARATIONS)
 
 WGPU_EXPORT void wgpuAdapterInfoFreeMembers(WGPUAdapterInfo value) WGPU_FUNCTION_ATTRIBUTE;
-WGPU_EXPORT void wgpuAdapterPropertiesFreeMembers(WGPUAdapterProperties value) WGPU_FUNCTION_ATTRIBUTE;
 WGPU_EXPORT void wgpuAdapterPropertiesMemoryHeapsFreeMembers(WGPUAdapterPropertiesMemoryHeaps value) WGPU_FUNCTION_ATTRIBUTE;
 WGPU_EXPORT WGPUInstance wgpuCreateInstance(WGPU_NULLABLE WGPUInstanceDescriptor const * descriptor) WGPU_FUNCTION_ATTRIBUTE;
 WGPU_EXPORT void wgpuDrmFormatCapabilitiesFreeMembers(WGPUDrmFormatCapabilities value) WGPU_FUNCTION_ATTRIBUTE;
@@ -3985,7 +3951,6 @@ WGPU_EXPORT WGPUStatus wgpuAdapterGetFormatCapabilities(WGPUAdapter adapter, WGP
 WGPU_EXPORT WGPUStatus wgpuAdapterGetInfo(WGPUAdapter adapter, WGPUAdapterInfo * info) WGPU_FUNCTION_ATTRIBUTE;
 WGPU_EXPORT WGPUInstance wgpuAdapterGetInstance(WGPUAdapter adapter) WGPU_FUNCTION_ATTRIBUTE;
 WGPU_EXPORT WGPUStatus wgpuAdapterGetLimits(WGPUAdapter adapter, WGPUSupportedLimits * limits) WGPU_FUNCTION_ATTRIBUTE;
-WGPU_EXPORT WGPUStatus wgpuAdapterGetProperties(WGPUAdapter adapter, WGPUAdapterProperties * properties) WGPU_FUNCTION_ATTRIBUTE;
 WGPU_EXPORT WGPUBool wgpuAdapterHasFeature(WGPUAdapter adapter, WGPUFeatureName feature) WGPU_FUNCTION_ATTRIBUTE;
 WGPU_EXPORT void wgpuAdapterRequestDevice(WGPUAdapter adapter, WGPU_NULLABLE WGPUDeviceDescriptor const * descriptor, WGPURequestDeviceCallback callback, void * userdata) WGPU_FUNCTION_ATTRIBUTE;
 WGPU_EXPORT WGPUFuture wgpuAdapterRequestDevice2(WGPUAdapter adapter, WGPU_NULLABLE WGPUDeviceDescriptor const * options, WGPURequestDeviceCallbackInfo2 callbackInfo) WGPU_FUNCTION_ATTRIBUTE;

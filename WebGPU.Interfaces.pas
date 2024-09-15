@@ -27,7 +27,6 @@ type
       function GetInfo(const aInfo: PWGPUAdapterInfo): TWGPUStatus;
       function GetInstance: TWGPUInstance;
       function GetLimits(const aLimits: PWGPUSupportedLimits): TWGPUStatus;
-      function GetProperties(const aProperties: PWGPUAdapterProperties): TWGPUStatus;
       function HasFeature(const aFeature: TWGPUFeatureName): TWGPUBool;
       procedure RequestDevice(const aDescriptor: TWGPUDeviceDescriptor; const aCallback: TWGPURequestDeviceCallback; const aUserdata: Pointer);
       function RequestDevice2(const aOptions: TWGPUDeviceDescriptor; const aCallbackInfo: TWGPURequestDeviceCallbackInfo2): TWGPUFuture;
@@ -408,7 +407,6 @@ type TiwgpuAdapter = class(TInterfacedObject, IWGPUAdapter)
    function GetInfo(const aInfo: PWGPUAdapterInfo): TWGPUStatus;
    function GetInstance: TWGPUInstance;
    function GetLimits(const aLimits: PWGPUSupportedLimits): TWGPUStatus;
-   function GetProperties(const aProperties: PWGPUAdapterProperties): TWGPUStatus;
    function HasFeature(const aFeature: TWGPUFeatureName): TWGPUBool;
    procedure RequestDevice(const aDescriptor: TWGPUDeviceDescriptor; const aCallback: TWGPURequestDeviceCallback; const aUserdata: Pointer);
    function RequestDevice2(const aOptions: TWGPUDeviceDescriptor; const aCallbackInfo: TWGPURequestDeviceCallbackInfo2): TWGPUFuture;
@@ -460,11 +458,6 @@ end;
 function TiwgpuAdapter.GetLimits(const aLimits: PWGPUSupportedLimits): TWGPUStatus;
 begin
    Result := wgpuAdapterGetLimits(FHandle, aLimits);
-end;
-
-function TiwgpuAdapter.GetProperties(const aProperties: PWGPUAdapterProperties): TWGPUStatus;
-begin
-   Result := wgpuAdapterGetProperties(FHandle, aProperties);
 end;
 
 function TiwgpuAdapter.HasFeature(const aFeature: TWGPUFeatureName): TWGPUBool;

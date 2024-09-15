@@ -106,8 +106,8 @@ const
 type
    // Forward declarations
    PPUTF8Char = ^PUTF8Char;
-   PUInt8 = ^UInt8;
    PUInt32 = ^UInt32;
+   PUInt8 = ^UInt8;
    PUInt64 = ^UInt64;
    PWGPUAdapterImpl = Pointer;
    PPWGPUAdapterImpl = ^PWGPUAdapterImpl;
@@ -177,7 +177,6 @@ type
    PWGPUUncapturedErrorCallbackInfo2 = ^TWGPUUncapturedErrorCallbackInfo2;
    PWGPUINTERNAL__HAVE_EMDAWNWEBGPU_HEADER = ^TWGPUINTERNAL__HAVE_EMDAWNWEBGPU_HEADER;
    PWGPUAdapterInfo = ^TWGPUAdapterInfo;
-   PWGPUAdapterProperties = ^TWGPUAdapterProperties;
    PWGPUAdapterPropertiesD3D = ^TWGPUAdapterPropertiesD3D;
    PWGPUAdapterPropertiesVk = ^TWGPUAdapterPropertiesVk;
    PWGPUBindGroupEntry = ^TWGPUBindGroupEntry;
@@ -336,6 +335,8 @@ type
    PWGPUFragmentState = ^TWGPUFragmentState;
    PWGPURenderPipelineDescriptor = ^TWGPURenderPipelineDescriptor;
 
+   ptrdiff_t = Int64;
+   size_t = UInt64;
    wchar_t = Word;
    wint_t = Word;
    int8_t = UTF8Char;
@@ -369,8 +370,6 @@ type
    uintptr_t = Cardinal;
    intmax_t = Int64;
    uintmax_t = UInt64;
-   ptrdiff_t = Int64;
-   size_t = UInt64;
    TWGPUFlags = UInt64;
    TWGPUBool = UInt32;
    TWGPUAdapter = Pointer;
@@ -1309,19 +1308,6 @@ type
       adapterType: TWGPUAdapterType;
       vendorID: UInt32;
       deviceID: UInt32;
-      compatibilityMode: TWGPUBool;
-   end;
-
-   TWGPUAdapterProperties = record
-      nextInChain: PWGPUChainedStructOut;
-      vendorID: UInt32;
-      vendorName: PUTF8Char;
-      architecture: PUTF8Char;
-      deviceID: UInt32;
-      name: PUTF8Char;
-      driverDescription: PUTF8Char;
-      adapterType: TWGPUAdapterType;
-      backendType: TWGPUBackendType;
       compatibilityMode: TWGPUBool;
    end;
 
@@ -2437,7 +2423,6 @@ type
    WGPUSurfaceDescriptorFromXlibWindow = TWGPUSurfaceSourceXlibWindow;
 
    TWGPUProcAdapterInfoFreeMembers = procedure(value: TWGPUAdapterInfo); cdecl;
-   TWGPUProcAdapterPropertiesFreeMembers = procedure(value: TWGPUAdapterProperties); cdecl;
    TWGPUProcAdapterPropertiesMemoryHeapsFreeMembers = procedure(value: TWGPUAdapterPropertiesMemoryHeaps); cdecl;
    TWGPUProcCreateInstance = function(const descriptor: PWGPUInstanceDescriptor): TWGPUInstance; cdecl;
    TWGPUProcDrmFormatCapabilitiesFreeMembers = procedure(value: TWGPUDrmFormatCapabilities); cdecl;
@@ -2453,7 +2438,6 @@ type
    TWGPUProcAdapterGetInfo = function(adapter: TWGPUAdapter; info: PWGPUAdapterInfo): TWGPUStatus; cdecl;
    TWGPUProcAdapterGetInstance = function(adapter: TWGPUAdapter): TWGPUInstance; cdecl;
    TWGPUProcAdapterGetLimits = function(adapter: TWGPUAdapter; limits: PWGPUSupportedLimits): TWGPUStatus; cdecl;
-   TWGPUProcAdapterGetProperties = function(adapter: TWGPUAdapter; properties: PWGPUAdapterProperties): TWGPUStatus; cdecl;
    TWGPUProcAdapterHasFeature = function(adapter: TWGPUAdapter; feature: TWGPUFeatureName): TWGPUBool; cdecl;
    TWGPUProcAdapterRequestDevice = procedure(adapter: TWGPUAdapter; const descriptor: PWGPUDeviceDescriptor; callback: TWGPURequestDeviceCallback; userdata: Pointer); cdecl;
    TWGPUProcAdapterRequestDevice2 = function(adapter: TWGPUAdapter; const options: PWGPUDeviceDescriptor; callbackInfo: TWGPURequestDeviceCallbackInfo2): TWGPUFuture; cdecl;
@@ -2784,7 +2768,6 @@ const
 
 var
    wgpuAdapterInfoFreeMembers : procedure(value: TWGPUAdapterInfo); cdecl;
-   wgpuAdapterPropertiesFreeMembers : procedure(value: TWGPUAdapterProperties); cdecl;
    wgpuAdapterPropertiesMemoryHeapsFreeMembers : procedure(value: TWGPUAdapterPropertiesMemoryHeaps); cdecl;
    wgpuCreateInstance : function(const descriptor: PWGPUInstanceDescriptor): TWGPUInstance; cdecl;
    wgpuDrmFormatCapabilitiesFreeMembers : procedure(value: TWGPUDrmFormatCapabilities); cdecl;
@@ -2800,7 +2783,6 @@ var
    wgpuAdapterGetInfo : function(adapter: TWGPUAdapter; info: PWGPUAdapterInfo): TWGPUStatus; cdecl;
    wgpuAdapterGetInstance : function(adapter: TWGPUAdapter): TWGPUInstance; cdecl;
    wgpuAdapterGetLimits : function(adapter: TWGPUAdapter; limits: PWGPUSupportedLimits): TWGPUStatus; cdecl;
-   wgpuAdapterGetProperties : function(adapter: TWGPUAdapter; properties: PWGPUAdapterProperties): TWGPUStatus; cdecl;
    wgpuAdapterHasFeature : function(adapter: TWGPUAdapter; feature: TWGPUFeatureName): TWGPUBool; cdecl;
    wgpuAdapterRequestDevice : procedure(adapter: TWGPUAdapter; const descriptor: PWGPUDeviceDescriptor; callback: TWGPURequestDeviceCallback; userdata: Pointer); cdecl;
    wgpuAdapterRequestDevice2 : function(adapter: TWGPUAdapter; const options: PWGPUDeviceDescriptor; callbackInfo: TWGPURequestDeviceCallbackInfo2): TWGPUFuture; cdecl;
@@ -3104,7 +3086,6 @@ begin
    if vLib = 0 then RaiseLastOSError;
 
    wgpuAdapterInfoFreeMembers := GetProcAddress(vLib, 'wgpuAdapterInfoFreeMembers');
-   wgpuAdapterPropertiesFreeMembers := GetProcAddress(vLib, 'wgpuAdapterPropertiesFreeMembers');
    wgpuAdapterPropertiesMemoryHeapsFreeMembers := GetProcAddress(vLib, 'wgpuAdapterPropertiesMemoryHeapsFreeMembers');
    wgpuCreateInstance := GetProcAddress(vLib, 'wgpuCreateInstance');
    wgpuDrmFormatCapabilitiesFreeMembers := GetProcAddress(vLib, 'wgpuDrmFormatCapabilitiesFreeMembers');
@@ -3120,7 +3101,6 @@ begin
    wgpuAdapterGetInfo := GetProcAddress(vLib, 'wgpuAdapterGetInfo');
    wgpuAdapterGetInstance := GetProcAddress(vLib, 'wgpuAdapterGetInstance');
    wgpuAdapterGetLimits := GetProcAddress(vLib, 'wgpuAdapterGetLimits');
-   wgpuAdapterGetProperties := GetProcAddress(vLib, 'wgpuAdapterGetProperties');
    wgpuAdapterHasFeature := GetProcAddress(vLib, 'wgpuAdapterHasFeature');
    wgpuAdapterRequestDevice := GetProcAddress(vLib, 'wgpuAdapterRequestDevice');
    wgpuAdapterRequestDevice2 := GetProcAddress(vLib, 'wgpuAdapterRequestDevice2');
