@@ -8,24 +8,42 @@ uses Classes, WebGPU;
 
 type
 
+   IWGPUAdapter = interface;
+   IWGPUBindGroup = interface;
+   IWGPUBindGroupLayout = interface;
+   IWGPUBuffer = interface;
+   IWGPUCommandBuffer = interface;
+   IWGPUCommandEncoder = interface;
+   IWGPUComputePassEncoder = interface;
    IWGPUComputePipeline = interface;
    IWGPUDevice = interface;
+   IWGPUExternalTexture = interface;
    IWGPUInstance = interface;
-   IWGPUComputePassEncoder = interface;
+   IWGPUPipelineLayout = interface;
+   IWGPUQuerySet = interface;
+   IWGPUQueue = interface;
+   IWGPURenderBundle = interface;
+   IWGPURenderBundleEncoder = interface;
    IWGPURenderPassEncoder = interface;
    IWGPURenderPipeline = interface;
-   IWGPUQuerySet = interface;
+   IWGPUSampler = interface;
+   IWGPUShaderModule = interface;
+   IWGPUSharedBufferMemory = interface;
+   IWGPUSharedFence = interface;
+   IWGPUSharedTextureMemory = interface;
    IWGPUSurface = interface;
+   IWGPUSwapChain = interface;
    IWGPUTexture = interface;
+   IWGPUTextureView = interface;
 
    IWGPUAdapter = interface
       ['{EF23B10E-8B6E-2044-D3F0-0FC89A2141C9}']
       function GetHandle: TWGPUAdapter;
-      function CreateDevice(const aDescriptor: TWGPUDeviceDescriptor): TWGPUDevice;
+      function CreateDevice(const aDescriptor: TWGPUDeviceDescriptor): IWGPUDevice;
       function EnumerateFeatures(const aFeatures: PWGPUFeatureName): NativeUInt;
       function GetFormatCapabilities(const aFormat: TWGPUTextureFormat; const aCapabilities: PWGPUFormatCapabilities): TWGPUStatus;
       function GetInfo(const aInfo: PWGPUAdapterInfo): TWGPUStatus;
-      function GetInstance: TWGPUInstance;
+      function GetInstance: IWGPUInstance;
       function GetLimits(const aLimits: PWGPUSupportedLimits): TWGPUStatus;
       function HasFeature(const aFeature: TWGPUFeatureName): TWGPUBool;
       procedure RequestDevice(const aDescriptor: TWGPUDeviceDescriptor; const aCallback: TWGPURequestDeviceCallback; const aUserdata: Pointer);
@@ -73,14 +91,14 @@ type
    IWGPUCommandEncoder = interface
       ['{164CAC2F-76B4-7E3E-A25E-5EAE1600611F}']
       function GetHandle: TWGPUCommandEncoder;
-      function BeginComputePass(const aDescriptor: TWGPUComputePassDescriptor): TWGPUComputePassEncoder;
-      function BeginRenderPass(const aDescriptor: TWGPURenderPassDescriptor): TWGPURenderPassEncoder;
+      function BeginComputePass(const aDescriptor: TWGPUComputePassDescriptor): IWGPUComputePassEncoder;
+      function BeginRenderPass(const aDescriptor: TWGPURenderPassDescriptor): IWGPURenderPassEncoder;
       procedure ClearBuffer(const aBuffer: IWGPUBuffer; aOffset: UInt64; aSize: UInt64);
       procedure CopyBufferToBuffer(const aSource: IWGPUBuffer; aSourceOffset: UInt64; const aDestination: IWGPUBuffer; aDestinationOffset: UInt64; aSize: UInt64);
       procedure CopyBufferToTexture(const aSource: PWGPUImageCopyBuffer; const aDestination: PWGPUImageCopyTexture; const aCopySize: PWGPUExtent3D);
       procedure CopyTextureToBuffer(const aSource: PWGPUImageCopyTexture; const aDestination: PWGPUImageCopyBuffer; const aCopySize: PWGPUExtent3D);
       procedure CopyTextureToTexture(const aSource: PWGPUImageCopyTexture; const aDestination: PWGPUImageCopyTexture; const aCopySize: PWGPUExtent3D);
-      function Finish(const aDescriptor: TWGPUCommandBufferDescriptor): TWGPUCommandBuffer;
+      function Finish(const aDescriptor: PWGPUCommandBufferDescriptor): IWGPUCommandBuffer;
       procedure InjectValidationError(const aMessage: UTF8String);
       procedure InjectValidationError2(const aMessage: TWGPUStringView);
       procedure InsertDebugMarker(const aMarkerLabel: UTF8String);
@@ -116,7 +134,7 @@ type
    IWGPUComputePipeline = interface
       ['{D4CA07D2-FB2A-C067-A9E4-91F3403606A4}']
       function GetHandle: TWGPUComputePipeline;
-      function GetBindGroupLayout(aGroupIndex: UInt32): TWGPUBindGroupLayout;
+      function GetBindGroupLayout(aGroupIndex: UInt32): IWGPUBindGroupLayout;
       procedure SetLabel(const aLabel: UTF8String);
       procedure SetLabel2(const aLabel: TWGPUStringView);
    end;
@@ -126,43 +144,43 @@ type
       function GetHandle: TWGPUDevice;
       function GetProcAddress(const aProcName: UTF8String): TWGPUProc;
       function GetProcAddress2(const aProcName: TWGPUStringView): TWGPUProc;
-      function CreateBindGroup(const aDescriptor: TWGPUBindGroupDescriptor): TWGPUBindGroup;
-      function CreateBindGroupLayout(const aDescriptor: TWGPUBindGroupLayoutDescriptor): TWGPUBindGroupLayout;
-      function CreateBuffer(const aDescriptor: TWGPUBufferDescriptor): TWGPUBuffer;
-      function CreateCommandEncoder(const aDescriptor: TWGPUCommandEncoderDescriptor): TWGPUCommandEncoder;
-      function CreateComputePipeline(const aDescriptor: TWGPUComputePipelineDescriptor): TWGPUComputePipeline;
+      function CreateBindGroup(const aDescriptor: TWGPUBindGroupDescriptor): IWGPUBindGroup;
+      function CreateBindGroupLayout(const aDescriptor: TWGPUBindGroupLayoutDescriptor): IWGPUBindGroupLayout;
+      function CreateBuffer(const aDescriptor: TWGPUBufferDescriptor): IWGPUBuffer;
+      function CreateCommandEncoder(const aDescriptor: TWGPUCommandEncoderDescriptor): IWGPUCommandEncoder;
+      function CreateComputePipeline(const aDescriptor: TWGPUComputePipelineDescriptor): IWGPUComputePipeline;
       procedure CreateComputePipelineAsync(const aDescriptor: TWGPUComputePipelineDescriptor; const aCallback: TWGPUCreateComputePipelineAsyncCallback; const aUserdata: Pointer);
       function CreateComputePipelineAsync2(const aDescriptor: TWGPUComputePipelineDescriptor; const aCallbackInfo: TWGPUCreateComputePipelineAsyncCallbackInfo2): TWGPUFuture;
       function CreateComputePipelineAsyncF(const aDescriptor: TWGPUComputePipelineDescriptor; const aCallbackInfo: TWGPUCreateComputePipelineAsyncCallbackInfo): TWGPUFuture;
-      function CreateErrorBuffer(const aDescriptor: TWGPUBufferDescriptor): TWGPUBuffer;
-      function CreateErrorExternalTexture: TWGPUExternalTexture;
-      function CreateErrorShaderModule(const aDescriptor: TWGPUShaderModuleDescriptor; const aErrorMessage: UTF8String): TWGPUShaderModule;
-      function CreateErrorShaderModule2(const aDescriptor: TWGPUShaderModuleDescriptor; const aErrorMessage: TWGPUStringView): TWGPUShaderModule;
-      function CreateErrorTexture(const aDescriptor: TWGPUTextureDescriptor): TWGPUTexture;
-      function CreateExternalTexture(const aExternalTextureDescriptor: TWGPUExternalTextureDescriptor): TWGPUExternalTexture;
-      function CreatePipelineLayout(const aDescriptor: TWGPUPipelineLayoutDescriptor): TWGPUPipelineLayout;
-      function CreateQuerySet(const aDescriptor: TWGPUQuerySetDescriptor): TWGPUQuerySet;
-      function CreateRenderBundleEncoder(const aDescriptor: TWGPURenderBundleEncoderDescriptor): TWGPURenderBundleEncoder;
-      function CreateRenderPipeline(const aDescriptor: TWGPURenderPipelineDescriptor): TWGPURenderPipeline;
+      function CreateErrorBuffer(const aDescriptor: TWGPUBufferDescriptor): IWGPUBuffer;
+      function CreateErrorExternalTexture: IWGPUExternalTexture;
+      function CreateErrorShaderModule(const aDescriptor: TWGPUShaderModuleDescriptor; const aErrorMessage: UTF8String): IWGPUShaderModule;
+      function CreateErrorShaderModule2(const aDescriptor: TWGPUShaderModuleDescriptor; const aErrorMessage: TWGPUStringView): IWGPUShaderModule;
+      function CreateErrorTexture(const aDescriptor: TWGPUTextureDescriptor): IWGPUTexture;
+      function CreateExternalTexture(const aExternalTextureDescriptor: TWGPUExternalTextureDescriptor): IWGPUExternalTexture;
+      function CreatePipelineLayout(const aDescriptor: TWGPUPipelineLayoutDescriptor): IWGPUPipelineLayout;
+      function CreateQuerySet(const aDescriptor: TWGPUQuerySetDescriptor): IWGPUQuerySet;
+      function CreateRenderBundleEncoder(const aDescriptor: TWGPURenderBundleEncoderDescriptor): IWGPURenderBundleEncoder;
+      function CreateRenderPipeline(const aDescriptor: TWGPURenderPipelineDescriptor): IWGPURenderPipeline;
       procedure CreateRenderPipelineAsync(const aDescriptor: TWGPURenderPipelineDescriptor; const aCallback: TWGPUCreateRenderPipelineAsyncCallback; const aUserdata: Pointer);
       function CreateRenderPipelineAsync2(const aDescriptor: TWGPURenderPipelineDescriptor; const aCallbackInfo: TWGPUCreateRenderPipelineAsyncCallbackInfo2): TWGPUFuture;
       function CreateRenderPipelineAsyncF(const aDescriptor: TWGPURenderPipelineDescriptor; const aCallbackInfo: TWGPUCreateRenderPipelineAsyncCallbackInfo): TWGPUFuture;
-      function CreateSampler(const aDescriptor: TWGPUSamplerDescriptor): TWGPUSampler;
-      function CreateShaderModule(const aDescriptor: TWGPUShaderModuleDescriptor): TWGPUShaderModule;
-      function CreateSwapChain(const aSurface: IWGPUSurface; const aDescriptor: TWGPUSwapChainDescriptor): TWGPUSwapChain;
-      function CreateTexture(const aDescriptor: TWGPUTextureDescriptor): TWGPUTexture;
+      function CreateSampler(const aDescriptor: TWGPUSamplerDescriptor): IWGPUSampler;
+      function CreateShaderModule(const aDescriptor: TWGPUShaderModuleDescriptor): IWGPUShaderModule;
+      function CreateSwapChain(const aSurface: IWGPUSurface; const aDescriptor: TWGPUSwapChainDescriptor): IWGPUSwapChain;
+      function CreateTexture(const aDescriptor: TWGPUTextureDescriptor): IWGPUTexture;
       function EnumerateFeatures(const aFeatures: PWGPUFeatureName): NativeUInt;
       procedure ForceLoss(const aType: TWGPUDeviceLostReason; const aMessage: UTF8String);
       procedure ForceLoss2(const aType: TWGPUDeviceLostReason; const aMessage: TWGPUStringView);
       function GetAHardwareBufferProperties(const aHandle: Pointer; const aProperties: PWGPUAHardwareBufferProperties): TWGPUStatus;
-      function GetAdapter: TWGPUAdapter;
+      function GetAdapter: IWGPUAdapter;
       function GetLimits(const aLimits: PWGPUSupportedLimits): TWGPUStatus;
-      function GetQueue: TWGPUQueue;
+      function GetQueue: IWGPUQueue;
       function GetSupportedSurfaceUsage(const aSurface: IWGPUSurface): TWGPUTextureUsage;
       function HasFeature(const aFeature: TWGPUFeatureName): TWGPUBool;
-      function ImportSharedBufferMemory(const aDescriptor: TWGPUSharedBufferMemoryDescriptor): TWGPUSharedBufferMemory;
-      function ImportSharedFence(const aDescriptor: TWGPUSharedFenceDescriptor): TWGPUSharedFence;
-      function ImportSharedTextureMemory(const aDescriptor: TWGPUSharedTextureMemoryDescriptor): TWGPUSharedTextureMemory;
+      function ImportSharedBufferMemory(const aDescriptor: TWGPUSharedBufferMemoryDescriptor): IWGPUSharedBufferMemory;
+      function ImportSharedFence(const aDescriptor: TWGPUSharedFenceDescriptor): IWGPUSharedFence;
+      function ImportSharedTextureMemory(const aDescriptor: TWGPUSharedTextureMemoryDescriptor): IWGPUSharedTextureMemory;
       procedure InjectError(const aType: TWGPUErrorType; const aMessage: UTF8String);
       procedure InjectError2(const aType: TWGPUErrorType; const aMessage: TWGPUStringView);
       procedure PopErrorScope(const aOldCallback: TWGPUErrorCallback; const aUserdata: Pointer);
@@ -190,13 +208,13 @@ type
    IWGPUInstance = interface
       ['{F1B8469C-6F36-DB74-B653-F2D1B7538413}']
       function GetHandle: TWGPUInstance;
-      function CreateSurface(const aDescriptor: TWGPUSurfaceDescriptor): TWGPUSurface;
+      function CreateSurface(const aDescriptor: TWGPUSurfaceDescriptor): IWGPUSurface;
       function EnumerateWGSLLanguageFeatures(const aFeatures: PWGPUWGSLFeatureName): NativeUInt;
       function HasWGSLLanguageFeature(const aFeature: TWGPUWGSLFeatureName): TWGPUBool;
       procedure ProcessEvents;
-      procedure RequestAdapter(const aOptions: PWGPURequestAdapterOptions; const aCallback: TWGPURequestAdapterCallback; const aUserdata: Pointer);
-      function RequestAdapter2(const aOptions: PWGPURequestAdapterOptions; const aCallbackInfo: TWGPURequestAdapterCallbackInfo2): TWGPUFuture;
-      function RequestAdapterF(const aOptions: PWGPURequestAdapterOptions; const aCallbackInfo: TWGPURequestAdapterCallbackInfo): TWGPUFuture;
+      procedure RequestAdapter(const aOptions: TWGPURequestAdapterOptions; const aCallback: TWGPURequestAdapterCallback; const aUserdata: Pointer);
+      function RequestAdapter2(const aOptions: TWGPURequestAdapterOptions; const aCallbackInfo: TWGPURequestAdapterCallbackInfo2): TWGPUFuture;
+      function RequestAdapterF(const aOptions: TWGPURequestAdapterOptions; const aCallbackInfo: TWGPURequestAdapterCallbackInfo): TWGPUFuture;
       function WaitAny(aFutureCount: NativeUInt; const aFutures: PWGPUFutureWaitInfo; aTimeoutNS: UInt64): TWGPUWaitStatus;
    end;
 
@@ -219,8 +237,8 @@ type
    IWGPUQueue = interface
       ['{4CBE6E56-BD36-266F-EEF2-D54D52FE5869}']
       function GetHandle: TWGPUQueue;
-      procedure CopyExternalTextureForBrowser(const aSource: PWGPUImageCopyExternalTexture; const aDestination: PWGPUImageCopyTexture; const aCopySize: PWGPUExtent3D; const aOptions: PWGPUCopyTextureForBrowserOptions);
-      procedure CopyTextureForBrowser(const aSource: PWGPUImageCopyTexture; const aDestination: PWGPUImageCopyTexture; const aCopySize: PWGPUExtent3D; const aOptions: PWGPUCopyTextureForBrowserOptions);
+      procedure CopyExternalTextureForBrowser(const aSource: PWGPUImageCopyExternalTexture; const aDestination: PWGPUImageCopyTexture; const aCopySize: PWGPUExtent3D; const aOptions: TWGPUCopyTextureForBrowserOptions);
+      procedure CopyTextureForBrowser(const aSource: PWGPUImageCopyTexture; const aDestination: PWGPUImageCopyTexture; const aCopySize: PWGPUExtent3D; const aOptions: TWGPUCopyTextureForBrowserOptions);
       procedure OnSubmittedWorkDone(const aCallback: TWGPUQueueWorkDoneCallback; const aUserdata: Pointer);
       function OnSubmittedWorkDone2(const aCallbackInfo: TWGPUQueueWorkDoneCallbackInfo2): TWGPUFuture;
       function OnSubmittedWorkDoneF(const aCallbackInfo: TWGPUQueueWorkDoneCallbackInfo): TWGPUFuture;
@@ -245,7 +263,7 @@ type
       procedure DrawIndexed(aIndexCount: UInt32; aInstanceCount: UInt32; aFirstIndex: UInt32; const aBaseVertex: Int32; aFirstInstance: UInt32);
       procedure DrawIndexedIndirect(const aIndirectBuffer: IWGPUBuffer; aIndirectOffset: UInt64);
       procedure DrawIndirect(const aIndirectBuffer: IWGPUBuffer; aIndirectOffset: UInt64);
-      function Finish(const aDescriptor: TWGPURenderBundleDescriptor): TWGPURenderBundle;
+      function Finish(const aDescriptor: PWGPURenderBundleDescriptor): IWGPURenderBundle;
       procedure InsertDebugMarker(const aMarkerLabel: UTF8String);
       procedure InsertDebugMarker2(const aMarkerLabel: TWGPUStringView);
       procedure PopDebugGroup;
@@ -294,7 +312,7 @@ type
    IWGPURenderPipeline = interface
       ['{54B16051-8009-561C-74DD-9E4DB3461191}']
       function GetHandle: TWGPURenderPipeline;
-      function GetBindGroupLayout(aGroupIndex: UInt32): TWGPUBindGroupLayout;
+      function GetBindGroupLayout(aGroupIndex: UInt32): IWGPUBindGroupLayout;
       procedure SetLabel(const aLabel: UTF8String);
       procedure SetLabel2(const aLabel: TWGPUStringView);
    end;
@@ -320,7 +338,7 @@ type
       ['{E6D9BCD6-F3CC-C067-E33A-093C6D0FFBF5}']
       function GetHandle: TWGPUSharedBufferMemory;
       function BeginAccess(const aBuffer: IWGPUBuffer; const aDescriptor: TWGPUSharedBufferMemoryBeginAccessDescriptor): TWGPUStatus;
-      function CreateBuffer(const aDescriptor: TWGPUBufferDescriptor): TWGPUBuffer;
+      function CreateBuffer(const aDescriptor: TWGPUBufferDescriptor): IWGPUBuffer;
       function EndAccess(const aBuffer: IWGPUBuffer; const aDescriptor: PWGPUSharedBufferMemoryEndAccessState): TWGPUStatus;
       function GetProperties(const aProperties: PWGPUSharedBufferMemoryProperties): TWGPUStatus;
       function IsDeviceLost: TWGPUBool;
@@ -338,7 +356,7 @@ type
       ['{B5C272BE-10AD-2E36-346D-180B924B4AC6}']
       function GetHandle: TWGPUSharedTextureMemory;
       function BeginAccess(const aTexture: IWGPUTexture; const aDescriptor: TWGPUSharedTextureMemoryBeginAccessDescriptor): TWGPUStatus;
-      function CreateTexture(const aDescriptor: TWGPUTextureDescriptor): TWGPUTexture;
+      function CreateTexture(const aDescriptor: TWGPUTextureDescriptor): IWGPUTexture;
       function EndAccess(const aTexture: IWGPUTexture; const aDescriptor: PWGPUSharedTextureMemoryEndAccessState): TWGPUStatus;
       function GetProperties(const aProperties: PWGPUSharedTextureMemoryProperties): TWGPUStatus;
       function IsDeviceLost: TWGPUBool;
@@ -349,7 +367,7 @@ type
    IWGPUSurface = interface
       ['{8452B981-4E40-3147-AF59-71F11D12A43C}']
       function GetHandle: TWGPUSurface;
-      procedure Configure(const aConfig: PWGPUSurfaceConfiguration);
+      procedure Configure(const aConfig: TWGPUSurfaceConfiguration);
       function GetCapabilities(const aAdapter: IWGPUAdapter; const aCapabilities: PWGPUSurfaceCapabilities): TWGPUStatus;
       procedure GetCurrentTexture(const aSurfaceTexture: PWGPUSurfaceTexture);
       function GetPreferredFormat(const aAdapter: IWGPUAdapter): TWGPUTextureFormat;
@@ -362,16 +380,16 @@ type
    IWGPUSwapChain = interface
       ['{B04973B1-5BFA-1BB3-40F9-701E79FDF390}']
       function GetHandle: TWGPUSwapChain;
-      function GetCurrentTexture: TWGPUTexture;
-      function GetCurrentTextureView: TWGPUTextureView;
+      function GetCurrentTexture: IWGPUTexture;
+      function GetCurrentTextureView: IWGPUTextureView;
       procedure Present;
    end;
 
    IWGPUTexture = interface
       ['{13DB8189-BFB9-23F7-C715-19710FB0C5B6}']
       function GetHandle: TWGPUTexture;
-      function CreateErrorView(const aDescriptor: TWGPUTextureViewDescriptor): TWGPUTextureView;
-      function CreateView(const aDescriptor: TWGPUTextureViewDescriptor): TWGPUTextureView;
+      function CreateErrorView(const aDescriptor: TWGPUTextureViewDescriptor): IWGPUTextureView;
+      function CreateView(const aDescriptor: TWGPUTextureViewDescriptor): IWGPUTextureView;
       function GetDepthOrArrayLayers: UInt32;
       function GetDimension: TWGPUTextureDimension;
       function GetFormat: TWGPUTextureFormat;
@@ -391,27 +409,444 @@ type
       procedure SetLabel2(const aLabel: TWGPUStringView);
    end;
 
+   WGPUFactory = class sealed
+      public
+         // To create top level instance
+         class function CreateInstance(const aInstanceDescriptor : TWGPUInstanceDescriptor) : IWGPUInstance; static;
+         // To wrap entities received in request callbacks
+         class function WrapAdapter(const aAdapter : TWGPUAdapter) : IWGPUAdapter; static;
+         class function WrapDevice(const aDevice : TWGPUDevice) : IWGPUDevice; static;
+   end;
+
 implementation
 
-//
-// TiwgpuAdapter
-//
-type TiwgpuAdapter = class(TInterfacedObject, IWGPUAdapter)
-   FHandle: TWGPUAdapter;
-   constructor Create(const h: TWGPUAdapter);
-   destructor Destroy; override;
-   function GetHandle: TWGPUAdapter;
-   function CreateDevice(const aDescriptor: TWGPUDeviceDescriptor): TWGPUDevice;
-   function EnumerateFeatures(const aFeatures: PWGPUFeatureName): NativeUInt;
-   function GetFormatCapabilities(const aFormat: TWGPUTextureFormat; const aCapabilities: PWGPUFormatCapabilities): TWGPUStatus;
-   function GetInfo(const aInfo: PWGPUAdapterInfo): TWGPUStatus;
-   function GetInstance: TWGPUInstance;
-   function GetLimits(const aLimits: PWGPUSupportedLimits): TWGPUStatus;
-   function HasFeature(const aFeature: TWGPUFeatureName): TWGPUBool;
-   procedure RequestDevice(const aDescriptor: TWGPUDeviceDescriptor; const aCallback: TWGPURequestDeviceCallback; const aUserdata: Pointer);
-   function RequestDevice2(const aOptions: TWGPUDeviceDescriptor; const aCallbackInfo: TWGPURequestDeviceCallbackInfo2): TWGPUFuture;
-   function RequestDeviceF(const aOptions: TWGPUDeviceDescriptor; const aCallbackInfo: TWGPURequestDeviceCallbackInfo): TWGPUFuture;
-end;
+type
+   TiwgpuAdapter = class(TInterfacedObject, IWGPUAdapter)
+      FHandle: TWGPUAdapter;
+      constructor Create(const h: TWGPUAdapter);
+      destructor Destroy; override;
+      function GetHandle: TWGPUAdapter;
+      function CreateDevice(const aDescriptor: TWGPUDeviceDescriptor): IWGPUDevice;
+      function EnumerateFeatures(const aFeatures: PWGPUFeatureName): NativeUInt;
+      function GetFormatCapabilities(const aFormat: TWGPUTextureFormat; const aCapabilities: PWGPUFormatCapabilities): TWGPUStatus;
+      function GetInfo(const aInfo: PWGPUAdapterInfo): TWGPUStatus;
+      function GetInstance: IWGPUInstance;
+      function GetLimits(const aLimits: PWGPUSupportedLimits): TWGPUStatus;
+      function HasFeature(const aFeature: TWGPUFeatureName): TWGPUBool;
+      procedure RequestDevice(const aDescriptor: TWGPUDeviceDescriptor; const aCallback: TWGPURequestDeviceCallback; const aUserdata: Pointer);
+      function RequestDevice2(const aOptions: TWGPUDeviceDescriptor; const aCallbackInfo: TWGPURequestDeviceCallbackInfo2): TWGPUFuture;
+      function RequestDeviceF(const aOptions: TWGPUDeviceDescriptor; const aCallbackInfo: TWGPURequestDeviceCallbackInfo): TWGPUFuture;
+   end;
+
+   TiwgpuBindGroup = class(TInterfacedObject, IWGPUBindGroup)
+      FHandle: TWGPUBindGroup;
+      constructor Create(const h: TWGPUBindGroup);
+      destructor Destroy; override;
+      function GetHandle: TWGPUBindGroup;
+      procedure SetLabel(const aLabel: UTF8String);
+      procedure SetLabel2(const aLabel: TWGPUStringView);
+   end;
+
+   TiwgpuBindGroupLayout = class(TInterfacedObject, IWGPUBindGroupLayout)
+      FHandle: TWGPUBindGroupLayout;
+      constructor Create(const h: TWGPUBindGroupLayout);
+      destructor Destroy; override;
+      function GetHandle: TWGPUBindGroupLayout;
+      procedure SetLabel(const aLabel: UTF8String);
+      procedure SetLabel2(const aLabel: TWGPUStringView);
+   end;
+
+   TiwgpuBuffer = class(TInterfacedObject, IWGPUBuffer)
+      FHandle: TWGPUBuffer;
+      constructor Create(const h: TWGPUBuffer);
+      destructor Destroy; override;
+      function GetHandle: TWGPUBuffer;
+      function GetConstMappedRange(aOffset: NativeUInt; aSize: NativeUInt): Pointer;
+      function GetMapState: TWGPUBufferMapState;
+      function GetMappedRange(aOffset: NativeUInt; aSize: NativeUInt): Pointer;
+      function GetSize: UInt64;
+      function GetUsage: TWGPUBufferUsage;
+      procedure MapAsync(const aMode: TWGPUMapMode; aOffset: NativeUInt; aSize: NativeUInt; const aCallback: TWGPUBufferMapCallback; const aUserdata: Pointer);
+      function MapAsync2(const aMode: TWGPUMapMode; aOffset: NativeUInt; aSize: NativeUInt; const aCallbackInfo: TWGPUBufferMapCallbackInfo2): TWGPUFuture;
+      function MapAsyncF(const aMode: TWGPUMapMode; aOffset: NativeUInt; aSize: NativeUInt; const aCallbackInfo: TWGPUBufferMapCallbackInfo): TWGPUFuture;
+      procedure SetLabel(const aLabel: UTF8String);
+      procedure SetLabel2(const aLabel: TWGPUStringView);
+      procedure Unmap;
+   end;
+
+   TiwgpuCommandBuffer = class(TInterfacedObject, IWGPUCommandBuffer)
+      FHandle: TWGPUCommandBuffer;
+      constructor Create(const h: TWGPUCommandBuffer);
+      destructor Destroy; override;
+      function GetHandle: TWGPUCommandBuffer;
+      procedure SetLabel(const aLabel: UTF8String);
+      procedure SetLabel2(const aLabel: TWGPUStringView);
+   end;
+
+   TiwgpuCommandEncoder = class(TInterfacedObject, IWGPUCommandEncoder)
+      FHandle: TWGPUCommandEncoder;
+      constructor Create(const h: TWGPUCommandEncoder);
+      destructor Destroy; override;
+      function GetHandle: TWGPUCommandEncoder;
+      function BeginComputePass(const aDescriptor: TWGPUComputePassDescriptor): IWGPUComputePassEncoder;
+      function BeginRenderPass(const aDescriptor: TWGPURenderPassDescriptor): IWGPURenderPassEncoder;
+      procedure ClearBuffer(const aBuffer: IWGPUBuffer; aOffset: UInt64; aSize: UInt64);
+      procedure CopyBufferToBuffer(const aSource: IWGPUBuffer; aSourceOffset: UInt64; const aDestination: IWGPUBuffer; aDestinationOffset: UInt64; aSize: UInt64);
+      procedure CopyBufferToTexture(const aSource: PWGPUImageCopyBuffer; const aDestination: PWGPUImageCopyTexture; const aCopySize: PWGPUExtent3D);
+      procedure CopyTextureToBuffer(const aSource: PWGPUImageCopyTexture; const aDestination: PWGPUImageCopyBuffer; const aCopySize: PWGPUExtent3D);
+      procedure CopyTextureToTexture(const aSource: PWGPUImageCopyTexture; const aDestination: PWGPUImageCopyTexture; const aCopySize: PWGPUExtent3D);
+      function Finish(const aDescriptor: PWGPUCommandBufferDescriptor): IWGPUCommandBuffer;
+      procedure InjectValidationError(const aMessage: UTF8String);
+      procedure InjectValidationError2(const aMessage: TWGPUStringView);
+      procedure InsertDebugMarker(const aMarkerLabel: UTF8String);
+      procedure InsertDebugMarker2(const aMarkerLabel: TWGPUStringView);
+      procedure PopDebugGroup;
+      procedure PushDebugGroup(const aGroupLabel: UTF8String);
+      procedure PushDebugGroup2(const aGroupLabel: TWGPUStringView);
+      procedure ResolveQuerySet(const aQuerySet: IWGPUQuerySet; aFirstQuery: UInt32; aQueryCount: UInt32; const aDestination: IWGPUBuffer; aDestinationOffset: UInt64);
+      procedure SetLabel(const aLabel: UTF8String);
+      procedure SetLabel2(const aLabel: TWGPUStringView);
+      procedure WriteBuffer(const aBuffer: IWGPUBuffer; aBufferOffset: UInt64; const aData: PUInt8; aSize: UInt64);
+      procedure WriteTimestamp(const aQuerySet: IWGPUQuerySet; aQueryIndex: UInt32);
+   end;
+
+   TiwgpuComputePassEncoder = class(TInterfacedObject, IWGPUComputePassEncoder)
+      FHandle: TWGPUComputePassEncoder;
+      constructor Create(const h: TWGPUComputePassEncoder);
+      destructor Destroy; override;
+      function GetHandle: TWGPUComputePassEncoder;
+      procedure DispatchWorkgroups(aWorkgroupCountX: UInt32; aWorkgroupCountY: UInt32; aWorkgroupCountZ: UInt32);
+      procedure DispatchWorkgroupsIndirect(const aIndirectBuffer: IWGPUBuffer; aIndirectOffset: UInt64);
+      procedure &End;
+      procedure InsertDebugMarker(const aMarkerLabel: UTF8String);
+      procedure InsertDebugMarker2(const aMarkerLabel: TWGPUStringView);
+      procedure PopDebugGroup;
+      procedure PushDebugGroup(const aGroupLabel: UTF8String);
+      procedure PushDebugGroup2(const aGroupLabel: TWGPUStringView);
+      procedure SetBindGroup(aGroupIndex: UInt32; const aGroup: IWGPUBindGroup; aDynamicOffsetCount: NativeUInt; const aDynamicOffsets: PUInt32);
+      procedure SetLabel(const aLabel: UTF8String);
+      procedure SetLabel2(const aLabel: TWGPUStringView);
+      procedure SetPipeline(const aPipeline: IWGPUComputePipeline);
+      procedure WriteTimestamp(const aQuerySet: IWGPUQuerySet; aQueryIndex: UInt32);
+   end;
+
+   TiwgpuComputePipeline = class(TInterfacedObject, IWGPUComputePipeline)
+      FHandle: TWGPUComputePipeline;
+      constructor Create(const h: TWGPUComputePipeline);
+      destructor Destroy; override;
+      function GetHandle: TWGPUComputePipeline;
+      function GetBindGroupLayout(aGroupIndex: UInt32): IWGPUBindGroupLayout;
+      procedure SetLabel(const aLabel: UTF8String);
+      procedure SetLabel2(const aLabel: TWGPUStringView);
+   end;
+
+   TiwgpuDevice = class(TInterfacedObject, IWGPUDevice)
+      FHandle: TWGPUDevice;
+      constructor Create(const h: TWGPUDevice);
+      destructor Destroy; override;
+      function GetHandle: TWGPUDevice;
+      function GetProcAddress(const aProcName: UTF8String): TWGPUProc;
+      function GetProcAddress2(const aProcName: TWGPUStringView): TWGPUProc;
+      function CreateBindGroup(const aDescriptor: TWGPUBindGroupDescriptor): IWGPUBindGroup;
+      function CreateBindGroupLayout(const aDescriptor: TWGPUBindGroupLayoutDescriptor): IWGPUBindGroupLayout;
+      function CreateBuffer(const aDescriptor: TWGPUBufferDescriptor): IWGPUBuffer;
+      function CreateCommandEncoder(const aDescriptor: TWGPUCommandEncoderDescriptor): IWGPUCommandEncoder;
+      function CreateComputePipeline(const aDescriptor: TWGPUComputePipelineDescriptor): IWGPUComputePipeline;
+      procedure CreateComputePipelineAsync(const aDescriptor: TWGPUComputePipelineDescriptor; const aCallback: TWGPUCreateComputePipelineAsyncCallback; const aUserdata: Pointer);
+      function CreateComputePipelineAsync2(const aDescriptor: TWGPUComputePipelineDescriptor; const aCallbackInfo: TWGPUCreateComputePipelineAsyncCallbackInfo2): TWGPUFuture;
+      function CreateComputePipelineAsyncF(const aDescriptor: TWGPUComputePipelineDescriptor; const aCallbackInfo: TWGPUCreateComputePipelineAsyncCallbackInfo): TWGPUFuture;
+      function CreateErrorBuffer(const aDescriptor: TWGPUBufferDescriptor): IWGPUBuffer;
+      function CreateErrorExternalTexture: IWGPUExternalTexture;
+      function CreateErrorShaderModule(const aDescriptor: TWGPUShaderModuleDescriptor; const aErrorMessage: UTF8String): IWGPUShaderModule;
+      function CreateErrorShaderModule2(const aDescriptor: TWGPUShaderModuleDescriptor; const aErrorMessage: TWGPUStringView): IWGPUShaderModule;
+      function CreateErrorTexture(const aDescriptor: TWGPUTextureDescriptor): IWGPUTexture;
+      function CreateExternalTexture(const aExternalTextureDescriptor: TWGPUExternalTextureDescriptor): IWGPUExternalTexture;
+      function CreatePipelineLayout(const aDescriptor: TWGPUPipelineLayoutDescriptor): IWGPUPipelineLayout;
+      function CreateQuerySet(const aDescriptor: TWGPUQuerySetDescriptor): IWGPUQuerySet;
+      function CreateRenderBundleEncoder(const aDescriptor: TWGPURenderBundleEncoderDescriptor): IWGPURenderBundleEncoder;
+      function CreateRenderPipeline(const aDescriptor: TWGPURenderPipelineDescriptor): IWGPURenderPipeline;
+      procedure CreateRenderPipelineAsync(const aDescriptor: TWGPURenderPipelineDescriptor; const aCallback: TWGPUCreateRenderPipelineAsyncCallback; const aUserdata: Pointer);
+      function CreateRenderPipelineAsync2(const aDescriptor: TWGPURenderPipelineDescriptor; const aCallbackInfo: TWGPUCreateRenderPipelineAsyncCallbackInfo2): TWGPUFuture;
+      function CreateRenderPipelineAsyncF(const aDescriptor: TWGPURenderPipelineDescriptor; const aCallbackInfo: TWGPUCreateRenderPipelineAsyncCallbackInfo): TWGPUFuture;
+      function CreateSampler(const aDescriptor: TWGPUSamplerDescriptor): IWGPUSampler;
+      function CreateShaderModule(const aDescriptor: TWGPUShaderModuleDescriptor): IWGPUShaderModule;
+      function CreateSwapChain(const aSurface: IWGPUSurface; const aDescriptor: TWGPUSwapChainDescriptor): IWGPUSwapChain;
+      function CreateTexture(const aDescriptor: TWGPUTextureDescriptor): IWGPUTexture;
+      function EnumerateFeatures(const aFeatures: PWGPUFeatureName): NativeUInt;
+      procedure ForceLoss(const aType: TWGPUDeviceLostReason; const aMessage: UTF8String);
+      procedure ForceLoss2(const aType: TWGPUDeviceLostReason; const aMessage: TWGPUStringView);
+      function GetAHardwareBufferProperties(const aHandle: Pointer; const aProperties: PWGPUAHardwareBufferProperties): TWGPUStatus;
+      function GetAdapter: IWGPUAdapter;
+      function GetLimits(const aLimits: PWGPUSupportedLimits): TWGPUStatus;
+      function GetQueue: IWGPUQueue;
+      function GetSupportedSurfaceUsage(const aSurface: IWGPUSurface): TWGPUTextureUsage;
+      function HasFeature(const aFeature: TWGPUFeatureName): TWGPUBool;
+      function ImportSharedBufferMemory(const aDescriptor: TWGPUSharedBufferMemoryDescriptor): IWGPUSharedBufferMemory;
+      function ImportSharedFence(const aDescriptor: TWGPUSharedFenceDescriptor): IWGPUSharedFence;
+      function ImportSharedTextureMemory(const aDescriptor: TWGPUSharedTextureMemoryDescriptor): IWGPUSharedTextureMemory;
+      procedure InjectError(const aType: TWGPUErrorType; const aMessage: UTF8String);
+      procedure InjectError2(const aType: TWGPUErrorType; const aMessage: TWGPUStringView);
+      procedure PopErrorScope(const aOldCallback: TWGPUErrorCallback; const aUserdata: Pointer);
+      function PopErrorScope2(const aCallbackInfo: TWGPUPopErrorScopeCallbackInfo2): TWGPUFuture;
+      function PopErrorScopeF(const aCallbackInfo: TWGPUPopErrorScopeCallbackInfo): TWGPUFuture;
+      procedure PushErrorScope(const aFilter: TWGPUErrorFilter);
+      procedure SetDeviceLostCallback(const aCallback: TWGPUDeviceLostCallback; const aUserdata: Pointer);
+      procedure SetLabel(const aLabel: UTF8String);
+      procedure SetLabel2(const aLabel: TWGPUStringView);
+      procedure SetLoggingCallback(const aCallback: TWGPULoggingCallback; const aUserdata: Pointer);
+      procedure SetUncapturedErrorCallback(const aCallback: TWGPUErrorCallback; const aUserdata: Pointer);
+      procedure Tick;
+      procedure ValidateTextureDescriptor(const aDescriptor: TWGPUTextureDescriptor);
+   end;
+
+   TiwgpuExternalTexture = class(TInterfacedObject, IWGPUExternalTexture)
+      FHandle: TWGPUExternalTexture;
+      constructor Create(const h: TWGPUExternalTexture);
+      destructor Destroy; override;
+      function GetHandle: TWGPUExternalTexture;
+      procedure Expire;
+      procedure Refresh;
+      procedure SetLabel(const aLabel: UTF8String);
+      procedure SetLabel2(const aLabel: TWGPUStringView);
+   end;
+
+   TiwgpuInstance = class(TInterfacedObject, IWGPUInstance)
+      FHandle: TWGPUInstance;
+      constructor Create(const h: TWGPUInstance);
+      destructor Destroy; override;
+      function GetHandle: TWGPUInstance;
+      function CreateSurface(const aDescriptor: TWGPUSurfaceDescriptor): IWGPUSurface;
+      function EnumerateWGSLLanguageFeatures(const aFeatures: PWGPUWGSLFeatureName): NativeUInt;
+      function HasWGSLLanguageFeature(const aFeature: TWGPUWGSLFeatureName): TWGPUBool;
+      procedure ProcessEvents;
+      procedure RequestAdapter(const aOptions: TWGPURequestAdapterOptions; const aCallback: TWGPURequestAdapterCallback; const aUserdata: Pointer);
+      function RequestAdapter2(const aOptions: TWGPURequestAdapterOptions; const aCallbackInfo: TWGPURequestAdapterCallbackInfo2): TWGPUFuture;
+      function RequestAdapterF(const aOptions: TWGPURequestAdapterOptions; const aCallbackInfo: TWGPURequestAdapterCallbackInfo): TWGPUFuture;
+      function WaitAny(aFutureCount: NativeUInt; const aFutures: PWGPUFutureWaitInfo; aTimeoutNS: UInt64): TWGPUWaitStatus;
+   end;
+
+   TiwgpuPipelineLayout = class(TInterfacedObject, IWGPUPipelineLayout)
+      FHandle: TWGPUPipelineLayout;
+      constructor Create(const h: TWGPUPipelineLayout);
+      destructor Destroy; override;
+      function GetHandle: TWGPUPipelineLayout;
+      procedure SetLabel(const aLabel: UTF8String);
+      procedure SetLabel2(const aLabel: TWGPUStringView);
+   end;
+
+   TiwgpuQuerySet = class(TInterfacedObject, IWGPUQuerySet)
+      FHandle: TWGPUQuerySet;
+      constructor Create(const h: TWGPUQuerySet);
+      destructor Destroy; override;
+      function GetHandle: TWGPUQuerySet;
+      function GetCount: UInt32;
+      function GetType: TWGPUQueryType;
+      procedure SetLabel(const aLabel: UTF8String);
+      procedure SetLabel2(const aLabel: TWGPUStringView);
+   end;
+
+   TiwgpuQueue = class(TInterfacedObject, IWGPUQueue)
+      FHandle: TWGPUQueue;
+      constructor Create(const h: TWGPUQueue);
+      destructor Destroy; override;
+      function GetHandle: TWGPUQueue;
+      procedure CopyExternalTextureForBrowser(const aSource: PWGPUImageCopyExternalTexture; const aDestination: PWGPUImageCopyTexture; const aCopySize: PWGPUExtent3D; const aOptions: TWGPUCopyTextureForBrowserOptions);
+      procedure CopyTextureForBrowser(const aSource: PWGPUImageCopyTexture; const aDestination: PWGPUImageCopyTexture; const aCopySize: PWGPUExtent3D; const aOptions: TWGPUCopyTextureForBrowserOptions);
+      procedure OnSubmittedWorkDone(const aCallback: TWGPUQueueWorkDoneCallback; const aUserdata: Pointer);
+      function OnSubmittedWorkDone2(const aCallbackInfo: TWGPUQueueWorkDoneCallbackInfo2): TWGPUFuture;
+      function OnSubmittedWorkDoneF(const aCallbackInfo: TWGPUQueueWorkDoneCallbackInfo): TWGPUFuture;
+      procedure SetLabel(const aLabel: UTF8String);
+      procedure SetLabel2(const aLabel: TWGPUStringView);
+      procedure Submit(aCommandCount: NativeUInt; const aCommands: PWGPUCommandBuffer);
+      procedure WriteBuffer(const aBuffer: IWGPUBuffer; aBufferOffset: UInt64; const aData: Pointer; aSize: NativeUInt);
+      procedure WriteTexture(const aDestination: PWGPUImageCopyTexture; const aData: Pointer; aDataSize: NativeUInt; const aDataLayout: PWGPUTextureDataLayout; const aWriteSize: PWGPUExtent3D);
+   end;
+
+   TiwgpuRenderBundle = class(TInterfacedObject, IWGPURenderBundle)
+      FHandle: TWGPURenderBundle;
+      constructor Create(const h: TWGPURenderBundle);
+      destructor Destroy; override;
+      function GetHandle: TWGPURenderBundle;
+      procedure SetLabel(const aLabel: UTF8String);
+      procedure SetLabel2(const aLabel: TWGPUStringView);
+   end;
+
+   TiwgpuRenderBundleEncoder = class(TInterfacedObject, IWGPURenderBundleEncoder)
+      FHandle: TWGPURenderBundleEncoder;
+      constructor Create(const h: TWGPURenderBundleEncoder);
+      destructor Destroy; override;
+      function GetHandle: TWGPURenderBundleEncoder;
+      procedure Draw(aVertexCount: UInt32; aInstanceCount: UInt32; aFirstVertex: UInt32; aFirstInstance: UInt32);
+      procedure DrawIndexed(aIndexCount: UInt32; aInstanceCount: UInt32; aFirstIndex: UInt32; const aBaseVertex: Int32; aFirstInstance: UInt32);
+      procedure DrawIndexedIndirect(const aIndirectBuffer: IWGPUBuffer; aIndirectOffset: UInt64);
+      procedure DrawIndirect(const aIndirectBuffer: IWGPUBuffer; aIndirectOffset: UInt64);
+      function Finish(const aDescriptor: PWGPURenderBundleDescriptor): IWGPURenderBundle;
+      procedure InsertDebugMarker(const aMarkerLabel: UTF8String);
+      procedure InsertDebugMarker2(const aMarkerLabel: TWGPUStringView);
+      procedure PopDebugGroup;
+      procedure PushDebugGroup(const aGroupLabel: UTF8String);
+      procedure PushDebugGroup2(const aGroupLabel: TWGPUStringView);
+      procedure SetBindGroup(aGroupIndex: UInt32; const aGroup: IWGPUBindGroup; aDynamicOffsetCount: NativeUInt; const aDynamicOffsets: PUInt32);
+      procedure SetIndexBuffer(const aBuffer: IWGPUBuffer; const aFormat: TWGPUIndexFormat; aOffset: UInt64; aSize: UInt64);
+      procedure SetLabel(const aLabel: UTF8String);
+      procedure SetLabel2(const aLabel: TWGPUStringView);
+      procedure SetPipeline(const aPipeline: IWGPURenderPipeline);
+      procedure SetVertexBuffer(aSlot: UInt32; const aBuffer: IWGPUBuffer; aOffset: UInt64; aSize: UInt64);
+   end;
+
+   TiwgpuRenderPassEncoder = class(TInterfacedObject, IWGPURenderPassEncoder)
+      FHandle: TWGPURenderPassEncoder;
+      constructor Create(const h: TWGPURenderPassEncoder);
+      destructor Destroy; override;
+      function GetHandle: TWGPURenderPassEncoder;
+      procedure BeginOcclusionQuery(aQueryIndex: UInt32);
+      procedure Draw(aVertexCount: UInt32; aInstanceCount: UInt32; aFirstVertex: UInt32; aFirstInstance: UInt32);
+      procedure DrawIndexed(aIndexCount: UInt32; aInstanceCount: UInt32; aFirstIndex: UInt32; const aBaseVertex: Int32; aFirstInstance: UInt32);
+      procedure DrawIndexedIndirect(const aIndirectBuffer: IWGPUBuffer; aIndirectOffset: UInt64);
+      procedure DrawIndirect(const aIndirectBuffer: IWGPUBuffer; aIndirectOffset: UInt64);
+      procedure &End;
+      procedure EndOcclusionQuery;
+      procedure ExecuteBundles(aBundleCount: NativeUInt; const aBundles: PWGPURenderBundle);
+      procedure InsertDebugMarker(const aMarkerLabel: UTF8String);
+      procedure InsertDebugMarker2(const aMarkerLabel: TWGPUStringView);
+      procedure MultiDrawIndexedIndirect(const aIndirectBuffer: IWGPUBuffer; aIndirectOffset: UInt64; aMaxDrawCount: UInt32; const aDrawCountBuffer: IWGPUBuffer; aDrawCountBufferOffset: UInt64);
+      procedure MultiDrawIndirect(const aIndirectBuffer: IWGPUBuffer; aIndirectOffset: UInt64; aMaxDrawCount: UInt32; const aDrawCountBuffer: IWGPUBuffer; aDrawCountBufferOffset: UInt64);
+      procedure PixelLocalStorageBarrier;
+      procedure PopDebugGroup;
+      procedure PushDebugGroup(const aGroupLabel: UTF8String);
+      procedure PushDebugGroup2(const aGroupLabel: TWGPUStringView);
+      procedure SetBindGroup(aGroupIndex: UInt32; const aGroup: IWGPUBindGroup; aDynamicOffsetCount: NativeUInt; const aDynamicOffsets: PUInt32);
+      procedure SetBlendConstant(const aColor: PWGPUColor);
+      procedure SetIndexBuffer(const aBuffer: IWGPUBuffer; const aFormat: TWGPUIndexFormat; aOffset: UInt64; aSize: UInt64);
+      procedure SetLabel(const aLabel: UTF8String);
+      procedure SetLabel2(const aLabel: TWGPUStringView);
+      procedure SetPipeline(const aPipeline: IWGPURenderPipeline);
+      procedure SetScissorRect(aX: UInt32; aY: UInt32; aWidth: UInt32; aHeight: UInt32);
+      procedure SetStencilReference(aReference: UInt32);
+      procedure SetVertexBuffer(aSlot: UInt32; const aBuffer: IWGPUBuffer; aOffset: UInt64; aSize: UInt64);
+      procedure SetViewport(const aX: Single; const aY: Single; const aWidth: Single; const aHeight: Single; const aMinDepth: Single; const aMaxDepth: Single);
+      procedure WriteTimestamp(const aQuerySet: IWGPUQuerySet; aQueryIndex: UInt32);
+   end;
+
+   TiwgpuRenderPipeline = class(TInterfacedObject, IWGPURenderPipeline)
+      FHandle: TWGPURenderPipeline;
+      constructor Create(const h: TWGPURenderPipeline);
+      destructor Destroy; override;
+      function GetHandle: TWGPURenderPipeline;
+      function GetBindGroupLayout(aGroupIndex: UInt32): IWGPUBindGroupLayout;
+      procedure SetLabel(const aLabel: UTF8String);
+      procedure SetLabel2(const aLabel: TWGPUStringView);
+   end;
+
+   TiwgpuSampler = class(TInterfacedObject, IWGPUSampler)
+      FHandle: TWGPUSampler;
+      constructor Create(const h: TWGPUSampler);
+      destructor Destroy; override;
+      function GetHandle: TWGPUSampler;
+      procedure SetLabel(const aLabel: UTF8String);
+      procedure SetLabel2(const aLabel: TWGPUStringView);
+   end;
+
+   TiwgpuShaderModule = class(TInterfacedObject, IWGPUShaderModule)
+      FHandle: TWGPUShaderModule;
+      constructor Create(const h: TWGPUShaderModule);
+      destructor Destroy; override;
+      function GetHandle: TWGPUShaderModule;
+      procedure GetCompilationInfo(const aCallback: TWGPUCompilationInfoCallback; const aUserdata: Pointer);
+      function GetCompilationInfo2(const aCallbackInfo: TWGPUCompilationInfoCallbackInfo2): TWGPUFuture;
+      function GetCompilationInfoF(const aCallbackInfo: TWGPUCompilationInfoCallbackInfo): TWGPUFuture;
+      procedure SetLabel(const aLabel: UTF8String);
+      procedure SetLabel2(const aLabel: TWGPUStringView);
+   end;
+
+   TiwgpuSharedBufferMemory = class(TInterfacedObject, IWGPUSharedBufferMemory)
+      FHandle: TWGPUSharedBufferMemory;
+      constructor Create(const h: TWGPUSharedBufferMemory);
+      destructor Destroy; override;
+      function GetHandle: TWGPUSharedBufferMemory;
+      function BeginAccess(const aBuffer: IWGPUBuffer; const aDescriptor: TWGPUSharedBufferMemoryBeginAccessDescriptor): TWGPUStatus;
+      function CreateBuffer(const aDescriptor: TWGPUBufferDescriptor): IWGPUBuffer;
+      function EndAccess(const aBuffer: IWGPUBuffer; const aDescriptor: PWGPUSharedBufferMemoryEndAccessState): TWGPUStatus;
+      function GetProperties(const aProperties: PWGPUSharedBufferMemoryProperties): TWGPUStatus;
+      function IsDeviceLost: TWGPUBool;
+      procedure SetLabel(const aLabel: UTF8String);
+      procedure SetLabel2(const aLabel: TWGPUStringView);
+   end;
+
+   TiwgpuSharedFence = class(TInterfacedObject, IWGPUSharedFence)
+      FHandle: TWGPUSharedFence;
+      constructor Create(const h: TWGPUSharedFence);
+      destructor Destroy; override;
+      function GetHandle: TWGPUSharedFence;
+      procedure ExportInfo(const aInfo: PWGPUSharedFenceExportInfo);
+   end;
+
+   TiwgpuSharedTextureMemory = class(TInterfacedObject, IWGPUSharedTextureMemory)
+      FHandle: TWGPUSharedTextureMemory;
+      constructor Create(const h: TWGPUSharedTextureMemory);
+      destructor Destroy; override;
+      function GetHandle: TWGPUSharedTextureMemory;
+      function BeginAccess(const aTexture: IWGPUTexture; const aDescriptor: TWGPUSharedTextureMemoryBeginAccessDescriptor): TWGPUStatus;
+      function CreateTexture(const aDescriptor: TWGPUTextureDescriptor): IWGPUTexture;
+      function EndAccess(const aTexture: IWGPUTexture; const aDescriptor: PWGPUSharedTextureMemoryEndAccessState): TWGPUStatus;
+      function GetProperties(const aProperties: PWGPUSharedTextureMemoryProperties): TWGPUStatus;
+      function IsDeviceLost: TWGPUBool;
+      procedure SetLabel(const aLabel: UTF8String);
+      procedure SetLabel2(const aLabel: TWGPUStringView);
+   end;
+
+   TiwgpuSurface = class(TInterfacedObject, IWGPUSurface)
+      FHandle: TWGPUSurface;
+      constructor Create(const h: TWGPUSurface);
+      destructor Destroy; override;
+      function GetHandle: TWGPUSurface;
+      procedure Configure(const aConfig: TWGPUSurfaceConfiguration);
+      function GetCapabilities(const aAdapter: IWGPUAdapter; const aCapabilities: PWGPUSurfaceCapabilities): TWGPUStatus;
+      procedure GetCurrentTexture(const aSurfaceTexture: PWGPUSurfaceTexture);
+      function GetPreferredFormat(const aAdapter: IWGPUAdapter): TWGPUTextureFormat;
+      procedure Present;
+      procedure SetLabel(const aLabel: UTF8String);
+      procedure SetLabel2(const aLabel: TWGPUStringView);
+      procedure Unconfigure;
+   end;
+
+   TiwgpuSwapChain = class(TInterfacedObject, IWGPUSwapChain)
+      FHandle: TWGPUSwapChain;
+      constructor Create(const h: TWGPUSwapChain);
+      destructor Destroy; override;
+      function GetHandle: TWGPUSwapChain;
+      function GetCurrentTexture: IWGPUTexture;
+      function GetCurrentTextureView: IWGPUTextureView;
+      procedure Present;
+   end;
+
+   TiwgpuTexture = class(TInterfacedObject, IWGPUTexture)
+      FHandle: TWGPUTexture;
+      constructor Create(const h: TWGPUTexture);
+      destructor Destroy; override;
+      function GetHandle: TWGPUTexture;
+      function CreateErrorView(const aDescriptor: TWGPUTextureViewDescriptor): IWGPUTextureView;
+      function CreateView(const aDescriptor: TWGPUTextureViewDescriptor): IWGPUTextureView;
+      function GetDepthOrArrayLayers: UInt32;
+      function GetDimension: TWGPUTextureDimension;
+      function GetFormat: TWGPUTextureFormat;
+      function GetHeight: UInt32;
+      function GetMipLevelCount: UInt32;
+      function GetSampleCount: UInt32;
+      function GetUsage: TWGPUTextureUsage;
+      function GetWidth: UInt32;
+      procedure SetLabel(const aLabel: UTF8String);
+      procedure SetLabel2(const aLabel: TWGPUStringView);
+   end;
+
+   TiwgpuTextureView = class(TInterfacedObject, IWGPUTextureView)
+      FHandle: TWGPUTextureView;
+      constructor Create(const h: TWGPUTextureView);
+      destructor Destroy; override;
+      function GetHandle: TWGPUTextureView;
+      procedure SetLabel(const aLabel: UTF8String);
+      procedure SetLabel2(const aLabel: TWGPUStringView);
+   end;
 
 constructor TiwgpuAdapter.Create(const h: TWGPUAdapter);
 begin
@@ -430,9 +865,9 @@ begin
    Result := FHandle;
 end;
 
-function TiwgpuAdapter.CreateDevice(const aDescriptor: TWGPUDeviceDescriptor): TWGPUDevice;
+function TiwgpuAdapter.CreateDevice(const aDescriptor: TWGPUDeviceDescriptor): IWGPUDevice;
 begin
-   Result := wgpuAdapterCreateDevice(FHandle, @aDescriptor);
+   Result := TiwgpuDevice.Create(wgpuAdapterCreateDevice(FHandle, @aDescriptor));
 end;
 
 function TiwgpuAdapter.EnumerateFeatures(const aFeatures: PWGPUFeatureName): NativeUInt;
@@ -450,9 +885,9 @@ begin
    Result := wgpuAdapterGetInfo(FHandle, aInfo);
 end;
 
-function TiwgpuAdapter.GetInstance: TWGPUInstance;
+function TiwgpuAdapter.GetInstance: IWGPUInstance;
 begin
-   Result := wgpuAdapterGetInstance(FHandle);
+   Result := TiwgpuInstance.Create(wgpuAdapterGetInstance(FHandle));
 end;
 
 function TiwgpuAdapter.GetLimits(const aLimits: PWGPUSupportedLimits): TWGPUStatus;
@@ -478,18 +913,6 @@ end;
 function TiwgpuAdapter.RequestDeviceF(const aOptions: TWGPUDeviceDescriptor; const aCallbackInfo: TWGPURequestDeviceCallbackInfo): TWGPUFuture;
 begin
    Result := wgpuAdapterRequestDeviceF(FHandle, @aOptions, aCallbackInfo);
-end;
-
-//
-// TiwgpuBindGroup
-//
-type TiwgpuBindGroup = class(TInterfacedObject, IWGPUBindGroup)
-   FHandle: TWGPUBindGroup;
-   constructor Create(const h: TWGPUBindGroup);
-   destructor Destroy; override;
-   function GetHandle: TWGPUBindGroup;
-   procedure SetLabel(const aLabel: UTF8String);
-   procedure SetLabel2(const aLabel: TWGPUStringView);
 end;
 
 constructor TiwgpuBindGroup.Create(const h: TWGPUBindGroup);
@@ -519,18 +942,6 @@ begin
    wgpuBindGroupSetLabel2(FHandle, aLabel);
 end;
 
-//
-// TiwgpuBindGroupLayout
-//
-type TiwgpuBindGroupLayout = class(TInterfacedObject, IWGPUBindGroupLayout)
-   FHandle: TWGPUBindGroupLayout;
-   constructor Create(const h: TWGPUBindGroupLayout);
-   destructor Destroy; override;
-   function GetHandle: TWGPUBindGroupLayout;
-   procedure SetLabel(const aLabel: UTF8String);
-   procedure SetLabel2(const aLabel: TWGPUStringView);
-end;
-
 constructor TiwgpuBindGroupLayout.Create(const h: TWGPUBindGroupLayout);
 begin
    inherited Create;
@@ -556,27 +967,6 @@ end;
 procedure TiwgpuBindGroupLayout.SetLabel2(const aLabel: TWGPUStringView);
 begin
    wgpuBindGroupLayoutSetLabel2(FHandle, aLabel);
-end;
-
-//
-// TiwgpuBuffer
-//
-type TiwgpuBuffer = class(TInterfacedObject, IWGPUBuffer)
-   FHandle: TWGPUBuffer;
-   constructor Create(const h: TWGPUBuffer);
-   destructor Destroy; override;
-   function GetHandle: TWGPUBuffer;
-   function GetConstMappedRange(aOffset: NativeUInt; aSize: NativeUInt): Pointer;
-   function GetMapState: TWGPUBufferMapState;
-   function GetMappedRange(aOffset: NativeUInt; aSize: NativeUInt): Pointer;
-   function GetSize: UInt64;
-   function GetUsage: TWGPUBufferUsage;
-   procedure MapAsync(const aMode: TWGPUMapMode; aOffset: NativeUInt; aSize: NativeUInt; const aCallback: TWGPUBufferMapCallback; const aUserdata: Pointer);
-   function MapAsync2(const aMode: TWGPUMapMode; aOffset: NativeUInt; aSize: NativeUInt; const aCallbackInfo: TWGPUBufferMapCallbackInfo2): TWGPUFuture;
-   function MapAsyncF(const aMode: TWGPUMapMode; aOffset: NativeUInt; aSize: NativeUInt; const aCallbackInfo: TWGPUBufferMapCallbackInfo): TWGPUFuture;
-   procedure SetLabel(const aLabel: UTF8String);
-   procedure SetLabel2(const aLabel: TWGPUStringView);
-   procedure Unmap;
 end;
 
 constructor TiwgpuBuffer.Create(const h: TWGPUBuffer);
@@ -651,18 +1041,6 @@ begin
    wgpuBufferUnmap(FHandle);
 end;
 
-//
-// TiwgpuCommandBuffer
-//
-type TiwgpuCommandBuffer = class(TInterfacedObject, IWGPUCommandBuffer)
-   FHandle: TWGPUCommandBuffer;
-   constructor Create(const h: TWGPUCommandBuffer);
-   destructor Destroy; override;
-   function GetHandle: TWGPUCommandBuffer;
-   procedure SetLabel(const aLabel: UTF8String);
-   procedure SetLabel2(const aLabel: TWGPUStringView);
-end;
-
 constructor TiwgpuCommandBuffer.Create(const h: TWGPUCommandBuffer);
 begin
    inherited Create;
@@ -690,36 +1068,6 @@ begin
    wgpuCommandBufferSetLabel2(FHandle, aLabel);
 end;
 
-//
-// TiwgpuCommandEncoder
-//
-type TiwgpuCommandEncoder = class(TInterfacedObject, IWGPUCommandEncoder)
-   FHandle: TWGPUCommandEncoder;
-   constructor Create(const h: TWGPUCommandEncoder);
-   destructor Destroy; override;
-   function GetHandle: TWGPUCommandEncoder;
-   function BeginComputePass(const aDescriptor: TWGPUComputePassDescriptor): TWGPUComputePassEncoder;
-   function BeginRenderPass(const aDescriptor: TWGPURenderPassDescriptor): TWGPURenderPassEncoder;
-   procedure ClearBuffer(const aBuffer: IWGPUBuffer; aOffset: UInt64; aSize: UInt64);
-   procedure CopyBufferToBuffer(const aSource: IWGPUBuffer; aSourceOffset: UInt64; const aDestination: IWGPUBuffer; aDestinationOffset: UInt64; aSize: UInt64);
-   procedure CopyBufferToTexture(const aSource: PWGPUImageCopyBuffer; const aDestination: PWGPUImageCopyTexture; const aCopySize: PWGPUExtent3D);
-   procedure CopyTextureToBuffer(const aSource: PWGPUImageCopyTexture; const aDestination: PWGPUImageCopyBuffer; const aCopySize: PWGPUExtent3D);
-   procedure CopyTextureToTexture(const aSource: PWGPUImageCopyTexture; const aDestination: PWGPUImageCopyTexture; const aCopySize: PWGPUExtent3D);
-   function Finish(const aDescriptor: TWGPUCommandBufferDescriptor): TWGPUCommandBuffer;
-   procedure InjectValidationError(const aMessage: UTF8String);
-   procedure InjectValidationError2(const aMessage: TWGPUStringView);
-   procedure InsertDebugMarker(const aMarkerLabel: UTF8String);
-   procedure InsertDebugMarker2(const aMarkerLabel: TWGPUStringView);
-   procedure PopDebugGroup;
-   procedure PushDebugGroup(const aGroupLabel: UTF8String);
-   procedure PushDebugGroup2(const aGroupLabel: TWGPUStringView);
-   procedure ResolveQuerySet(const aQuerySet: IWGPUQuerySet; aFirstQuery: UInt32; aQueryCount: UInt32; const aDestination: IWGPUBuffer; aDestinationOffset: UInt64);
-   procedure SetLabel(const aLabel: UTF8String);
-   procedure SetLabel2(const aLabel: TWGPUStringView);
-   procedure WriteBuffer(const aBuffer: IWGPUBuffer; aBufferOffset: UInt64; const aData: PUInt8; aSize: UInt64);
-   procedure WriteTimestamp(const aQuerySet: IWGPUQuerySet; aQueryIndex: UInt32);
-end;
-
 constructor TiwgpuCommandEncoder.Create(const h: TWGPUCommandEncoder);
 begin
    inherited Create;
@@ -737,14 +1085,14 @@ begin
    Result := FHandle;
 end;
 
-function TiwgpuCommandEncoder.BeginComputePass(const aDescriptor: TWGPUComputePassDescriptor): TWGPUComputePassEncoder;
+function TiwgpuCommandEncoder.BeginComputePass(const aDescriptor: TWGPUComputePassDescriptor): IWGPUComputePassEncoder;
 begin
-   Result := wgpuCommandEncoderBeginComputePass(FHandle, @aDescriptor);
+   Result := TiwgpuComputePassEncoder.Create(wgpuCommandEncoderBeginComputePass(FHandle, @aDescriptor));
 end;
 
-function TiwgpuCommandEncoder.BeginRenderPass(const aDescriptor: TWGPURenderPassDescriptor): TWGPURenderPassEncoder;
+function TiwgpuCommandEncoder.BeginRenderPass(const aDescriptor: TWGPURenderPassDescriptor): IWGPURenderPassEncoder;
 begin
-   Result := wgpuCommandEncoderBeginRenderPass(FHandle, @aDescriptor);
+   Result := TiwgpuRenderPassEncoder.Create(wgpuCommandEncoderBeginRenderPass(FHandle, @aDescriptor));
 end;
 
 procedure TiwgpuCommandEncoder.ClearBuffer(const aBuffer: IWGPUBuffer; aOffset: UInt64; aSize: UInt64);
@@ -772,9 +1120,9 @@ begin
    wgpuCommandEncoderCopyTextureToTexture(FHandle, aSource, aDestination, aCopySize);
 end;
 
-function TiwgpuCommandEncoder.Finish(const aDescriptor: TWGPUCommandBufferDescriptor): TWGPUCommandBuffer;
+function TiwgpuCommandEncoder.Finish(const aDescriptor: PWGPUCommandBufferDescriptor): IWGPUCommandBuffer;
 begin
-   Result := wgpuCommandEncoderFinish(FHandle, @aDescriptor);
+   Result := TiwgpuCommandBuffer.Create(wgpuCommandEncoderFinish(FHandle, @aDescriptor));
 end;
 
 procedure TiwgpuCommandEncoder.InjectValidationError(const aMessage: UTF8String);
@@ -835,29 +1183,6 @@ end;
 procedure TiwgpuCommandEncoder.WriteTimestamp(const aQuerySet: IWGPUQuerySet; aQueryIndex: UInt32);
 begin
    wgpuCommandEncoderWriteTimestamp(FHandle, aQuerySet.GetHandle, aQueryIndex);
-end;
-
-//
-// TiwgpuComputePassEncoder
-//
-type TiwgpuComputePassEncoder = class(TInterfacedObject, IWGPUComputePassEncoder)
-   FHandle: TWGPUComputePassEncoder;
-   constructor Create(const h: TWGPUComputePassEncoder);
-   destructor Destroy; override;
-   function GetHandle: TWGPUComputePassEncoder;
-   procedure DispatchWorkgroups(aWorkgroupCountX: UInt32; aWorkgroupCountY: UInt32; aWorkgroupCountZ: UInt32);
-   procedure DispatchWorkgroupsIndirect(const aIndirectBuffer: IWGPUBuffer; aIndirectOffset: UInt64);
-   procedure &End;
-   procedure InsertDebugMarker(const aMarkerLabel: UTF8String);
-   procedure InsertDebugMarker2(const aMarkerLabel: TWGPUStringView);
-   procedure PopDebugGroup;
-   procedure PushDebugGroup(const aGroupLabel: UTF8String);
-   procedure PushDebugGroup2(const aGroupLabel: TWGPUStringView);
-   procedure SetBindGroup(aGroupIndex: UInt32; const aGroup: IWGPUBindGroup; aDynamicOffsetCount: NativeUInt; const aDynamicOffsets: PUInt32);
-   procedure SetLabel(const aLabel: UTF8String);
-   procedure SetLabel2(const aLabel: TWGPUStringView);
-   procedure SetPipeline(const aPipeline: IWGPUComputePipeline);
-   procedure WriteTimestamp(const aQuerySet: IWGPUQuerySet; aQueryIndex: UInt32);
 end;
 
 constructor TiwgpuComputePassEncoder.Create(const h: TWGPUComputePassEncoder);
@@ -942,19 +1267,6 @@ begin
    wgpuComputePassEncoderWriteTimestamp(FHandle, aQuerySet.GetHandle, aQueryIndex);
 end;
 
-//
-// TiwgpuComputePipeline
-//
-type TiwgpuComputePipeline = class(TInterfacedObject, IWGPUComputePipeline)
-   FHandle: TWGPUComputePipeline;
-   constructor Create(const h: TWGPUComputePipeline);
-   destructor Destroy; override;
-   function GetHandle: TWGPUComputePipeline;
-   function GetBindGroupLayout(aGroupIndex: UInt32): TWGPUBindGroupLayout;
-   procedure SetLabel(const aLabel: UTF8String);
-   procedure SetLabel2(const aLabel: TWGPUStringView);
-end;
-
 constructor TiwgpuComputePipeline.Create(const h: TWGPUComputePipeline);
 begin
    inherited Create;
@@ -972,9 +1284,9 @@ begin
    Result := FHandle;
 end;
 
-function TiwgpuComputePipeline.GetBindGroupLayout(aGroupIndex: UInt32): TWGPUBindGroupLayout;
+function TiwgpuComputePipeline.GetBindGroupLayout(aGroupIndex: UInt32): IWGPUBindGroupLayout;
 begin
-   Result := wgpuComputePipelineGetBindGroupLayout(FHandle, aGroupIndex);
+   Result := TiwgpuBindGroupLayout.Create(wgpuComputePipelineGetBindGroupLayout(FHandle, aGroupIndex));
 end;
 
 procedure TiwgpuComputePipeline.SetLabel(const aLabel: UTF8String);
@@ -985,68 +1297,6 @@ end;
 procedure TiwgpuComputePipeline.SetLabel2(const aLabel: TWGPUStringView);
 begin
    wgpuComputePipelineSetLabel2(FHandle, aLabel);
-end;
-
-//
-// TiwgpuDevice
-//
-type TiwgpuDevice = class(TInterfacedObject, IWGPUDevice)
-   FHandle: TWGPUDevice;
-   constructor Create(const h: TWGPUDevice);
-   destructor Destroy; override;
-   function GetHandle: TWGPUDevice;
-   function GetProcAddress(const aProcName: UTF8String): TWGPUProc;
-   function GetProcAddress2(const aProcName: TWGPUStringView): TWGPUProc;
-   function CreateBindGroup(const aDescriptor: TWGPUBindGroupDescriptor): TWGPUBindGroup;
-   function CreateBindGroupLayout(const aDescriptor: TWGPUBindGroupLayoutDescriptor): TWGPUBindGroupLayout;
-   function CreateBuffer(const aDescriptor: TWGPUBufferDescriptor): TWGPUBuffer;
-   function CreateCommandEncoder(const aDescriptor: TWGPUCommandEncoderDescriptor): TWGPUCommandEncoder;
-   function CreateComputePipeline(const aDescriptor: TWGPUComputePipelineDescriptor): TWGPUComputePipeline;
-   procedure CreateComputePipelineAsync(const aDescriptor: TWGPUComputePipelineDescriptor; const aCallback: TWGPUCreateComputePipelineAsyncCallback; const aUserdata: Pointer);
-   function CreateComputePipelineAsync2(const aDescriptor: TWGPUComputePipelineDescriptor; const aCallbackInfo: TWGPUCreateComputePipelineAsyncCallbackInfo2): TWGPUFuture;
-   function CreateComputePipelineAsyncF(const aDescriptor: TWGPUComputePipelineDescriptor; const aCallbackInfo: TWGPUCreateComputePipelineAsyncCallbackInfo): TWGPUFuture;
-   function CreateErrorBuffer(const aDescriptor: TWGPUBufferDescriptor): TWGPUBuffer;
-   function CreateErrorExternalTexture: TWGPUExternalTexture;
-   function CreateErrorShaderModule(const aDescriptor: TWGPUShaderModuleDescriptor; const aErrorMessage: UTF8String): TWGPUShaderModule;
-   function CreateErrorShaderModule2(const aDescriptor: TWGPUShaderModuleDescriptor; const aErrorMessage: TWGPUStringView): TWGPUShaderModule;
-   function CreateErrorTexture(const aDescriptor: TWGPUTextureDescriptor): TWGPUTexture;
-   function CreateExternalTexture(const aExternalTextureDescriptor: TWGPUExternalTextureDescriptor): TWGPUExternalTexture;
-   function CreatePipelineLayout(const aDescriptor: TWGPUPipelineLayoutDescriptor): TWGPUPipelineLayout;
-   function CreateQuerySet(const aDescriptor: TWGPUQuerySetDescriptor): TWGPUQuerySet;
-   function CreateRenderBundleEncoder(const aDescriptor: TWGPURenderBundleEncoderDescriptor): TWGPURenderBundleEncoder;
-   function CreateRenderPipeline(const aDescriptor: TWGPURenderPipelineDescriptor): TWGPURenderPipeline;
-   procedure CreateRenderPipelineAsync(const aDescriptor: TWGPURenderPipelineDescriptor; const aCallback: TWGPUCreateRenderPipelineAsyncCallback; const aUserdata: Pointer);
-   function CreateRenderPipelineAsync2(const aDescriptor: TWGPURenderPipelineDescriptor; const aCallbackInfo: TWGPUCreateRenderPipelineAsyncCallbackInfo2): TWGPUFuture;
-   function CreateRenderPipelineAsyncF(const aDescriptor: TWGPURenderPipelineDescriptor; const aCallbackInfo: TWGPUCreateRenderPipelineAsyncCallbackInfo): TWGPUFuture;
-   function CreateSampler(const aDescriptor: TWGPUSamplerDescriptor): TWGPUSampler;
-   function CreateShaderModule(const aDescriptor: TWGPUShaderModuleDescriptor): TWGPUShaderModule;
-   function CreateSwapChain(const aSurface: IWGPUSurface; const aDescriptor: TWGPUSwapChainDescriptor): TWGPUSwapChain;
-   function CreateTexture(const aDescriptor: TWGPUTextureDescriptor): TWGPUTexture;
-   function EnumerateFeatures(const aFeatures: PWGPUFeatureName): NativeUInt;
-   procedure ForceLoss(const aType: TWGPUDeviceLostReason; const aMessage: UTF8String);
-   procedure ForceLoss2(const aType: TWGPUDeviceLostReason; const aMessage: TWGPUStringView);
-   function GetAHardwareBufferProperties(const aHandle: Pointer; const aProperties: PWGPUAHardwareBufferProperties): TWGPUStatus;
-   function GetAdapter: TWGPUAdapter;
-   function GetLimits(const aLimits: PWGPUSupportedLimits): TWGPUStatus;
-   function GetQueue: TWGPUQueue;
-   function GetSupportedSurfaceUsage(const aSurface: IWGPUSurface): TWGPUTextureUsage;
-   function HasFeature(const aFeature: TWGPUFeatureName): TWGPUBool;
-   function ImportSharedBufferMemory(const aDescriptor: TWGPUSharedBufferMemoryDescriptor): TWGPUSharedBufferMemory;
-   function ImportSharedFence(const aDescriptor: TWGPUSharedFenceDescriptor): TWGPUSharedFence;
-   function ImportSharedTextureMemory(const aDescriptor: TWGPUSharedTextureMemoryDescriptor): TWGPUSharedTextureMemory;
-   procedure InjectError(const aType: TWGPUErrorType; const aMessage: UTF8String);
-   procedure InjectError2(const aType: TWGPUErrorType; const aMessage: TWGPUStringView);
-   procedure PopErrorScope(const aOldCallback: TWGPUErrorCallback; const aUserdata: Pointer);
-   function PopErrorScope2(const aCallbackInfo: TWGPUPopErrorScopeCallbackInfo2): TWGPUFuture;
-   function PopErrorScopeF(const aCallbackInfo: TWGPUPopErrorScopeCallbackInfo): TWGPUFuture;
-   procedure PushErrorScope(const aFilter: TWGPUErrorFilter);
-   procedure SetDeviceLostCallback(const aCallback: TWGPUDeviceLostCallback; const aUserdata: Pointer);
-   procedure SetLabel(const aLabel: UTF8String);
-   procedure SetLabel2(const aLabel: TWGPUStringView);
-   procedure SetLoggingCallback(const aCallback: TWGPULoggingCallback; const aUserdata: Pointer);
-   procedure SetUncapturedErrorCallback(const aCallback: TWGPUErrorCallback; const aUserdata: Pointer);
-   procedure Tick;
-   procedure ValidateTextureDescriptor(const aDescriptor: TWGPUTextureDescriptor);
 end;
 
 constructor TiwgpuDevice.Create(const h: TWGPUDevice);
@@ -1076,29 +1326,29 @@ begin
    Result := wgpuGetProcAddress2(FHandle, aProcName);
 end;
 
-function TiwgpuDevice.CreateBindGroup(const aDescriptor: TWGPUBindGroupDescriptor): TWGPUBindGroup;
+function TiwgpuDevice.CreateBindGroup(const aDescriptor: TWGPUBindGroupDescriptor): IWGPUBindGroup;
 begin
-   Result := wgpuDeviceCreateBindGroup(FHandle, @aDescriptor);
+   Result := TiwgpuBindGroup.Create(wgpuDeviceCreateBindGroup(FHandle, @aDescriptor));
 end;
 
-function TiwgpuDevice.CreateBindGroupLayout(const aDescriptor: TWGPUBindGroupLayoutDescriptor): TWGPUBindGroupLayout;
+function TiwgpuDevice.CreateBindGroupLayout(const aDescriptor: TWGPUBindGroupLayoutDescriptor): IWGPUBindGroupLayout;
 begin
-   Result := wgpuDeviceCreateBindGroupLayout(FHandle, @aDescriptor);
+   Result := TiwgpuBindGroupLayout.Create(wgpuDeviceCreateBindGroupLayout(FHandle, @aDescriptor));
 end;
 
-function TiwgpuDevice.CreateBuffer(const aDescriptor: TWGPUBufferDescriptor): TWGPUBuffer;
+function TiwgpuDevice.CreateBuffer(const aDescriptor: TWGPUBufferDescriptor): IWGPUBuffer;
 begin
-   Result := wgpuDeviceCreateBuffer(FHandle, @aDescriptor);
+   Result := TiwgpuBuffer.Create(wgpuDeviceCreateBuffer(FHandle, @aDescriptor));
 end;
 
-function TiwgpuDevice.CreateCommandEncoder(const aDescriptor: TWGPUCommandEncoderDescriptor): TWGPUCommandEncoder;
+function TiwgpuDevice.CreateCommandEncoder(const aDescriptor: TWGPUCommandEncoderDescriptor): IWGPUCommandEncoder;
 begin
-   Result := wgpuDeviceCreateCommandEncoder(FHandle, @aDescriptor);
+   Result := TiwgpuCommandEncoder.Create(wgpuDeviceCreateCommandEncoder(FHandle, @aDescriptor));
 end;
 
-function TiwgpuDevice.CreateComputePipeline(const aDescriptor: TWGPUComputePipelineDescriptor): TWGPUComputePipeline;
+function TiwgpuDevice.CreateComputePipeline(const aDescriptor: TWGPUComputePipelineDescriptor): IWGPUComputePipeline;
 begin
-   Result := wgpuDeviceCreateComputePipeline(FHandle, @aDescriptor);
+   Result := TiwgpuComputePipeline.Create(wgpuDeviceCreateComputePipeline(FHandle, @aDescriptor));
 end;
 
 procedure TiwgpuDevice.CreateComputePipelineAsync(const aDescriptor: TWGPUComputePipelineDescriptor; const aCallback: TWGPUCreateComputePipelineAsyncCallback; const aUserdata: Pointer);
@@ -1116,54 +1366,54 @@ begin
    Result := wgpuDeviceCreateComputePipelineAsyncF(FHandle, @aDescriptor, aCallbackInfo);
 end;
 
-function TiwgpuDevice.CreateErrorBuffer(const aDescriptor: TWGPUBufferDescriptor): TWGPUBuffer;
+function TiwgpuDevice.CreateErrorBuffer(const aDescriptor: TWGPUBufferDescriptor): IWGPUBuffer;
 begin
-   Result := wgpuDeviceCreateErrorBuffer(FHandle, @aDescriptor);
+   Result := TiwgpuBuffer.Create(wgpuDeviceCreateErrorBuffer(FHandle, @aDescriptor));
 end;
 
-function TiwgpuDevice.CreateErrorExternalTexture: TWGPUExternalTexture;
+function TiwgpuDevice.CreateErrorExternalTexture: IWGPUExternalTexture;
 begin
-   Result := wgpuDeviceCreateErrorExternalTexture(FHandle);
+   Result := TiwgpuExternalTexture.Create(wgpuDeviceCreateErrorExternalTexture(FHandle));
 end;
 
-function TiwgpuDevice.CreateErrorShaderModule(const aDescriptor: TWGPUShaderModuleDescriptor; const aErrorMessage: UTF8String): TWGPUShaderModule;
+function TiwgpuDevice.CreateErrorShaderModule(const aDescriptor: TWGPUShaderModuleDescriptor; const aErrorMessage: UTF8String): IWGPUShaderModule;
 begin
-   Result := wgpuDeviceCreateErrorShaderModule(FHandle, @aDescriptor, Pointer(aErrorMessage));
+   Result := TiwgpuShaderModule.Create(wgpuDeviceCreateErrorShaderModule(FHandle, @aDescriptor, Pointer(aErrorMessage)));
 end;
 
-function TiwgpuDevice.CreateErrorShaderModule2(const aDescriptor: TWGPUShaderModuleDescriptor; const aErrorMessage: TWGPUStringView): TWGPUShaderModule;
+function TiwgpuDevice.CreateErrorShaderModule2(const aDescriptor: TWGPUShaderModuleDescriptor; const aErrorMessage: TWGPUStringView): IWGPUShaderModule;
 begin
-   Result := wgpuDeviceCreateErrorShaderModule2(FHandle, @aDescriptor, aErrorMessage);
+   Result := TiwgpuShaderModule.Create(wgpuDeviceCreateErrorShaderModule2(FHandle, @aDescriptor, aErrorMessage));
 end;
 
-function TiwgpuDevice.CreateErrorTexture(const aDescriptor: TWGPUTextureDescriptor): TWGPUTexture;
+function TiwgpuDevice.CreateErrorTexture(const aDescriptor: TWGPUTextureDescriptor): IWGPUTexture;
 begin
-   Result := wgpuDeviceCreateErrorTexture(FHandle, @aDescriptor);
+   Result := TiwgpuTexture.Create(wgpuDeviceCreateErrorTexture(FHandle, @aDescriptor));
 end;
 
-function TiwgpuDevice.CreateExternalTexture(const aExternalTextureDescriptor: TWGPUExternalTextureDescriptor): TWGPUExternalTexture;
+function TiwgpuDevice.CreateExternalTexture(const aExternalTextureDescriptor: TWGPUExternalTextureDescriptor): IWGPUExternalTexture;
 begin
-   Result := wgpuDeviceCreateExternalTexture(FHandle, @aExternalTextureDescriptor);
+   Result := TiwgpuExternalTexture.Create(wgpuDeviceCreateExternalTexture(FHandle, @aExternalTextureDescriptor));
 end;
 
-function TiwgpuDevice.CreatePipelineLayout(const aDescriptor: TWGPUPipelineLayoutDescriptor): TWGPUPipelineLayout;
+function TiwgpuDevice.CreatePipelineLayout(const aDescriptor: TWGPUPipelineLayoutDescriptor): IWGPUPipelineLayout;
 begin
-   Result := wgpuDeviceCreatePipelineLayout(FHandle, @aDescriptor);
+   Result := TiwgpuPipelineLayout.Create(wgpuDeviceCreatePipelineLayout(FHandle, @aDescriptor));
 end;
 
-function TiwgpuDevice.CreateQuerySet(const aDescriptor: TWGPUQuerySetDescriptor): TWGPUQuerySet;
+function TiwgpuDevice.CreateQuerySet(const aDescriptor: TWGPUQuerySetDescriptor): IWGPUQuerySet;
 begin
-   Result := wgpuDeviceCreateQuerySet(FHandle, @aDescriptor);
+   Result := TiwgpuQuerySet.Create(wgpuDeviceCreateQuerySet(FHandle, @aDescriptor));
 end;
 
-function TiwgpuDevice.CreateRenderBundleEncoder(const aDescriptor: TWGPURenderBundleEncoderDescriptor): TWGPURenderBundleEncoder;
+function TiwgpuDevice.CreateRenderBundleEncoder(const aDescriptor: TWGPURenderBundleEncoderDescriptor): IWGPURenderBundleEncoder;
 begin
-   Result := wgpuDeviceCreateRenderBundleEncoder(FHandle, @aDescriptor);
+   Result := TiwgpuRenderBundleEncoder.Create(wgpuDeviceCreateRenderBundleEncoder(FHandle, @aDescriptor));
 end;
 
-function TiwgpuDevice.CreateRenderPipeline(const aDescriptor: TWGPURenderPipelineDescriptor): TWGPURenderPipeline;
+function TiwgpuDevice.CreateRenderPipeline(const aDescriptor: TWGPURenderPipelineDescriptor): IWGPURenderPipeline;
 begin
-   Result := wgpuDeviceCreateRenderPipeline(FHandle, @aDescriptor);
+   Result := TiwgpuRenderPipeline.Create(wgpuDeviceCreateRenderPipeline(FHandle, @aDescriptor));
 end;
 
 procedure TiwgpuDevice.CreateRenderPipelineAsync(const aDescriptor: TWGPURenderPipelineDescriptor; const aCallback: TWGPUCreateRenderPipelineAsyncCallback; const aUserdata: Pointer);
@@ -1181,24 +1431,24 @@ begin
    Result := wgpuDeviceCreateRenderPipelineAsyncF(FHandle, @aDescriptor, aCallbackInfo);
 end;
 
-function TiwgpuDevice.CreateSampler(const aDescriptor: TWGPUSamplerDescriptor): TWGPUSampler;
+function TiwgpuDevice.CreateSampler(const aDescriptor: TWGPUSamplerDescriptor): IWGPUSampler;
 begin
-   Result := wgpuDeviceCreateSampler(FHandle, @aDescriptor);
+   Result := TiwgpuSampler.Create(wgpuDeviceCreateSampler(FHandle, @aDescriptor));
 end;
 
-function TiwgpuDevice.CreateShaderModule(const aDescriptor: TWGPUShaderModuleDescriptor): TWGPUShaderModule;
+function TiwgpuDevice.CreateShaderModule(const aDescriptor: TWGPUShaderModuleDescriptor): IWGPUShaderModule;
 begin
-   Result := wgpuDeviceCreateShaderModule(FHandle, @aDescriptor);
+   Result := TiwgpuShaderModule.Create(wgpuDeviceCreateShaderModule(FHandle, @aDescriptor));
 end;
 
-function TiwgpuDevice.CreateSwapChain(const aSurface: IWGPUSurface; const aDescriptor: TWGPUSwapChainDescriptor): TWGPUSwapChain;
+function TiwgpuDevice.CreateSwapChain(const aSurface: IWGPUSurface; const aDescriptor: TWGPUSwapChainDescriptor): IWGPUSwapChain;
 begin
-   Result := wgpuDeviceCreateSwapChain(FHandle, aSurface.GetHandle, @aDescriptor);
+   Result := TiwgpuSwapChain.Create(wgpuDeviceCreateSwapChain(FHandle, aSurface.GetHandle, @aDescriptor));
 end;
 
-function TiwgpuDevice.CreateTexture(const aDescriptor: TWGPUTextureDescriptor): TWGPUTexture;
+function TiwgpuDevice.CreateTexture(const aDescriptor: TWGPUTextureDescriptor): IWGPUTexture;
 begin
-   Result := wgpuDeviceCreateTexture(FHandle, @aDescriptor);
+   Result := TiwgpuTexture.Create(wgpuDeviceCreateTexture(FHandle, @aDescriptor));
 end;
 
 function TiwgpuDevice.EnumerateFeatures(const aFeatures: PWGPUFeatureName): NativeUInt;
@@ -1221,9 +1471,9 @@ begin
    Result := wgpuDeviceGetAHardwareBufferProperties(FHandle, aHandle, aProperties);
 end;
 
-function TiwgpuDevice.GetAdapter: TWGPUAdapter;
+function TiwgpuDevice.GetAdapter: IWGPUAdapter;
 begin
-   Result := wgpuDeviceGetAdapter(FHandle);
+   Result := TiwgpuAdapter.Create(wgpuDeviceGetAdapter(FHandle));
 end;
 
 function TiwgpuDevice.GetLimits(const aLimits: PWGPUSupportedLimits): TWGPUStatus;
@@ -1231,9 +1481,9 @@ begin
    Result := wgpuDeviceGetLimits(FHandle, aLimits);
 end;
 
-function TiwgpuDevice.GetQueue: TWGPUQueue;
+function TiwgpuDevice.GetQueue: IWGPUQueue;
 begin
-   Result := wgpuDeviceGetQueue(FHandle);
+   Result := TiwgpuQueue.Create(wgpuDeviceGetQueue(FHandle));
 end;
 
 function TiwgpuDevice.GetSupportedSurfaceUsage(const aSurface: IWGPUSurface): TWGPUTextureUsage;
@@ -1246,19 +1496,19 @@ begin
    Result := wgpuDeviceHasFeature(FHandle, aFeature);
 end;
 
-function TiwgpuDevice.ImportSharedBufferMemory(const aDescriptor: TWGPUSharedBufferMemoryDescriptor): TWGPUSharedBufferMemory;
+function TiwgpuDevice.ImportSharedBufferMemory(const aDescriptor: TWGPUSharedBufferMemoryDescriptor): IWGPUSharedBufferMemory;
 begin
-   Result := wgpuDeviceImportSharedBufferMemory(FHandle, @aDescriptor);
+   Result := TiwgpuSharedBufferMemory.Create(wgpuDeviceImportSharedBufferMemory(FHandle, @aDescriptor));
 end;
 
-function TiwgpuDevice.ImportSharedFence(const aDescriptor: TWGPUSharedFenceDescriptor): TWGPUSharedFence;
+function TiwgpuDevice.ImportSharedFence(const aDescriptor: TWGPUSharedFenceDescriptor): IWGPUSharedFence;
 begin
-   Result := wgpuDeviceImportSharedFence(FHandle, @aDescriptor);
+   Result := TiwgpuSharedFence.Create(wgpuDeviceImportSharedFence(FHandle, @aDescriptor));
 end;
 
-function TiwgpuDevice.ImportSharedTextureMemory(const aDescriptor: TWGPUSharedTextureMemoryDescriptor): TWGPUSharedTextureMemory;
+function TiwgpuDevice.ImportSharedTextureMemory(const aDescriptor: TWGPUSharedTextureMemoryDescriptor): IWGPUSharedTextureMemory;
 begin
-   Result := wgpuDeviceImportSharedTextureMemory(FHandle, @aDescriptor);
+   Result := TiwgpuSharedTextureMemory.Create(wgpuDeviceImportSharedTextureMemory(FHandle, @aDescriptor));
 end;
 
 procedure TiwgpuDevice.InjectError(const aType: TWGPUErrorType; const aMessage: UTF8String);
@@ -1326,20 +1576,6 @@ begin
    wgpuDeviceValidateTextureDescriptor(FHandle, @aDescriptor);
 end;
 
-//
-// TiwgpuExternalTexture
-//
-type TiwgpuExternalTexture = class(TInterfacedObject, IWGPUExternalTexture)
-   FHandle: TWGPUExternalTexture;
-   constructor Create(const h: TWGPUExternalTexture);
-   destructor Destroy; override;
-   function GetHandle: TWGPUExternalTexture;
-   procedure Expire;
-   procedure Refresh;
-   procedure SetLabel(const aLabel: UTF8String);
-   procedure SetLabel2(const aLabel: TWGPUStringView);
-end;
-
 constructor TiwgpuExternalTexture.Create(const h: TWGPUExternalTexture);
 begin
    inherited Create;
@@ -1377,24 +1613,6 @@ begin
    wgpuExternalTextureSetLabel2(FHandle, aLabel);
 end;
 
-//
-// TiwgpuInstance
-//
-type TiwgpuInstance = class(TInterfacedObject, IWGPUInstance)
-   FHandle: TWGPUInstance;
-   constructor Create(const h: TWGPUInstance);
-   destructor Destroy; override;
-   function GetHandle: TWGPUInstance;
-   function CreateSurface(const aDescriptor: TWGPUSurfaceDescriptor): TWGPUSurface;
-   function EnumerateWGSLLanguageFeatures(const aFeatures: PWGPUWGSLFeatureName): NativeUInt;
-   function HasWGSLLanguageFeature(const aFeature: TWGPUWGSLFeatureName): TWGPUBool;
-   procedure ProcessEvents;
-   procedure RequestAdapter(const aOptions: PWGPURequestAdapterOptions; const aCallback: TWGPURequestAdapterCallback; const aUserdata: Pointer);
-   function RequestAdapter2(const aOptions: PWGPURequestAdapterOptions; const aCallbackInfo: TWGPURequestAdapterCallbackInfo2): TWGPUFuture;
-   function RequestAdapterF(const aOptions: PWGPURequestAdapterOptions; const aCallbackInfo: TWGPURequestAdapterCallbackInfo): TWGPUFuture;
-   function WaitAny(aFutureCount: NativeUInt; const aFutures: PWGPUFutureWaitInfo; aTimeoutNS: UInt64): TWGPUWaitStatus;
-end;
-
 constructor TiwgpuInstance.Create(const h: TWGPUInstance);
 begin
    inherited Create;
@@ -1412,9 +1630,9 @@ begin
    Result := FHandle;
 end;
 
-function TiwgpuInstance.CreateSurface(const aDescriptor: TWGPUSurfaceDescriptor): TWGPUSurface;
+function TiwgpuInstance.CreateSurface(const aDescriptor: TWGPUSurfaceDescriptor): IWGPUSurface;
 begin
-   Result := wgpuInstanceCreateSurface(FHandle, @aDescriptor);
+   Result := TiwgpuSurface.Create(wgpuInstanceCreateSurface(FHandle, @aDescriptor));
 end;
 
 function TiwgpuInstance.EnumerateWGSLLanguageFeatures(const aFeatures: PWGPUWGSLFeatureName): NativeUInt;
@@ -1432,36 +1650,24 @@ begin
    wgpuInstanceProcessEvents(FHandle);
 end;
 
-procedure TiwgpuInstance.RequestAdapter(const aOptions: PWGPURequestAdapterOptions; const aCallback: TWGPURequestAdapterCallback; const aUserdata: Pointer);
+procedure TiwgpuInstance.RequestAdapter(const aOptions: TWGPURequestAdapterOptions; const aCallback: TWGPURequestAdapterCallback; const aUserdata: Pointer);
 begin
-   wgpuInstanceRequestAdapter(FHandle, aOptions, aCallback, aUserdata);
+   wgpuInstanceRequestAdapter(FHandle, @aOptions, aCallback, aUserdata);
 end;
 
-function TiwgpuInstance.RequestAdapter2(const aOptions: PWGPURequestAdapterOptions; const aCallbackInfo: TWGPURequestAdapterCallbackInfo2): TWGPUFuture;
+function TiwgpuInstance.RequestAdapter2(const aOptions: TWGPURequestAdapterOptions; const aCallbackInfo: TWGPURequestAdapterCallbackInfo2): TWGPUFuture;
 begin
-   Result := wgpuInstanceRequestAdapter2(FHandle, aOptions, aCallbackInfo);
+   Result := wgpuInstanceRequestAdapter2(FHandle, @aOptions, aCallbackInfo);
 end;
 
-function TiwgpuInstance.RequestAdapterF(const aOptions: PWGPURequestAdapterOptions; const aCallbackInfo: TWGPURequestAdapterCallbackInfo): TWGPUFuture;
+function TiwgpuInstance.RequestAdapterF(const aOptions: TWGPURequestAdapterOptions; const aCallbackInfo: TWGPURequestAdapterCallbackInfo): TWGPUFuture;
 begin
-   Result := wgpuInstanceRequestAdapterF(FHandle, aOptions, aCallbackInfo);
+   Result := wgpuInstanceRequestAdapterF(FHandle, @aOptions, aCallbackInfo);
 end;
 
 function TiwgpuInstance.WaitAny(aFutureCount: NativeUInt; const aFutures: PWGPUFutureWaitInfo; aTimeoutNS: UInt64): TWGPUWaitStatus;
 begin
    Result := wgpuInstanceWaitAny(FHandle, aFutureCount, aFutures, aTimeoutNS);
-end;
-
-//
-// TiwgpuPipelineLayout
-//
-type TiwgpuPipelineLayout = class(TInterfacedObject, IWGPUPipelineLayout)
-   FHandle: TWGPUPipelineLayout;
-   constructor Create(const h: TWGPUPipelineLayout);
-   destructor Destroy; override;
-   function GetHandle: TWGPUPipelineLayout;
-   procedure SetLabel(const aLabel: UTF8String);
-   procedure SetLabel2(const aLabel: TWGPUStringView);
 end;
 
 constructor TiwgpuPipelineLayout.Create(const h: TWGPUPipelineLayout);
@@ -1489,20 +1695,6 @@ end;
 procedure TiwgpuPipelineLayout.SetLabel2(const aLabel: TWGPUStringView);
 begin
    wgpuPipelineLayoutSetLabel2(FHandle, aLabel);
-end;
-
-//
-// TiwgpuQuerySet
-//
-type TiwgpuQuerySet = class(TInterfacedObject, IWGPUQuerySet)
-   FHandle: TWGPUQuerySet;
-   constructor Create(const h: TWGPUQuerySet);
-   destructor Destroy; override;
-   function GetHandle: TWGPUQuerySet;
-   function GetCount: UInt32;
-   function GetType: TWGPUQueryType;
-   procedure SetLabel(const aLabel: UTF8String);
-   procedure SetLabel2(const aLabel: TWGPUStringView);
 end;
 
 constructor TiwgpuQuerySet.Create(const h: TWGPUQuerySet);
@@ -1542,26 +1734,6 @@ begin
    wgpuQuerySetSetLabel2(FHandle, aLabel);
 end;
 
-//
-// TiwgpuQueue
-//
-type TiwgpuQueue = class(TInterfacedObject, IWGPUQueue)
-   FHandle: TWGPUQueue;
-   constructor Create(const h: TWGPUQueue);
-   destructor Destroy; override;
-   function GetHandle: TWGPUQueue;
-   procedure CopyExternalTextureForBrowser(const aSource: PWGPUImageCopyExternalTexture; const aDestination: PWGPUImageCopyTexture; const aCopySize: PWGPUExtent3D; const aOptions: PWGPUCopyTextureForBrowserOptions);
-   procedure CopyTextureForBrowser(const aSource: PWGPUImageCopyTexture; const aDestination: PWGPUImageCopyTexture; const aCopySize: PWGPUExtent3D; const aOptions: PWGPUCopyTextureForBrowserOptions);
-   procedure OnSubmittedWorkDone(const aCallback: TWGPUQueueWorkDoneCallback; const aUserdata: Pointer);
-   function OnSubmittedWorkDone2(const aCallbackInfo: TWGPUQueueWorkDoneCallbackInfo2): TWGPUFuture;
-   function OnSubmittedWorkDoneF(const aCallbackInfo: TWGPUQueueWorkDoneCallbackInfo): TWGPUFuture;
-   procedure SetLabel(const aLabel: UTF8String);
-   procedure SetLabel2(const aLabel: TWGPUStringView);
-   procedure Submit(aCommandCount: NativeUInt; const aCommands: PWGPUCommandBuffer);
-   procedure WriteBuffer(const aBuffer: IWGPUBuffer; aBufferOffset: UInt64; const aData: Pointer; aSize: NativeUInt);
-   procedure WriteTexture(const aDestination: PWGPUImageCopyTexture; const aData: Pointer; aDataSize: NativeUInt; const aDataLayout: PWGPUTextureDataLayout; const aWriteSize: PWGPUExtent3D);
-end;
-
 constructor TiwgpuQueue.Create(const h: TWGPUQueue);
 begin
    inherited Create;
@@ -1579,14 +1751,14 @@ begin
    Result := FHandle;
 end;
 
-procedure TiwgpuQueue.CopyExternalTextureForBrowser(const aSource: PWGPUImageCopyExternalTexture; const aDestination: PWGPUImageCopyTexture; const aCopySize: PWGPUExtent3D; const aOptions: PWGPUCopyTextureForBrowserOptions);
+procedure TiwgpuQueue.CopyExternalTextureForBrowser(const aSource: PWGPUImageCopyExternalTexture; const aDestination: PWGPUImageCopyTexture; const aCopySize: PWGPUExtent3D; const aOptions: TWGPUCopyTextureForBrowserOptions);
 begin
-   wgpuQueueCopyExternalTextureForBrowser(FHandle, aSource, aDestination, aCopySize, aOptions);
+   wgpuQueueCopyExternalTextureForBrowser(FHandle, aSource, aDestination, aCopySize, @aOptions);
 end;
 
-procedure TiwgpuQueue.CopyTextureForBrowser(const aSource: PWGPUImageCopyTexture; const aDestination: PWGPUImageCopyTexture; const aCopySize: PWGPUExtent3D; const aOptions: PWGPUCopyTextureForBrowserOptions);
+procedure TiwgpuQueue.CopyTextureForBrowser(const aSource: PWGPUImageCopyTexture; const aDestination: PWGPUImageCopyTexture; const aCopySize: PWGPUExtent3D; const aOptions: TWGPUCopyTextureForBrowserOptions);
 begin
-   wgpuQueueCopyTextureForBrowser(FHandle, aSource, aDestination, aCopySize, aOptions);
+   wgpuQueueCopyTextureForBrowser(FHandle, aSource, aDestination, aCopySize, @aOptions);
 end;
 
 procedure TiwgpuQueue.OnSubmittedWorkDone(const aCallback: TWGPUQueueWorkDoneCallback; const aUserdata: Pointer);
@@ -1629,18 +1801,6 @@ begin
    wgpuQueueWriteTexture(FHandle, aDestination, aData, aDataSize, aDataLayout, aWriteSize);
 end;
 
-//
-// TiwgpuRenderBundle
-//
-type TiwgpuRenderBundle = class(TInterfacedObject, IWGPURenderBundle)
-   FHandle: TWGPURenderBundle;
-   constructor Create(const h: TWGPURenderBundle);
-   destructor Destroy; override;
-   function GetHandle: TWGPURenderBundle;
-   procedure SetLabel(const aLabel: UTF8String);
-   procedure SetLabel2(const aLabel: TWGPUStringView);
-end;
-
 constructor TiwgpuRenderBundle.Create(const h: TWGPURenderBundle);
 begin
    inherited Create;
@@ -1666,32 +1826,6 @@ end;
 procedure TiwgpuRenderBundle.SetLabel2(const aLabel: TWGPUStringView);
 begin
    wgpuRenderBundleSetLabel2(FHandle, aLabel);
-end;
-
-//
-// TiwgpuRenderBundleEncoder
-//
-type TiwgpuRenderBundleEncoder = class(TInterfacedObject, IWGPURenderBundleEncoder)
-   FHandle: TWGPURenderBundleEncoder;
-   constructor Create(const h: TWGPURenderBundleEncoder);
-   destructor Destroy; override;
-   function GetHandle: TWGPURenderBundleEncoder;
-   procedure Draw(aVertexCount: UInt32; aInstanceCount: UInt32; aFirstVertex: UInt32; aFirstInstance: UInt32);
-   procedure DrawIndexed(aIndexCount: UInt32; aInstanceCount: UInt32; aFirstIndex: UInt32; const aBaseVertex: Int32; aFirstInstance: UInt32);
-   procedure DrawIndexedIndirect(const aIndirectBuffer: IWGPUBuffer; aIndirectOffset: UInt64);
-   procedure DrawIndirect(const aIndirectBuffer: IWGPUBuffer; aIndirectOffset: UInt64);
-   function Finish(const aDescriptor: TWGPURenderBundleDescriptor): TWGPURenderBundle;
-   procedure InsertDebugMarker(const aMarkerLabel: UTF8String);
-   procedure InsertDebugMarker2(const aMarkerLabel: TWGPUStringView);
-   procedure PopDebugGroup;
-   procedure PushDebugGroup(const aGroupLabel: UTF8String);
-   procedure PushDebugGroup2(const aGroupLabel: TWGPUStringView);
-   procedure SetBindGroup(aGroupIndex: UInt32; const aGroup: IWGPUBindGroup; aDynamicOffsetCount: NativeUInt; const aDynamicOffsets: PUInt32);
-   procedure SetIndexBuffer(const aBuffer: IWGPUBuffer; const aFormat: TWGPUIndexFormat; aOffset: UInt64; aSize: UInt64);
-   procedure SetLabel(const aLabel: UTF8String);
-   procedure SetLabel2(const aLabel: TWGPUStringView);
-   procedure SetPipeline(const aPipeline: IWGPURenderPipeline);
-   procedure SetVertexBuffer(aSlot: UInt32; const aBuffer: IWGPUBuffer; aOffset: UInt64; aSize: UInt64);
 end;
 
 constructor TiwgpuRenderBundleEncoder.Create(const h: TWGPURenderBundleEncoder);
@@ -1731,9 +1865,9 @@ begin
    wgpuRenderBundleEncoderDrawIndirect(FHandle, aIndirectBuffer.GetHandle, aIndirectOffset);
 end;
 
-function TiwgpuRenderBundleEncoder.Finish(const aDescriptor: TWGPURenderBundleDescriptor): TWGPURenderBundle;
+function TiwgpuRenderBundleEncoder.Finish(const aDescriptor: PWGPURenderBundleDescriptor): IWGPURenderBundle;
 begin
-   Result := wgpuRenderBundleEncoderFinish(FHandle, @aDescriptor);
+   Result := TiwgpuRenderBundle.Create(wgpuRenderBundleEncoderFinish(FHandle, @aDescriptor));
 end;
 
 procedure TiwgpuRenderBundleEncoder.InsertDebugMarker(const aMarkerLabel: UTF8String);
@@ -1789,43 +1923,6 @@ end;
 procedure TiwgpuRenderBundleEncoder.SetVertexBuffer(aSlot: UInt32; const aBuffer: IWGPUBuffer; aOffset: UInt64; aSize: UInt64);
 begin
    wgpuRenderBundleEncoderSetVertexBuffer(FHandle, aSlot, aBuffer.GetHandle, aOffset, aSize);
-end;
-
-//
-// TiwgpuRenderPassEncoder
-//
-type TiwgpuRenderPassEncoder = class(TInterfacedObject, IWGPURenderPassEncoder)
-   FHandle: TWGPURenderPassEncoder;
-   constructor Create(const h: TWGPURenderPassEncoder);
-   destructor Destroy; override;
-   function GetHandle: TWGPURenderPassEncoder;
-   procedure BeginOcclusionQuery(aQueryIndex: UInt32);
-   procedure Draw(aVertexCount: UInt32; aInstanceCount: UInt32; aFirstVertex: UInt32; aFirstInstance: UInt32);
-   procedure DrawIndexed(aIndexCount: UInt32; aInstanceCount: UInt32; aFirstIndex: UInt32; const aBaseVertex: Int32; aFirstInstance: UInt32);
-   procedure DrawIndexedIndirect(const aIndirectBuffer: IWGPUBuffer; aIndirectOffset: UInt64);
-   procedure DrawIndirect(const aIndirectBuffer: IWGPUBuffer; aIndirectOffset: UInt64);
-   procedure &End;
-   procedure EndOcclusionQuery;
-   procedure ExecuteBundles(aBundleCount: NativeUInt; const aBundles: PWGPURenderBundle);
-   procedure InsertDebugMarker(const aMarkerLabel: UTF8String);
-   procedure InsertDebugMarker2(const aMarkerLabel: TWGPUStringView);
-   procedure MultiDrawIndexedIndirect(const aIndirectBuffer: IWGPUBuffer; aIndirectOffset: UInt64; aMaxDrawCount: UInt32; const aDrawCountBuffer: IWGPUBuffer; aDrawCountBufferOffset: UInt64);
-   procedure MultiDrawIndirect(const aIndirectBuffer: IWGPUBuffer; aIndirectOffset: UInt64; aMaxDrawCount: UInt32; const aDrawCountBuffer: IWGPUBuffer; aDrawCountBufferOffset: UInt64);
-   procedure PixelLocalStorageBarrier;
-   procedure PopDebugGroup;
-   procedure PushDebugGroup(const aGroupLabel: UTF8String);
-   procedure PushDebugGroup2(const aGroupLabel: TWGPUStringView);
-   procedure SetBindGroup(aGroupIndex: UInt32; const aGroup: IWGPUBindGroup; aDynamicOffsetCount: NativeUInt; const aDynamicOffsets: PUInt32);
-   procedure SetBlendConstant(const aColor: PWGPUColor);
-   procedure SetIndexBuffer(const aBuffer: IWGPUBuffer; const aFormat: TWGPUIndexFormat; aOffset: UInt64; aSize: UInt64);
-   procedure SetLabel(const aLabel: UTF8String);
-   procedure SetLabel2(const aLabel: TWGPUStringView);
-   procedure SetPipeline(const aPipeline: IWGPURenderPipeline);
-   procedure SetScissorRect(aX: UInt32; aY: UInt32; aWidth: UInt32; aHeight: UInt32);
-   procedure SetStencilReference(aReference: UInt32);
-   procedure SetVertexBuffer(aSlot: UInt32; const aBuffer: IWGPUBuffer; aOffset: UInt64; aSize: UInt64);
-   procedure SetViewport(const aX: Single; const aY: Single; const aWidth: Single; const aHeight: Single; const aMinDepth: Single; const aMaxDepth: Single);
-   procedure WriteTimestamp(const aQuerySet: IWGPUQuerySet; aQueryIndex: UInt32);
 end;
 
 constructor TiwgpuRenderPassEncoder.Create(const h: TWGPURenderPassEncoder);
@@ -1980,19 +2077,6 @@ begin
    wgpuRenderPassEncoderWriteTimestamp(FHandle, aQuerySet.GetHandle, aQueryIndex);
 end;
 
-//
-// TiwgpuRenderPipeline
-//
-type TiwgpuRenderPipeline = class(TInterfacedObject, IWGPURenderPipeline)
-   FHandle: TWGPURenderPipeline;
-   constructor Create(const h: TWGPURenderPipeline);
-   destructor Destroy; override;
-   function GetHandle: TWGPURenderPipeline;
-   function GetBindGroupLayout(aGroupIndex: UInt32): TWGPUBindGroupLayout;
-   procedure SetLabel(const aLabel: UTF8String);
-   procedure SetLabel2(const aLabel: TWGPUStringView);
-end;
-
 constructor TiwgpuRenderPipeline.Create(const h: TWGPURenderPipeline);
 begin
    inherited Create;
@@ -2010,9 +2094,9 @@ begin
    Result := FHandle;
 end;
 
-function TiwgpuRenderPipeline.GetBindGroupLayout(aGroupIndex: UInt32): TWGPUBindGroupLayout;
+function TiwgpuRenderPipeline.GetBindGroupLayout(aGroupIndex: UInt32): IWGPUBindGroupLayout;
 begin
-   Result := wgpuRenderPipelineGetBindGroupLayout(FHandle, aGroupIndex);
+   Result := TiwgpuBindGroupLayout.Create(wgpuRenderPipelineGetBindGroupLayout(FHandle, aGroupIndex));
 end;
 
 procedure TiwgpuRenderPipeline.SetLabel(const aLabel: UTF8String);
@@ -2023,18 +2107,6 @@ end;
 procedure TiwgpuRenderPipeline.SetLabel2(const aLabel: TWGPUStringView);
 begin
    wgpuRenderPipelineSetLabel2(FHandle, aLabel);
-end;
-
-//
-// TiwgpuSampler
-//
-type TiwgpuSampler = class(TInterfacedObject, IWGPUSampler)
-   FHandle: TWGPUSampler;
-   constructor Create(const h: TWGPUSampler);
-   destructor Destroy; override;
-   function GetHandle: TWGPUSampler;
-   procedure SetLabel(const aLabel: UTF8String);
-   procedure SetLabel2(const aLabel: TWGPUStringView);
 end;
 
 constructor TiwgpuSampler.Create(const h: TWGPUSampler);
@@ -2062,21 +2134,6 @@ end;
 procedure TiwgpuSampler.SetLabel2(const aLabel: TWGPUStringView);
 begin
    wgpuSamplerSetLabel2(FHandle, aLabel);
-end;
-
-//
-// TiwgpuShaderModule
-//
-type TiwgpuShaderModule = class(TInterfacedObject, IWGPUShaderModule)
-   FHandle: TWGPUShaderModule;
-   constructor Create(const h: TWGPUShaderModule);
-   destructor Destroy; override;
-   function GetHandle: TWGPUShaderModule;
-   procedure GetCompilationInfo(const aCallback: TWGPUCompilationInfoCallback; const aUserdata: Pointer);
-   function GetCompilationInfo2(const aCallbackInfo: TWGPUCompilationInfoCallbackInfo2): TWGPUFuture;
-   function GetCompilationInfoF(const aCallbackInfo: TWGPUCompilationInfoCallbackInfo): TWGPUFuture;
-   procedure SetLabel(const aLabel: UTF8String);
-   procedure SetLabel2(const aLabel: TWGPUStringView);
 end;
 
 constructor TiwgpuShaderModule.Create(const h: TWGPUShaderModule);
@@ -2121,23 +2178,6 @@ begin
    wgpuShaderModuleSetLabel2(FHandle, aLabel);
 end;
 
-//
-// TiwgpuSharedBufferMemory
-//
-type TiwgpuSharedBufferMemory = class(TInterfacedObject, IWGPUSharedBufferMemory)
-   FHandle: TWGPUSharedBufferMemory;
-   constructor Create(const h: TWGPUSharedBufferMemory);
-   destructor Destroy; override;
-   function GetHandle: TWGPUSharedBufferMemory;
-   function BeginAccess(const aBuffer: IWGPUBuffer; const aDescriptor: TWGPUSharedBufferMemoryBeginAccessDescriptor): TWGPUStatus;
-   function CreateBuffer(const aDescriptor: TWGPUBufferDescriptor): TWGPUBuffer;
-   function EndAccess(const aBuffer: IWGPUBuffer; const aDescriptor: PWGPUSharedBufferMemoryEndAccessState): TWGPUStatus;
-   function GetProperties(const aProperties: PWGPUSharedBufferMemoryProperties): TWGPUStatus;
-   function IsDeviceLost: TWGPUBool;
-   procedure SetLabel(const aLabel: UTF8String);
-   procedure SetLabel2(const aLabel: TWGPUStringView);
-end;
-
 constructor TiwgpuSharedBufferMemory.Create(const h: TWGPUSharedBufferMemory);
 begin
    inherited Create;
@@ -2160,9 +2200,9 @@ begin
    Result := wgpuSharedBufferMemoryBeginAccess(FHandle, aBuffer.GetHandle, @aDescriptor);
 end;
 
-function TiwgpuSharedBufferMemory.CreateBuffer(const aDescriptor: TWGPUBufferDescriptor): TWGPUBuffer;
+function TiwgpuSharedBufferMemory.CreateBuffer(const aDescriptor: TWGPUBufferDescriptor): IWGPUBuffer;
 begin
-   Result := wgpuSharedBufferMemoryCreateBuffer(FHandle, @aDescriptor);
+   Result := TiwgpuBuffer.Create(wgpuSharedBufferMemoryCreateBuffer(FHandle, @aDescriptor));
 end;
 
 function TiwgpuSharedBufferMemory.EndAccess(const aBuffer: IWGPUBuffer; const aDescriptor: PWGPUSharedBufferMemoryEndAccessState): TWGPUStatus;
@@ -2190,17 +2230,6 @@ begin
    wgpuSharedBufferMemorySetLabel2(FHandle, aLabel);
 end;
 
-//
-// TiwgpuSharedFence
-//
-type TiwgpuSharedFence = class(TInterfacedObject, IWGPUSharedFence)
-   FHandle: TWGPUSharedFence;
-   constructor Create(const h: TWGPUSharedFence);
-   destructor Destroy; override;
-   function GetHandle: TWGPUSharedFence;
-   procedure ExportInfo(const aInfo: PWGPUSharedFenceExportInfo);
-end;
-
 constructor TiwgpuSharedFence.Create(const h: TWGPUSharedFence);
 begin
    inherited Create;
@@ -2221,23 +2250,6 @@ end;
 procedure TiwgpuSharedFence.ExportInfo(const aInfo: PWGPUSharedFenceExportInfo);
 begin
    wgpuSharedFenceExportInfo(FHandle, aInfo);
-end;
-
-//
-// TiwgpuSharedTextureMemory
-//
-type TiwgpuSharedTextureMemory = class(TInterfacedObject, IWGPUSharedTextureMemory)
-   FHandle: TWGPUSharedTextureMemory;
-   constructor Create(const h: TWGPUSharedTextureMemory);
-   destructor Destroy; override;
-   function GetHandle: TWGPUSharedTextureMemory;
-   function BeginAccess(const aTexture: IWGPUTexture; const aDescriptor: TWGPUSharedTextureMemoryBeginAccessDescriptor): TWGPUStatus;
-   function CreateTexture(const aDescriptor: TWGPUTextureDescriptor): TWGPUTexture;
-   function EndAccess(const aTexture: IWGPUTexture; const aDescriptor: PWGPUSharedTextureMemoryEndAccessState): TWGPUStatus;
-   function GetProperties(const aProperties: PWGPUSharedTextureMemoryProperties): TWGPUStatus;
-   function IsDeviceLost: TWGPUBool;
-   procedure SetLabel(const aLabel: UTF8String);
-   procedure SetLabel2(const aLabel: TWGPUStringView);
 end;
 
 constructor TiwgpuSharedTextureMemory.Create(const h: TWGPUSharedTextureMemory);
@@ -2262,9 +2274,9 @@ begin
    Result := wgpuSharedTextureMemoryBeginAccess(FHandle, aTexture.GetHandle, @aDescriptor);
 end;
 
-function TiwgpuSharedTextureMemory.CreateTexture(const aDescriptor: TWGPUTextureDescriptor): TWGPUTexture;
+function TiwgpuSharedTextureMemory.CreateTexture(const aDescriptor: TWGPUTextureDescriptor): IWGPUTexture;
 begin
-   Result := wgpuSharedTextureMemoryCreateTexture(FHandle, @aDescriptor);
+   Result := TiwgpuTexture.Create(wgpuSharedTextureMemoryCreateTexture(FHandle, @aDescriptor));
 end;
 
 function TiwgpuSharedTextureMemory.EndAccess(const aTexture: IWGPUTexture; const aDescriptor: PWGPUSharedTextureMemoryEndAccessState): TWGPUStatus;
@@ -2292,24 +2304,6 @@ begin
    wgpuSharedTextureMemorySetLabel2(FHandle, aLabel);
 end;
 
-//
-// TiwgpuSurface
-//
-type TiwgpuSurface = class(TInterfacedObject, IWGPUSurface)
-   FHandle: TWGPUSurface;
-   constructor Create(const h: TWGPUSurface);
-   destructor Destroy; override;
-   function GetHandle: TWGPUSurface;
-   procedure Configure(const aConfig: PWGPUSurfaceConfiguration);
-   function GetCapabilities(const aAdapter: IWGPUAdapter; const aCapabilities: PWGPUSurfaceCapabilities): TWGPUStatus;
-   procedure GetCurrentTexture(const aSurfaceTexture: PWGPUSurfaceTexture);
-   function GetPreferredFormat(const aAdapter: IWGPUAdapter): TWGPUTextureFormat;
-   procedure Present;
-   procedure SetLabel(const aLabel: UTF8String);
-   procedure SetLabel2(const aLabel: TWGPUStringView);
-   procedure Unconfigure;
-end;
-
 constructor TiwgpuSurface.Create(const h: TWGPUSurface);
 begin
    inherited Create;
@@ -2327,9 +2321,9 @@ begin
    Result := FHandle;
 end;
 
-procedure TiwgpuSurface.Configure(const aConfig: PWGPUSurfaceConfiguration);
+procedure TiwgpuSurface.Configure(const aConfig: TWGPUSurfaceConfiguration);
 begin
-   wgpuSurfaceConfigure(FHandle, aConfig);
+   wgpuSurfaceConfigure(FHandle, @aConfig);
 end;
 
 function TiwgpuSurface.GetCapabilities(const aAdapter: IWGPUAdapter; const aCapabilities: PWGPUSurfaceCapabilities): TWGPUStatus;
@@ -2367,19 +2361,6 @@ begin
    wgpuSurfaceUnconfigure(FHandle);
 end;
 
-//
-// TiwgpuSwapChain
-//
-type TiwgpuSwapChain = class(TInterfacedObject, IWGPUSwapChain)
-   FHandle: TWGPUSwapChain;
-   constructor Create(const h: TWGPUSwapChain);
-   destructor Destroy; override;
-   function GetHandle: TWGPUSwapChain;
-   function GetCurrentTexture: TWGPUTexture;
-   function GetCurrentTextureView: TWGPUTextureView;
-   procedure Present;
-end;
-
 constructor TiwgpuSwapChain.Create(const h: TWGPUSwapChain);
 begin
    inherited Create;
@@ -2397,41 +2378,19 @@ begin
    Result := FHandle;
 end;
 
-function TiwgpuSwapChain.GetCurrentTexture: TWGPUTexture;
+function TiwgpuSwapChain.GetCurrentTexture: IWGPUTexture;
 begin
-   Result := wgpuSwapChainGetCurrentTexture(FHandle);
+   Result := TiwgpuTexture.Create(wgpuSwapChainGetCurrentTexture(FHandle));
 end;
 
-function TiwgpuSwapChain.GetCurrentTextureView: TWGPUTextureView;
+function TiwgpuSwapChain.GetCurrentTextureView: IWGPUTextureView;
 begin
-   Result := wgpuSwapChainGetCurrentTextureView(FHandle);
+   Result := TiwgpuTextureView.Create(wgpuSwapChainGetCurrentTextureView(FHandle));
 end;
 
 procedure TiwgpuSwapChain.Present;
 begin
    wgpuSwapChainPresent(FHandle);
-end;
-
-//
-// TiwgpuTexture
-//
-type TiwgpuTexture = class(TInterfacedObject, IWGPUTexture)
-   FHandle: TWGPUTexture;
-   constructor Create(const h: TWGPUTexture);
-   destructor Destroy; override;
-   function GetHandle: TWGPUTexture;
-   function CreateErrorView(const aDescriptor: TWGPUTextureViewDescriptor): TWGPUTextureView;
-   function CreateView(const aDescriptor: TWGPUTextureViewDescriptor): TWGPUTextureView;
-   function GetDepthOrArrayLayers: UInt32;
-   function GetDimension: TWGPUTextureDimension;
-   function GetFormat: TWGPUTextureFormat;
-   function GetHeight: UInt32;
-   function GetMipLevelCount: UInt32;
-   function GetSampleCount: UInt32;
-   function GetUsage: TWGPUTextureUsage;
-   function GetWidth: UInt32;
-   procedure SetLabel(const aLabel: UTF8String);
-   procedure SetLabel2(const aLabel: TWGPUStringView);
 end;
 
 constructor TiwgpuTexture.Create(const h: TWGPUTexture);
@@ -2451,14 +2410,14 @@ begin
    Result := FHandle;
 end;
 
-function TiwgpuTexture.CreateErrorView(const aDescriptor: TWGPUTextureViewDescriptor): TWGPUTextureView;
+function TiwgpuTexture.CreateErrorView(const aDescriptor: TWGPUTextureViewDescriptor): IWGPUTextureView;
 begin
-   Result := wgpuTextureCreateErrorView(FHandle, @aDescriptor);
+   Result := TiwgpuTextureView.Create(wgpuTextureCreateErrorView(FHandle, @aDescriptor));
 end;
 
-function TiwgpuTexture.CreateView(const aDescriptor: TWGPUTextureViewDescriptor): TWGPUTextureView;
+function TiwgpuTexture.CreateView(const aDescriptor: TWGPUTextureViewDescriptor): IWGPUTextureView;
 begin
-   Result := wgpuTextureCreateView(FHandle, @aDescriptor);
+   Result := TiwgpuTextureView.Create(wgpuTextureCreateView(FHandle, @aDescriptor));
 end;
 
 function TiwgpuTexture.GetDepthOrArrayLayers: UInt32;
@@ -2511,18 +2470,6 @@ begin
    wgpuTextureSetLabel2(FHandle, aLabel);
 end;
 
-//
-// TiwgpuTextureView
-//
-type TiwgpuTextureView = class(TInterfacedObject, IWGPUTextureView)
-   FHandle: TWGPUTextureView;
-   constructor Create(const h: TWGPUTextureView);
-   destructor Destroy; override;
-   function GetHandle: TWGPUTextureView;
-   procedure SetLabel(const aLabel: UTF8String);
-   procedure SetLabel2(const aLabel: TWGPUStringView);
-end;
-
 constructor TiwgpuTextureView.Create(const h: TWGPUTextureView);
 begin
    inherited Create;
@@ -2548,6 +2495,26 @@ end;
 procedure TiwgpuTextureView.SetLabel2(const aLabel: TWGPUStringView);
 begin
    wgpuTextureViewSetLabel2(FHandle, aLabel);
+end;
+
+//
+// WGPUFactory
+//
+
+class function WGPUFactory.CreateInstance(const aInstanceDescriptor : TWGPUInstanceDescriptor) : IWGPUInstance;
+begin
+   var instance := wgpuCreateInstance(@aInstanceDescriptor);
+   Assert(instance <> nil, 'Failed to CreateInstance');
+   Result := TiwgpuInstance.Create(instance);
+end;
+
+class function WGPUFactory.WrapAdapter(const aAdapter : TWGPUAdapter) : IWGPUAdapter;
+begin
+   Result := TiwgpuAdapter.Create(aAdapter);
+end;
+class function WGPUFactory.WrapDevice(const aDevice : TWGPUDevice) : IWGPUDevice;
+begin
+   Result := TiwgpuDevice.Create(aDevice);
 end;
 
 end.
