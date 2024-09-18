@@ -168,12 +168,12 @@ begin
    // Create vInstance
    var instanceDescriptor := Default(TWGPUInstanceDescriptor);
    vInstance := wgpuCreateInstance(@instanceDescriptor);
-   Assert(vInstance <> nil);
+   Assert(vInstance <> 0);
 
    // Request adapter
    var adapterOptions := Default(TWGPURequestAdapterOptions);
    wgpuInstanceRequestAdapter(vInstance, @adapterOptions, @AdapterCallback, nil);
-   Assert(vAdapter <> nil);
+   Assert(vAdapter <> 0);
 
    // Request device
    var requiredLimits := Default(TWGPURequiredLimits);
@@ -196,7 +196,7 @@ begin
    deviceDescriptor.requiredFeatureCount := Length(featuresArray);
    deviceDescriptor.requiredFeatures := Pointer(featuresArray);;
    wgpuAdapterRequestDevice(vAdapter, @deviceDescriptor, @DeviceCallback, nil);
-   Assert(vDevice <> nil);
+   Assert(vDevice <> 0);
 
    // Create vSurface
 
@@ -211,7 +211,7 @@ begin
    surfaceDescriptor.nextInChain := @fromWindowsHWND;
 
    vSurface := wgpuInstanceCreateSurface(vInstance, @surfaceDescriptor);
-   Assert(vSurface <> nil);
+   Assert(vSurface <> 0);
 
    // Configure canvas context
    var surfaceConfiguration := Default(TWGPUSurfaceConfiguration);
@@ -246,7 +246,7 @@ begin
    shaderModuleDescriptor.nextInChain := @vertexSource;
 
    var vertexModule := wgpuDeviceCreateShaderModule(vDevice, @shaderModuleDescriptor);
-   Assert(vertexModule <> nil);
+   Assert(vertexModule <> 0);
 
    var compilationInfoCallbackInfo2 := Default(TWGPUCompilationInfoCallbackInfo2);
    compilationInfoCallbackInfo2.mode := WGPUCallbackMode_AllowSpontaneous;
@@ -262,7 +262,7 @@ begin
    shaderModuleDescriptor.nextInChain := @fragmentSource;
 
    var fragmentModule := wgpuDeviceCreateShaderModule(vDevice, @shaderModuleDescriptor);
-   Assert(fragmentModule <> nil);
+   Assert(fragmentModule <> 0);
 
    compilationInfoCallbackInfo2.userdata1 := PChar('Fragment Shader');
    wgpuShaderModuleGetCompilationInfo2(fragmentModule, compilationInfoCallbackInfo2);
@@ -308,7 +308,7 @@ begin
    bindGroupLayoutDescriptor.entryCount := Length(bindGroupLayoutEntries);
    bindGroupLayoutDescriptor.entries := @bindGroupLayoutEntries;
    var bindGroupLayout := wgpuDeviceCreateBindGroupLayout(vDevice, @bindGroupLayoutDescriptor);
-   Assert(bindGroupLayout <> nil);
+   Assert(bindGroupLayout <> 0);
 
    // Create pipeline layout
    var pipelineLayoutDescriptor := Default(TWGPUPipelineLayoutDescriptor);
@@ -316,7 +316,7 @@ begin
    pipelineLayoutDescriptor.bindGroupLayoutCount := 1;
    pipelineLayoutDescriptor.bindGroupLayouts := @bindGroupLayout;
    var pipelineLayout := wgpuDeviceCreatePipelineLayout(vDevice, @pipelineLayoutDescriptor);
-   Assert(pipelineLayout <> nil);
+   Assert(pipelineLayout <> 0);
 
    // Configure vertex state
    var vertexBufferLayout := Default(TWGPUVertexBufferLayout);
@@ -369,7 +369,7 @@ begin
    pipelineDescriptor.multisample.mask := UInt32(-1);
 
    vRenderPipeline := wgpuDeviceCreateRenderPipeline(vDevice, @pipelineDescriptor);
-   Assert(vRenderPipeline <> nil);
+   Assert(vRenderPipeline <> 0);
 
    // Create the bind group
    var bindGroupEntries : array [0..2] of TWGPUBindGroupEntry;
@@ -390,7 +390,7 @@ begin
    bindGroupDescriptor.entryCount := Length(bindGroupEntries);
    bindGroupDescriptor.entries := @bindGroupEntries;
    vBindGroup := wgpuDeviceCreateBindGroup(vDevice, @bindGroupDescriptor);
-   Assert(vBindGroup <> nil);
+   Assert(vBindGroup <> 0);
 
    wgpuShaderModuleRelease(vertexModule);
    wgpuShaderModuleRelease(fragmentModule);
@@ -405,7 +405,7 @@ begin
    vertexBufferDescriptor.usage := WGPUBufferUsage_Vertex or WGPUBufferUsage_CopyDst;
    vertexBufferDescriptor.size := SizeOf(Vertices);
    vVertexBuffer := wgpuDeviceCreateBuffer(vDevice, @vertexBufferDescriptor);
-   Assert(vVertexBuffer <> nil);
+   Assert(vVertexBuffer <> 0);
 
    wgpuQueueWriteBuffer(vQueue, vVertexBuffer, 0, @Vertices, SizeOf(Vertices));
 
@@ -414,7 +414,7 @@ begin
    uniformBufferDescriptor.usage := WGPUBufferUsage_Uniform or WGPUBufferUsage_CopyDst;
    uniformBufferDescriptor.size := SizeOf(Single);
    vUniformBuffer := wgpuDeviceCreateBuffer(vDevice, @uniformBufferDescriptor);
-   Assert(vUniformBuffer <> nil);
+   Assert(vUniformBuffer <> 0);
 end;
 
 procedure CreateTexture;
@@ -441,7 +441,7 @@ begin
    textureDescriptor.mipLevelCount := 1;
    textureDescriptor.sampleCount := 1;
    vTexture := wgpuDeviceCreateTexture(vDevice, @textureDescriptor);
-   Assert(vTexture <> nil);
+   Assert(vTexture <> 0);
 
    var destination := Default(TWGPUImageCopyTexture);
    destination.texture := vTexture;
@@ -467,7 +467,7 @@ begin
    textureViewDescriptor.arrayLayerCount := 1;
    textureViewDescriptor.aspect := WGPUTextureAspect_All;
    vTextureView := wgpuTextureCreateView(vTexture, @textureViewDescriptor);
-   Assert(vTextureView <> nil);
+   Assert(vTextureView <> 0);
 end;
 
 procedure Render;
@@ -487,12 +487,12 @@ begin
    viewDescriptor.arrayLayerCount := 1;
    viewDescriptor.aspect := WGPUTextureAspect_All;
    var targetView := wgpuTextureCreateView(surfaceTexture.texture, @viewDescriptor);
-   Assert(targetView <> nil);
+   Assert(targetView <> 0);
 
    var commandEncoderDescriptor := Default(TWGPUCommandEncoderDescriptor);
    commandEncoderDescriptor.&label := 'Command Encoder';
    var commandEncoder := wgpuDeviceCreateCommandEncoder(vDevice, @commandEncoderDescriptor);
-   Assert(commandEncoder <> nil);
+   Assert(commandEncoder <> 0);
 
    var renderPassColorAttachment := Default(TWGPURenderPassColorAttachment);
    renderPassColorAttachment.view := targetView;
@@ -519,7 +519,7 @@ begin
    wgpuRenderPassEncoderRelease(renderPass);
 
    var commandBuffer := wgpuCommandEncoderFinish(commandEncoder, nil);
-   Assert(commandBuffer <> nil);
+   Assert(commandBuffer <> 0);
 
    var angle : Single := Frac(Now) * 86400 * PI / 4; // PI/4 per second
    wgpuQueueWriteBuffer(vQueue, vUniformBuffer, 0, @angle, SizeOf(angle));
