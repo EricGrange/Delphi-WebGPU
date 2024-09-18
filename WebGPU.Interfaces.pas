@@ -1,5 +1,18 @@
-// WARNING: experimental and auto-generated, for comments only, not for use (yet)
-//
+{**********************************************************************}
+{                                                                      }
+{    "The contents of this file are subject to the Mozilla Public      }
+{    License Version 2.0 (the "License"); you may not use this         }
+{    file except in compliance with the License. You may obtain        }
+{    a copy of the License at http://www.mozilla.org/MPL/              }
+{                                                                      }
+{    Software distributed under the License is distributed on an       }
+{    "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express       }
+{    or implied. See the License for the specific language             }
+{    governing rights and limitations under the License.               }
+{                                                                      }
+{    EXPERIMENTAL interface-based reformulation of WebGPU header       }
+{                                                                      }
+{**********************************************************************}
 unit WebGPU.Interfaces;
 
 interface
@@ -36,11 +49,15 @@ type
    IWGPUTexture = interface;
    IWGPUTextureView = interface;
 
+   TIWGPUCommandBufferArray = TArray<IWGPUCommandBuffer>;
+   TWGPUFeatureNameArray = TArray<TWGPUFeatureName>;
+
    IWGPUAdapter = interface
       ['{EF23B10E-8B6E-2044-D3F0-0FC89A2141C9}']
       function GetHandle: TWGPUAdapter;
       function CreateDevice(const aDescriptor: TWGPUDeviceDescriptor): IWGPUDevice;
-      function EnumerateFeatures(const aFeatures: PWGPUFeatureName): NativeUInt;
+      function EnumerateFeatures : TWGPUFeatureNameArray; overload;
+      function EnumerateFeatures(const aFeatures: PWGPUFeatureName): NativeUInt; overload;
       function GetFormatCapabilities(const aFormat: TWGPUTextureFormat; const aCapabilities: PWGPUFormatCapabilities): TWGPUStatus;
       function GetInfo(const aInfo: PWGPUAdapterInfo): TWGPUStatus;
       function GetInstance: IWGPUInstance;
@@ -68,6 +85,7 @@ type
    IWGPUBuffer = interface
       ['{6FC46489-F0E8-72EC-11FB-7E5935592B2A}']
       function GetHandle: TWGPUBuffer;
+      function GetLabel: UTF8String;
       function GetConstMappedRange(aOffset: NativeUInt; aSize: NativeUInt): Pointer;
       function GetMapState: TWGPUBufferMapState;
       function GetMappedRange(aOffset: NativeUInt; aSize: NativeUInt): Pointer;
@@ -79,6 +97,7 @@ type
       procedure SetLabel(const aLabel: UTF8String);
       procedure SetLabel2(const aLabel: TWGPUStringView);
       procedure Unmap;
+      property &Label : UTF8String read GetLabel write SetLabel;
    end;
 
    IWGPUCommandBuffer = interface
@@ -169,7 +188,8 @@ type
       function CreateShaderModule(const aDescriptor: TWGPUShaderModuleDescriptor): IWGPUShaderModule;
       function CreateSwapChain(const aSurface: IWGPUSurface; const aDescriptor: TWGPUSwapChainDescriptor): IWGPUSwapChain;
       function CreateTexture(const aDescriptor: TWGPUTextureDescriptor): IWGPUTexture;
-      function EnumerateFeatures(const aFeatures: PWGPUFeatureName): NativeUInt;
+      function EnumerateFeatures : TWGPUFeatureNameArray; overload;
+      function EnumerateFeatures(const aFeatures: PWGPUFeatureName): NativeUInt; overload;
       procedure ForceLoss(const aType: TWGPUDeviceLostReason; const aMessage: UTF8String);
       procedure ForceLoss2(const aType: TWGPUDeviceLostReason; const aMessage: TWGPUStringView);
       function GetAHardwareBufferProperties(const aHandle: Pointer; const aProperties: PWGPUAHardwareBufferProperties): TWGPUStatus;
@@ -244,7 +264,8 @@ type
       function OnSubmittedWorkDoneF(const aCallbackInfo: TWGPUQueueWorkDoneCallbackInfo): TWGPUFuture;
       procedure SetLabel(const aLabel: UTF8String);
       procedure SetLabel2(const aLabel: TWGPUStringView);
-      procedure Submit(aCommandCount: NativeUInt; const aCommands: PWGPUCommandBuffer);
+      procedure Submit(const aCommand: IWGPUCommandBuffer); overload;
+      procedure Submit(const aCommands: TIWGPUCommandBufferArray); overload;
       procedure WriteBuffer(const aBuffer: IWGPUBuffer; aBufferOffset: UInt64; const aData: Pointer; aSize: NativeUInt);
       procedure WriteTexture(const aDestination: PWGPUImageCopyTexture; const aData: Pointer; aDataSize: NativeUInt; const aDataLayout: PWGPUTextureDataLayout; const aWriteSize: PWGPUExtent3D);
    end;
@@ -369,7 +390,7 @@ type
       function GetHandle: TWGPUSurface;
       procedure Configure(const aConfig: TWGPUSurfaceConfiguration);
       function GetCapabilities(const aAdapter: IWGPUAdapter; const aCapabilities: PWGPUSurfaceCapabilities): TWGPUStatus;
-      procedure GetCurrentTexture(const aSurfaceTexture: PWGPUSurfaceTexture);
+      function GetCurrentTexture : IWGPUTexture;
       function GetPreferredFormat(const aAdapter: IWGPUAdapter): TWGPUTextureFormat;
       procedure Present;
       procedure SetLabel(const aLabel: UTF8String);
@@ -388,6 +409,7 @@ type
    IWGPUTexture = interface
       ['{13DB8189-BFB9-23F7-C715-19710FB0C5B6}']
       function GetHandle: TWGPUTexture;
+      function GetLabel: UTF8String;
       function CreateErrorView(const aDescriptor: TWGPUTextureViewDescriptor): IWGPUTextureView;
       function CreateView(const aDescriptor: TWGPUTextureViewDescriptor): IWGPUTextureView;
       function GetDepthOrArrayLayers: UInt32;
@@ -400,6 +422,7 @@ type
       function GetWidth: UInt32;
       procedure SetLabel(const aLabel: UTF8String);
       procedure SetLabel2(const aLabel: TWGPUStringView);
+      property &Label : UTF8String read GetLabel write SetLabel;
    end;
 
    IWGPUTextureView = interface
@@ -413,12 +436,20 @@ type
       public
          // To create top level instance
          class function CreateInstance(const aInstanceDescriptor : TWGPUInstanceDescriptor) : IWGPUInstance; static;
-         // To wrap entities received in request callbacks
+         // To wrap entities received in request & async callbacks
          class function WrapAdapter(const aAdapter : TWGPUAdapter) : IWGPUAdapter; static;
          class function WrapDevice(const aDevice : TWGPUDevice) : IWGPUDevice; static;
+         class function WrapComputePipeline(const aPipeLine : TWGPUComputePipeline) : IWGPUComputePipeline; static;
+         class function WrapRenderPipeline(const aPipeLine : TWGPURenderPipeline) : IWGPURenderPipeline; static;
    end;
 
+// ------------------------------------------------------------------
+// ------------------------------------------------------------------
+// ------------------------------------------------------------------
 implementation
+// ------------------------------------------------------------------
+// ------------------------------------------------------------------
+// ------------------------------------------------------------------
 
 type
    TiwgpuAdapter = class(TInterfacedObject, IWGPUAdapter)
@@ -427,7 +458,8 @@ type
       destructor Destroy; override;
       function GetHandle: TWGPUAdapter;
       function CreateDevice(const aDescriptor: TWGPUDeviceDescriptor): IWGPUDevice;
-      function EnumerateFeatures(const aFeatures: PWGPUFeatureName): NativeUInt;
+      function EnumerateFeatures : TWGPUFeatureNameArray; overload;
+      function EnumerateFeatures(const aFeatures: PWGPUFeatureName): NativeUInt; overload;
       function GetFormatCapabilities(const aFormat: TWGPUTextureFormat; const aCapabilities: PWGPUFormatCapabilities): TWGPUStatus;
       function GetInfo(const aInfo: PWGPUAdapterInfo): TWGPUStatus;
       function GetInstance: IWGPUInstance;
@@ -458,9 +490,11 @@ type
 
    TiwgpuBuffer = class(TInterfacedObject, IWGPUBuffer)
       FHandle: TWGPUBuffer;
-      constructor Create(const h: TWGPUBuffer);
+      FLabel: UTF8String;
+      constructor Create(const h: TWGPUBuffer; const aLabel: UTF8String = '');
       destructor Destroy; override;
       function GetHandle: TWGPUBuffer;
+      function GetLabel: UTF8String;
       function GetConstMappedRange(aOffset: NativeUInt; aSize: NativeUInt): Pointer;
       function GetMapState: TWGPUBufferMapState;
       function GetMappedRange(aOffset: NativeUInt; aSize: NativeUInt): Pointer;
@@ -572,7 +606,8 @@ type
       function CreateShaderModule(const aDescriptor: TWGPUShaderModuleDescriptor): IWGPUShaderModule;
       function CreateSwapChain(const aSurface: IWGPUSurface; const aDescriptor: TWGPUSwapChainDescriptor): IWGPUSwapChain;
       function CreateTexture(const aDescriptor: TWGPUTextureDescriptor): IWGPUTexture;
-      function EnumerateFeatures(const aFeatures: PWGPUFeatureName): NativeUInt;
+      function EnumerateFeatures : TWGPUFeatureNameArray; overload;
+      function EnumerateFeatures(const aFeatures: PWGPUFeatureName): NativeUInt; overload;
       procedure ForceLoss(const aType: TWGPUDeviceLostReason; const aMessage: UTF8String);
       procedure ForceLoss2(const aType: TWGPUDeviceLostReason; const aMessage: TWGPUStringView);
       function GetAHardwareBufferProperties(const aHandle: Pointer; const aProperties: PWGPUAHardwareBufferProperties): TWGPUStatus;
@@ -657,7 +692,8 @@ type
       function OnSubmittedWorkDoneF(const aCallbackInfo: TWGPUQueueWorkDoneCallbackInfo): TWGPUFuture;
       procedure SetLabel(const aLabel: UTF8String);
       procedure SetLabel2(const aLabel: TWGPUStringView);
-      procedure Submit(aCommandCount: NativeUInt; const aCommands: PWGPUCommandBuffer);
+      procedure Submit(const aCommand: IWGPUCommandBuffer); overload;
+      procedure Submit(const aCommands: TIWGPUCommandBufferArray); overload;
       procedure WriteBuffer(const aBuffer: IWGPUBuffer; aBufferOffset: UInt64; const aData: Pointer; aSize: NativeUInt);
       procedure WriteTexture(const aDestination: PWGPUImageCopyTexture; const aData: Pointer; aDataSize: NativeUInt; const aDataLayout: PWGPUTextureDataLayout; const aWriteSize: PWGPUExtent3D);
    end;
@@ -802,7 +838,7 @@ type
       function GetHandle: TWGPUSurface;
       procedure Configure(const aConfig: TWGPUSurfaceConfiguration);
       function GetCapabilities(const aAdapter: IWGPUAdapter; const aCapabilities: PWGPUSurfaceCapabilities): TWGPUStatus;
-      procedure GetCurrentTexture(const aSurfaceTexture: PWGPUSurfaceTexture);
+      function GetCurrentTexture : IWGPUTexture;
       function GetPreferredFormat(const aAdapter: IWGPUAdapter): TWGPUTextureFormat;
       procedure Present;
       procedure SetLabel(const aLabel: UTF8String);
@@ -822,9 +858,11 @@ type
 
    TiwgpuTexture = class(TInterfacedObject, IWGPUTexture)
       FHandle: TWGPUTexture;
-      constructor Create(const h: TWGPUTexture);
+      FLabel: UTF8String;
+      constructor Create(const h: TWGPUTexture; const aLabel: UTF8String = '');
       destructor Destroy; override;
       function GetHandle: TWGPUTexture;
+      function GetLabel: UTF8String;
       function CreateErrorView(const aDescriptor: TWGPUTextureViewDescriptor): IWGPUTextureView;
       function CreateView(const aDescriptor: TWGPUTextureViewDescriptor): IWGPUTextureView;
       function GetDepthOrArrayLayers: UInt32;
@@ -848,6 +886,10 @@ type
       procedure SetLabel2(const aLabel: TWGPUStringView);
    end;
 
+//
+// TiwgpuAdapter
+//
+
 constructor TiwgpuAdapter.Create(const h: TWGPUAdapter);
 begin
    inherited Create;
@@ -868,6 +910,13 @@ end;
 function TiwgpuAdapter.CreateDevice(const aDescriptor: TWGPUDeviceDescriptor): IWGPUDevice;
 begin
    Result := TiwgpuDevice.Create(wgpuAdapterCreateDevice(FHandle, @aDescriptor));
+end;
+
+function TIwgpuAdapter.EnumerateFeatures : TWGPUFeatureNameArray;
+begin
+   var n := wgpuAdapterEnumerateFeatures(FHandle, nil);
+   SetLength(Result, n);
+   wgpuAdapterEnumerateFeatures(FHandle, Pointer(Result));
 end;
 
 function TiwgpuAdapter.EnumerateFeatures(const aFeatures: PWGPUFeatureName): NativeUInt;
@@ -915,6 +964,10 @@ begin
    Result := wgpuAdapterRequestDeviceF(FHandle, @aOptions, aCallbackInfo);
 end;
 
+//
+// TiwgpuBindGroup
+//
+
 constructor TiwgpuBindGroup.Create(const h: TWGPUBindGroup);
 begin
    inherited Create;
@@ -941,6 +994,10 @@ procedure TiwgpuBindGroup.SetLabel2(const aLabel: TWGPUStringView);
 begin
    wgpuBindGroupSetLabel2(FHandle, aLabel);
 end;
+
+//
+// TiwgpuBindGroupLayout
+//
 
 constructor TiwgpuBindGroupLayout.Create(const h: TWGPUBindGroupLayout);
 begin
@@ -969,10 +1026,15 @@ begin
    wgpuBindGroupLayoutSetLabel2(FHandle, aLabel);
 end;
 
-constructor TiwgpuBuffer.Create(const h: TWGPUBuffer);
+//
+// TiwgpuBuffer
+//
+
+constructor TiwgpuBuffer.Create(const h: TWGPUBuffer; const aLabel: UTF8String = '');
 begin
    inherited Create;
    FHandle := h;
+   FLabel := aLabel;
 end;
 
 destructor TiwgpuBuffer.Destroy;
@@ -984,6 +1046,11 @@ end;
 function TiwgpuBuffer.GetHandle: TWGPUBuffer;
 begin
    Result := FHandle;
+end;
+
+function TiwgpuBuffer.GetLabel: UTF8String;
+begin
+   Result := FLabel;
 end;
 
 function TiwgpuBuffer.GetConstMappedRange(aOffset: NativeUInt; aSize: NativeUInt): Pointer;
@@ -1041,6 +1108,10 @@ begin
    wgpuBufferUnmap(FHandle);
 end;
 
+//
+// TiwgpuCommandBuffer
+//
+
 constructor TiwgpuCommandBuffer.Create(const h: TWGPUCommandBuffer);
 begin
    inherited Create;
@@ -1067,6 +1138,10 @@ procedure TiwgpuCommandBuffer.SetLabel2(const aLabel: TWGPUStringView);
 begin
    wgpuCommandBufferSetLabel2(FHandle, aLabel);
 end;
+
+//
+// TiwgpuCommandEncoder
+//
 
 constructor TiwgpuCommandEncoder.Create(const h: TWGPUCommandEncoder);
 begin
@@ -1122,7 +1197,7 @@ end;
 
 function TiwgpuCommandEncoder.Finish(const aDescriptor: PWGPUCommandBufferDescriptor): IWGPUCommandBuffer;
 begin
-   Result := TiwgpuCommandBuffer.Create(wgpuCommandEncoderFinish(FHandle, @aDescriptor));
+   Result := TiwgpuCommandBuffer.Create(wgpuCommandEncoderFinish(FHandle, aDescriptor));
 end;
 
 procedure TiwgpuCommandEncoder.InjectValidationError(const aMessage: UTF8String);
@@ -1184,6 +1259,10 @@ procedure TiwgpuCommandEncoder.WriteTimestamp(const aQuerySet: IWGPUQuerySet; aQ
 begin
    wgpuCommandEncoderWriteTimestamp(FHandle, aQuerySet.GetHandle, aQueryIndex);
 end;
+
+//
+// TiwgpuComputePassEncoder
+//
 
 constructor TiwgpuComputePassEncoder.Create(const h: TWGPUComputePassEncoder);
 begin
@@ -1267,6 +1346,10 @@ begin
    wgpuComputePassEncoderWriteTimestamp(FHandle, aQuerySet.GetHandle, aQueryIndex);
 end;
 
+//
+// TiwgpuComputePipeline
+//
+
 constructor TiwgpuComputePipeline.Create(const h: TWGPUComputePipeline);
 begin
    inherited Create;
@@ -1298,6 +1381,10 @@ procedure TiwgpuComputePipeline.SetLabel2(const aLabel: TWGPUStringView);
 begin
    wgpuComputePipelineSetLabel2(FHandle, aLabel);
 end;
+
+//
+// TiwgpuDevice
+//
 
 constructor TiwgpuDevice.Create(const h: TWGPUDevice);
 begin
@@ -1448,7 +1535,14 @@ end;
 
 function TiwgpuDevice.CreateTexture(const aDescriptor: TWGPUTextureDescriptor): IWGPUTexture;
 begin
-   Result := TiwgpuTexture.Create(wgpuDeviceCreateTexture(FHandle, @aDescriptor));
+   Result := TiwgpuTexture.Create(wgpuDeviceCreateTexture(FHandle, @aDescriptor), aDescriptor.&label);
+end;
+
+function TIwgpuDevice.EnumerateFeatures : TWGPUFeatureNameArray;
+begin
+   var n := wgpuDeviceEnumerateFeatures(FHandle, nil);
+   SetLength(Result, n);
+   wgpuDeviceEnumerateFeatures(FHandle, Pointer(Result));
 end;
 
 function TiwgpuDevice.EnumerateFeatures(const aFeatures: PWGPUFeatureName): NativeUInt;
@@ -1576,6 +1670,10 @@ begin
    wgpuDeviceValidateTextureDescriptor(FHandle, @aDescriptor);
 end;
 
+//
+// TiwgpuExternalTexture
+//
+
 constructor TiwgpuExternalTexture.Create(const h: TWGPUExternalTexture);
 begin
    inherited Create;
@@ -1612,6 +1710,10 @@ procedure TiwgpuExternalTexture.SetLabel2(const aLabel: TWGPUStringView);
 begin
    wgpuExternalTextureSetLabel2(FHandle, aLabel);
 end;
+
+//
+// TiwgpuInstance
+//
 
 constructor TiwgpuInstance.Create(const h: TWGPUInstance);
 begin
@@ -1670,6 +1772,10 @@ begin
    Result := wgpuInstanceWaitAny(FHandle, aFutureCount, aFutures, aTimeoutNS);
 end;
 
+//
+// TiwgpuPipelineLayout
+//
+
 constructor TiwgpuPipelineLayout.Create(const h: TWGPUPipelineLayout);
 begin
    inherited Create;
@@ -1696,6 +1802,10 @@ procedure TiwgpuPipelineLayout.SetLabel2(const aLabel: TWGPUStringView);
 begin
    wgpuPipelineLayoutSetLabel2(FHandle, aLabel);
 end;
+
+//
+// TiwgpuQuerySet
+//
 
 constructor TiwgpuQuerySet.Create(const h: TWGPUQuerySet);
 begin
@@ -1733,6 +1843,10 @@ procedure TiwgpuQuerySet.SetLabel2(const aLabel: TWGPUStringView);
 begin
    wgpuQuerySetSetLabel2(FHandle, aLabel);
 end;
+
+//
+// TiwgpuQueue
+//
 
 constructor TiwgpuQueue.Create(const h: TWGPUQueue);
 begin
@@ -1786,9 +1900,20 @@ begin
    wgpuQueueSetLabel2(FHandle, aLabel);
 end;
 
-procedure TiwgpuQueue.Submit(aCommandCount: NativeUInt; const aCommands: PWGPUCommandBuffer);
+procedure TIwgpuQueue.Submit(const aCommand: IWGPUCommandBuffer);
 begin
-   wgpuQueueSubmit(FHandle, aCommandCount, aCommands);
+   var command := aCommand.GetHandle;
+   wgpuQueueSubmit(FHandle, 1, @command);
+end;
+
+procedure TIwgpuQueue.Submit(const aCommands: TIWGPUCommandBufferArray);
+begin
+   var commands : array of TWGPUCommandBuffer;
+   var n := Length(aCommands);
+   SetLength(commands, n);
+   for var i := 0 to n-1 do
+      commands[i] := aCommands[i].GetHandle;
+   wgpuQueueSubmit(FHandle, n, Pointer(commands));
 end;
 
 procedure TiwgpuQueue.WriteBuffer(const aBuffer: IWGPUBuffer; aBufferOffset: UInt64; const aData: Pointer; aSize: NativeUInt);
@@ -1800,6 +1925,10 @@ procedure TiwgpuQueue.WriteTexture(const aDestination: PWGPUImageCopyTexture; co
 begin
    wgpuQueueWriteTexture(FHandle, aDestination, aData, aDataSize, aDataLayout, aWriteSize);
 end;
+
+//
+// TiwgpuRenderBundle
+//
 
 constructor TiwgpuRenderBundle.Create(const h: TWGPURenderBundle);
 begin
@@ -1827,6 +1956,10 @@ procedure TiwgpuRenderBundle.SetLabel2(const aLabel: TWGPUStringView);
 begin
    wgpuRenderBundleSetLabel2(FHandle, aLabel);
 end;
+
+//
+// TiwgpuRenderBundleEncoder
+//
 
 constructor TiwgpuRenderBundleEncoder.Create(const h: TWGPURenderBundleEncoder);
 begin
@@ -1867,7 +2000,7 @@ end;
 
 function TiwgpuRenderBundleEncoder.Finish(const aDescriptor: PWGPURenderBundleDescriptor): IWGPURenderBundle;
 begin
-   Result := TiwgpuRenderBundle.Create(wgpuRenderBundleEncoderFinish(FHandle, @aDescriptor));
+   Result := TiwgpuRenderBundle.Create(wgpuRenderBundleEncoderFinish(FHandle, aDescriptor));
 end;
 
 procedure TiwgpuRenderBundleEncoder.InsertDebugMarker(const aMarkerLabel: UTF8String);
@@ -1924,6 +2057,10 @@ procedure TiwgpuRenderBundleEncoder.SetVertexBuffer(aSlot: UInt32; const aBuffer
 begin
    wgpuRenderBundleEncoderSetVertexBuffer(FHandle, aSlot, aBuffer.GetHandle, aOffset, aSize);
 end;
+
+//
+// TiwgpuRenderPassEncoder
+//
 
 constructor TiwgpuRenderPassEncoder.Create(const h: TWGPURenderPassEncoder);
 begin
@@ -2077,6 +2214,10 @@ begin
    wgpuRenderPassEncoderWriteTimestamp(FHandle, aQuerySet.GetHandle, aQueryIndex);
 end;
 
+//
+// TiwgpuRenderPipeline
+//
+
 constructor TiwgpuRenderPipeline.Create(const h: TWGPURenderPipeline);
 begin
    inherited Create;
@@ -2109,6 +2250,10 @@ begin
    wgpuRenderPipelineSetLabel2(FHandle, aLabel);
 end;
 
+//
+// TiwgpuSampler
+//
+
 constructor TiwgpuSampler.Create(const h: TWGPUSampler);
 begin
    inherited Create;
@@ -2135,6 +2280,10 @@ procedure TiwgpuSampler.SetLabel2(const aLabel: TWGPUStringView);
 begin
    wgpuSamplerSetLabel2(FHandle, aLabel);
 end;
+
+//
+// TiwgpuShaderModule
+//
 
 constructor TiwgpuShaderModule.Create(const h: TWGPUShaderModule);
 begin
@@ -2177,6 +2326,10 @@ procedure TiwgpuShaderModule.SetLabel2(const aLabel: TWGPUStringView);
 begin
    wgpuShaderModuleSetLabel2(FHandle, aLabel);
 end;
+
+//
+// TiwgpuSharedBufferMemory
+//
 
 constructor TiwgpuSharedBufferMemory.Create(const h: TWGPUSharedBufferMemory);
 begin
@@ -2230,6 +2383,10 @@ begin
    wgpuSharedBufferMemorySetLabel2(FHandle, aLabel);
 end;
 
+//
+// TiwgpuSharedFence
+//
+
 constructor TiwgpuSharedFence.Create(const h: TWGPUSharedFence);
 begin
    inherited Create;
@@ -2251,6 +2408,10 @@ procedure TiwgpuSharedFence.ExportInfo(const aInfo: PWGPUSharedFenceExportInfo);
 begin
    wgpuSharedFenceExportInfo(FHandle, aInfo);
 end;
+
+//
+// TiwgpuSharedTextureMemory
+//
 
 constructor TiwgpuSharedTextureMemory.Create(const h: TWGPUSharedTextureMemory);
 begin
@@ -2276,7 +2437,7 @@ end;
 
 function TiwgpuSharedTextureMemory.CreateTexture(const aDescriptor: TWGPUTextureDescriptor): IWGPUTexture;
 begin
-   Result := TiwgpuTexture.Create(wgpuSharedTextureMemoryCreateTexture(FHandle, @aDescriptor));
+   Result := TiwgpuTexture.Create(wgpuSharedTextureMemoryCreateTexture(FHandle, @aDescriptor), aDescriptor.&label);
 end;
 
 function TiwgpuSharedTextureMemory.EndAccess(const aTexture: IWGPUTexture; const aDescriptor: PWGPUSharedTextureMemoryEndAccessState): TWGPUStatus;
@@ -2303,6 +2464,10 @@ procedure TiwgpuSharedTextureMemory.SetLabel2(const aLabel: TWGPUStringView);
 begin
    wgpuSharedTextureMemorySetLabel2(FHandle, aLabel);
 end;
+
+//
+// TiwgpuSurface
+//
 
 constructor TiwgpuSurface.Create(const h: TWGPUSurface);
 begin
@@ -2331,9 +2496,13 @@ begin
    Result := wgpuSurfaceGetCapabilities(FHandle, aAdapter.GetHandle, aCapabilities);
 end;
 
-procedure TiwgpuSurface.GetCurrentTexture(const aSurfaceTexture: PWGPUSurfaceTexture);
+function TIwgpuSurface.GetCurrentTexture : IWGPUTexture;
 begin
-   wgpuSurfaceGetCurrentTexture(FHandle, aSurfaceTexture);
+   var texture := Default(TWGPUSurfaceTexture);
+   wgpuSurfaceGetCurrentTexture(FHandle, @texture);
+   if texture.status = WGPUSurfaceGetCurrentTextureStatus_Success then
+      Result := TiwgpuTexture.Create(texture.texture)
+   else Result := nil;
 end;
 
 function TiwgpuSurface.GetPreferredFormat(const aAdapter: IWGPUAdapter): TWGPUTextureFormat;
@@ -2360,6 +2529,10 @@ procedure TiwgpuSurface.Unconfigure;
 begin
    wgpuSurfaceUnconfigure(FHandle);
 end;
+
+//
+// TiwgpuSwapChain
+//
 
 constructor TiwgpuSwapChain.Create(const h: TWGPUSwapChain);
 begin
@@ -2393,10 +2566,15 @@ begin
    wgpuSwapChainPresent(FHandle);
 end;
 
-constructor TiwgpuTexture.Create(const h: TWGPUTexture);
+//
+// TiwgpuTexture
+//
+
+constructor TiwgpuTexture.Create(const h: TWGPUTexture; const aLabel: UTF8String = '');
 begin
    inherited Create;
    FHandle := h;
+   FLabel := aLabel;
 end;
 
 destructor TiwgpuTexture.Destroy;
@@ -2408,6 +2586,11 @@ end;
 function TiwgpuTexture.GetHandle: TWGPUTexture;
 begin
    Result := FHandle;
+end;
+
+function TiwgpuTexture.GetLabel: UTF8String;
+begin
+   Result := FLabel;
 end;
 
 function TiwgpuTexture.CreateErrorView(const aDescriptor: TWGPUTextureViewDescriptor): IWGPUTextureView;
@@ -2470,6 +2653,10 @@ begin
    wgpuTextureSetLabel2(FHandle, aLabel);
 end;
 
+//
+// TiwgpuTextureView
+//
+
 constructor TiwgpuTextureView.Create(const h: TWGPUTextureView);
 begin
    inherited Create;
@@ -2504,7 +2691,7 @@ end;
 class function WGPUFactory.CreateInstance(const aInstanceDescriptor : TWGPUInstanceDescriptor) : IWGPUInstance;
 begin
    var instance := wgpuCreateInstance(@aInstanceDescriptor);
-   Assert(instance <> nil, 'Failed to CreateInstance');
+   Assert(instance <> 0, 'Failed to CreateInstance');
    Result := TiwgpuInstance.Create(instance);
 end;
 
@@ -2512,9 +2699,20 @@ class function WGPUFactory.WrapAdapter(const aAdapter : TWGPUAdapter) : IWGPUAda
 begin
    Result := TiwgpuAdapter.Create(aAdapter);
 end;
+
 class function WGPUFactory.WrapDevice(const aDevice : TWGPUDevice) : IWGPUDevice;
 begin
    Result := TiwgpuDevice.Create(aDevice);
+end;
+
+class function WGPUFactory.WrapComputePipeline(const aPipeline : TWGPUComputePipeline) : IWGPUComputePipeline;
+begin
+   Result := TiwgpuComputePipeline.Create(aPipeline);
+end;
+
+class function WGPUFactory.WrapRenderPipeline(const aPipeline : TWGPURenderPipeline) : IWGPURenderPipeline;
+begin
+   Result := TiwgpuRenderPipeline.Create(aPipeline);
 end;
 
 end.
