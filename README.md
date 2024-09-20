@@ -4,6 +4,7 @@ Headers and utilities for using WebGPU from Delphi
 
 Precompliled Dawn builds can be found at https://github.com/mmozeiko/build-dawn
 (one is included in the "dawn-x64" folder)
+Precompiled wgpu-native builds are at https://github.com/gfx-rs/wgpu-native
 
 Header converted with Chet (https://github.com/neslib/Chet)
 
