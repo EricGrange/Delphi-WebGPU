@@ -239,7 +239,8 @@ begin
    // Create shader modules
    var vertexSource := Default(TWGPUShaderSourceWGSL);
    vertexSource.chain.sType := WGPUSType_ShaderSourceWGSL;
-   vertexSource.code := PUTF8Char(cVertexShaderCode);
+   vertexSource.code.data := PUTF8Char(cVertexShaderCode);
+   vertexSource.code.length := Length(cVertexShaderCode);
 
    var shaderModuleDescriptor := Default(TWGPUShaderModuleDescriptor);
    shaderModuleDescriptor.&label := 'Vertex Shader';
@@ -256,7 +257,8 @@ begin
 
    var fragmentSource := Default(TWGPUShaderSourceWGSL);
    fragmentSource.chain.sType := WGPUSType_ShaderSourceWGSL;
-   fragmentSource.code := PUTF8Char(cFragmentShaderCode);
+   fragmentSource.code.data := PUTF8Char(cFragmentShaderCode);
+   fragmentSource.code.length := Length(cFragmentShaderCode);
 
    shaderModuleDescriptor.&label := 'Fragment Shader';
    shaderModuleDescriptor.nextInChain := @fragmentSource;

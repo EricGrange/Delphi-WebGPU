@@ -1,4 +1,4 @@
-// BSD 3-Clause License
+﻿// BSD 3-Clause License
 //
 // Copyright (c) 2019, "WebGPU native" developers
 // All rights reserved.
@@ -94,6 +94,7 @@ const
    WGPU_LIMIT_U64_UNDEFINED = UINT64_MAX;
    WGPU_MIP_LEVEL_COUNT_UNDEFINED = UINT32_MAX;
    WGPU_QUERY_SET_INDEX_UNDEFINED = UINT32_MAX;
+   WGPU_STRLEN = SIZE_MAX;
    WGPU_WHOLE_MAP_SIZE = SIZE_MAX;
    WGPU_WHOLE_SIZE = UINT64_MAX;
 
@@ -237,7 +238,6 @@ type
    PWGPUShaderModuleCompilationOptions = ^TWGPUShaderModuleCompilationOptions;
    PWGPUShaderModuleDescriptor = ^TWGPUShaderModuleDescriptor;
    PWGPUShaderSourceSPIRV = ^TWGPUShaderSourceSPIRV;
-   PWGPUShaderSourceWGSL = ^TWGPUShaderSourceWGSL;
    PWGPUSharedBufferMemoryBeginAccessDescriptor = ^TWGPUSharedBufferMemoryBeginAccessDescriptor;
    PWGPUSharedBufferMemoryDescriptor = ^TWGPUSharedBufferMemoryDescriptor;
    PWGPUSharedBufferMemoryEndAccessState = ^TWGPUSharedBufferMemoryEndAccessState;
@@ -313,6 +313,7 @@ type
    PWGPURenderPassColorAttachment = ^TWGPURenderPassColorAttachment;
    PWGPURenderPassStorageAttachment = ^TWGPURenderPassStorageAttachment;
    PWGPURequiredLimits = ^TWGPURequiredLimits;
+   PWGPUShaderSourceWGSL = ^TWGPUShaderSourceWGSL;
    PWGPUSharedTextureMemoryAHardwareBufferProperties = ^TWGPUSharedTextureMemoryAHardwareBufferProperties;
    PWGPUSharedTextureMemoryDmaBufDescriptor = ^TWGPUSharedTextureMemoryDmaBufDescriptor;
    PWGPUSharedTextureMemoryProperties = ^TWGPUSharedTextureMemoryProperties;
@@ -1290,6 +1291,7 @@ type
    end;
 
    TWGPUINTERNAL__HAVE_EMDAWNWEBGPU_HEADER = record
+      unused: TWGPUBool;
    end;
 
    TWGPUAdapterInfo = record
@@ -1769,11 +1771,6 @@ type
       code: PUInt32;
    end;
 
-   TWGPUShaderSourceWGSL = record
-      chain: TWGPUChainedStruct;
-      code: PUTF8Char;
-   end;
-
    TWGPUSharedBufferMemoryBeginAccessDescriptor = record
       nextInChain: PWGPUChainedStruct;
       initialized: TWGPUBool;
@@ -2096,6 +2093,7 @@ type
       baseArrayLayer: UInt32;
       arrayLayerCount: UInt32;
       aspect: TWGPUTextureAspect;
+      usage: TWGPUTextureUsage;
    end;
 
    TWGPUUncapturedErrorCallbackInfo = record
@@ -2273,6 +2271,11 @@ type
    TWGPURequiredLimits = record
       nextInChain: PWGPUChainedStruct;
       limits: TWGPULimits;
+   end;
+
+   TWGPUShaderSourceWGSL = record
+      chain: TWGPUChainedStruct;
+      code: TWGPUStringView;
    end;
 
    TWGPUSharedTextureMemoryAHardwareBufferProperties = record
