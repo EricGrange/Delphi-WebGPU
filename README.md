@@ -2,6 +2,11 @@
 
 Headers and utilities for using WebGPU from Delphi
 
+WebGPU headers are maintained at https://github.com/webgpu-native/webgpu-headers/
+
+**The header is NOT STABLE yet, breaking changes can happen on a weekly basis!**
+
+
 Precompliled Dawn builds can be found at https://github.com/mmozeiko/build-dawn
 (one is included in the "dawn-x64" folder)
 
