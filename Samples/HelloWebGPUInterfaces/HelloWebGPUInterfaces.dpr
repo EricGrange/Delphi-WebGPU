@@ -206,7 +206,7 @@ begin
    fromWindowsHWND.hwnd := Pointer(vWindowHandle);
 
    var surfaceDescriptor := Default(TWGPUSurfaceDescriptor);
-   surfaceDescriptor.&label := nil;
+   surfaceDescriptor.&label := '';
    surfaceDescriptor.nextInChain := @fromWindowsHWND;
 
    vSurface := vInstance.CreateSurface(surfaceDescriptor);

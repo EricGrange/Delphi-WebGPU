@@ -177,13 +177,10 @@ type
    PWGPUBindGroupEntry = ^TWGPUBindGroupEntry;
    PWGPUBlendComponent = ^TWGPUBlendComponent;
    PWGPUBufferBindingLayout = ^TWGPUBufferBindingLayout;
-   PWGPUBufferDescriptor = ^TWGPUBufferDescriptor;
    PWGPUBufferHostMappedPointer = ^TWGPUBufferHostMappedPointer;
    PWGPUBufferMapCallbackInfo = ^TWGPUBufferMapCallbackInfo;
    PWGPUColor = ^TWGPUColor;
    PWGPUColorTargetStateExpandResolveTextureDawn = ^TWGPUColorTargetStateExpandResolveTextureDawn;
-   PWGPUCommandBufferDescriptor = ^TWGPUCommandBufferDescriptor;
-   PWGPUCommandEncoderDescriptor = ^TWGPUCommandEncoderDescriptor;
    PWGPUCompilationInfoCallbackInfo = ^TWGPUCompilationInfoCallbackInfo;
    PWGPUCompilationMessage = ^TWGPUCompilationMessage;
    PWGPUComputePassTimestampWrites = ^TWGPUComputePassTimestampWrites;
@@ -197,6 +194,7 @@ type
    PWGPUDawnCacheDeviceDescriptor = ^TWGPUDawnCacheDeviceDescriptor;
    PWGPUDawnComputePipelineFullSubgroups = ^TWGPUDawnComputePipelineFullSubgroups;
    PWGPUDawnEncoderInternalUsageDescriptor = ^TWGPUDawnEncoderInternalUsageDescriptor;
+   PWGPUDawnExperimentalImmediateDataLimits = ^TWGPUDawnExperimentalImmediateDataLimits;
    PWGPUDawnExperimentalSubgroupLimits = ^TWGPUDawnExperimentalSubgroupLimits;
    PWGPUDawnRenderPassColorAttachmentRenderToSingleSampled = ^TWGPUDawnRenderPassColorAttachmentRenderToSingleSampled;
    PWGPUDawnShaderModuleSPIRVOptionsDescriptor = ^TWGPUDawnShaderModuleSPIRVOptionsDescriptor;
@@ -217,15 +215,10 @@ type
    PWGPUMultisampleState = ^TWGPUMultisampleState;
    PWGPUOrigin2D = ^TWGPUOrigin2D;
    PWGPUOrigin3D = ^TWGPUOrigin3D;
-   PWGPUPipelineLayoutDescriptor = ^TWGPUPipelineLayoutDescriptor;
    PWGPUPipelineLayoutStorageAttachment = ^TWGPUPipelineLayoutStorageAttachment;
    PWGPUPopErrorScopeCallbackInfo = ^TWGPUPopErrorScopeCallbackInfo;
    PWGPUPrimitiveState = ^TWGPUPrimitiveState;
-   PWGPUQuerySetDescriptor = ^TWGPUQuerySetDescriptor;
-   PWGPUQueueDescriptor = ^TWGPUQueueDescriptor;
    PWGPUQueueWorkDoneCallbackInfo = ^TWGPUQueueWorkDoneCallbackInfo;
-   PWGPURenderBundleDescriptor = ^TWGPURenderBundleDescriptor;
-   PWGPURenderBundleEncoderDescriptor = ^TWGPURenderBundleEncoderDescriptor;
    PWGPURenderPassDepthStencilAttachment = ^TWGPURenderPassDepthStencilAttachment;
    PWGPURenderPassDescriptorExpandResolveRect = ^TWGPURenderPassDescriptorExpandResolveRect;
    PWGPURenderPassMaxDrawCount = ^TWGPURenderPassMaxDrawCount;
@@ -234,19 +227,15 @@ type
    PWGPURequestAdapterOptions = ^TWGPURequestAdapterOptions;
    PWGPURequestDeviceCallbackInfo = ^TWGPURequestDeviceCallbackInfo;
    PWGPUSamplerBindingLayout = ^TWGPUSamplerBindingLayout;
-   PWGPUSamplerDescriptor = ^TWGPUSamplerDescriptor;
    PWGPUShaderModuleCompilationOptions = ^TWGPUShaderModuleCompilationOptions;
-   PWGPUShaderModuleDescriptor = ^TWGPUShaderModuleDescriptor;
    PWGPUShaderSourceSPIRV = ^TWGPUShaderSourceSPIRV;
    PWGPUSharedBufferMemoryBeginAccessDescriptor = ^TWGPUSharedBufferMemoryBeginAccessDescriptor;
-   PWGPUSharedBufferMemoryDescriptor = ^TWGPUSharedBufferMemoryDescriptor;
    PWGPUSharedBufferMemoryEndAccessState = ^TWGPUSharedBufferMemoryEndAccessState;
    PWGPUSharedBufferMemoryProperties = ^TWGPUSharedBufferMemoryProperties;
    PWGPUSharedFenceDXGISharedHandleDescriptor = ^TWGPUSharedFenceDXGISharedHandleDescriptor;
    PWGPUSharedFenceDXGISharedHandleExportInfo = ^TWGPUSharedFenceDXGISharedHandleExportInfo;
    PWGPUSharedFenceMTLSharedEventDescriptor = ^TWGPUSharedFenceMTLSharedEventDescriptor;
    PWGPUSharedFenceMTLSharedEventExportInfo = ^TWGPUSharedFenceMTLSharedEventExportInfo;
-   PWGPUSharedFenceDescriptor = ^TWGPUSharedFenceDescriptor;
    PWGPUSharedFenceExportInfo = ^TWGPUSharedFenceExportInfo;
    PWGPUSharedFenceVkSemaphoreOpaqueFDDescriptor = ^TWGPUSharedFenceVkSemaphoreOpaqueFDDescriptor;
    PWGPUSharedFenceVkSemaphoreOpaqueFDExportInfo = ^TWGPUSharedFenceVkSemaphoreOpaqueFDExportInfo;
@@ -260,7 +249,6 @@ type
    PWGPUSharedTextureMemoryIOSurfaceDescriptor = ^TWGPUSharedTextureMemoryIOSurfaceDescriptor;
    PWGPUSharedTextureMemoryAHardwareBufferDescriptor = ^TWGPUSharedTextureMemoryAHardwareBufferDescriptor;
    PWGPUSharedTextureMemoryBeginAccessDescriptor = ^TWGPUSharedTextureMemoryBeginAccessDescriptor;
-   PWGPUSharedTextureMemoryDescriptor = ^TWGPUSharedTextureMemoryDescriptor;
    PWGPUSharedTextureMemoryDmaBufPlane = ^TWGPUSharedTextureMemoryDmaBufPlane;
    PWGPUSharedTextureMemoryEndAccessState = ^TWGPUSharedTextureMemoryEndAccessState;
    PWGPUSharedTextureMemoryOpaqueFDDescriptor = ^TWGPUSharedTextureMemoryOpaqueFDDescriptor;
@@ -274,7 +262,6 @@ type
    PWGPUStringView = ^TWGPUStringView;
    PWGPUSurfaceCapabilities = ^TWGPUSurfaceCapabilities;
    PWGPUSurfaceConfiguration = ^TWGPUSurfaceConfiguration;
-   PWGPUSurfaceDescriptor = ^TWGPUSurfaceDescriptor;
    PWGPUSurfaceDescriptorFromWindowsCoreWindow = ^TWGPUSurfaceDescriptorFromWindowsCoreWindow;
    PWGPUSurfaceDescriptorFromWindowsSwapChainPanel = ^TWGPUSurfaceDescriptorFromWindowsSwapChainPanel;
    PWGPUSurfaceSourceXCBWindow = ^TWGPUSurfaceSourceXCBWindow;
@@ -285,11 +272,9 @@ type
    PWGPUSurfaceSourceWindowsHWND = ^TWGPUSurfaceSourceWindowsHWND;
    PWGPUSurfaceSourceXlibWindow = ^TWGPUSurfaceSourceXlibWindow;
    PWGPUSurfaceTexture = ^TWGPUSurfaceTexture;
-   PWGPUSwapChainDescriptor = ^TWGPUSwapChainDescriptor;
    PWGPUTextureBindingLayout = ^TWGPUTextureBindingLayout;
    PWGPUTextureBindingViewDimensionDescriptor = ^TWGPUTextureBindingViewDimensionDescriptor;
    PWGPUTextureDataLayout = ^TWGPUTextureDataLayout;
-   PWGPUTextureViewDescriptor = ^TWGPUTextureViewDescriptor;
    PWGPUUncapturedErrorCallbackInfo = ^TWGPUUncapturedErrorCallbackInfo;
    PWGPUVertexAttribute = ^TWGPUVertexAttribute;
    PWGPUYCbCrVkDescriptor = ^TWGPUYCbCrVkDescriptor;
@@ -298,6 +283,9 @@ type
    PWGPUBindGroupDescriptor = ^TWGPUBindGroupDescriptor;
    PWGPUBindGroupLayoutEntry = ^TWGPUBindGroupLayoutEntry;
    PWGPUBlendState = ^TWGPUBlendState;
+   PWGPUBufferDescriptor = ^TWGPUBufferDescriptor;
+   PWGPUCommandBufferDescriptor = ^TWGPUCommandBufferDescriptor;
+   PWGPUCommandEncoderDescriptor = ^TWGPUCommandEncoderDescriptor;
    PWGPUCompilationInfo = ^TWGPUCompilationInfo;
    PWGPUComputePassDescriptor = ^TWGPUComputePassDescriptor;
    PWGPUDepthStencilState = ^TWGPUDepthStencilState;
@@ -308,17 +296,30 @@ type
    PWGPUImageCopyExternalTexture = ^TWGPUImageCopyExternalTexture;
    PWGPUImageCopyTexture = ^TWGPUImageCopyTexture;
    PWGPUInstanceDescriptor = ^TWGPUInstanceDescriptor;
+   PWGPUPipelineLayoutDescriptor = ^TWGPUPipelineLayoutDescriptor;
    PWGPUPipelineLayoutPixelLocalStorage = ^TWGPUPipelineLayoutPixelLocalStorage;
    PWGPUProgrammableStageDescriptor = ^TWGPUProgrammableStageDescriptor;
+   PWGPUQuerySetDescriptor = ^TWGPUQuerySetDescriptor;
+   PWGPUQueueDescriptor = ^TWGPUQueueDescriptor;
+   PWGPURenderBundleDescriptor = ^TWGPURenderBundleDescriptor;
+   PWGPURenderBundleEncoderDescriptor = ^TWGPURenderBundleEncoderDescriptor;
    PWGPURenderPassColorAttachment = ^TWGPURenderPassColorAttachment;
    PWGPURenderPassStorageAttachment = ^TWGPURenderPassStorageAttachment;
    PWGPURequiredLimits = ^TWGPURequiredLimits;
+   PWGPUSamplerDescriptor = ^TWGPUSamplerDescriptor;
+   PWGPUShaderModuleDescriptor = ^TWGPUShaderModuleDescriptor;
    PWGPUShaderSourceWGSL = ^TWGPUShaderSourceWGSL;
+   PWGPUSharedBufferMemoryDescriptor = ^TWGPUSharedBufferMemoryDescriptor;
+   PWGPUSharedFenceDescriptor = ^TWGPUSharedFenceDescriptor;
    PWGPUSharedTextureMemoryAHardwareBufferProperties = ^TWGPUSharedTextureMemoryAHardwareBufferProperties;
+   PWGPUSharedTextureMemoryDescriptor = ^TWGPUSharedTextureMemoryDescriptor;
    PWGPUSharedTextureMemoryDmaBufDescriptor = ^TWGPUSharedTextureMemoryDmaBufDescriptor;
    PWGPUSharedTextureMemoryProperties = ^TWGPUSharedTextureMemoryProperties;
    PWGPUSupportedLimits = ^TWGPUSupportedLimits;
+   PWGPUSurfaceDescriptor = ^TWGPUSurfaceDescriptor;
+   PWGPUSwapChainDescriptor = ^TWGPUSwapChainDescriptor;
    PWGPUTextureDescriptor = ^TWGPUTextureDescriptor;
+   PWGPUTextureViewDescriptor = ^TWGPUTextureViewDescriptor;
    PWGPUVertexBufferLayout = ^TWGPUVertexBufferLayout;
    PWGPUBindGroupLayoutDescriptor = ^TWGPUBindGroupLayoutDescriptor;
    PWGPUColorTargetState = ^TWGPUColorTargetState;
@@ -700,6 +701,7 @@ type
       WGPUFeatureName_DawnPartialLoadResolveTexture = 327734,
       WGPUFeatureName_MultiDrawIndirect = 327735,
       WGPUFeatureName_ClipDistances = 327736,
+      WGPUFeatureName_ChromiumExperimentalImmediateData = 327737,
       WGPUFeatureName_Force32 = 2147483647);
    PWGPUFeatureName = ^TWGPUFeatureName;
 
@@ -897,6 +899,7 @@ type
       WGPUSType_YCbCrVkDescriptor = 327736,
       WGPUSType_SharedTextureMemoryAHardwareBufferProperties = 327737,
       WGPUSType_AHardwareBufferProperties = 327738,
+      WGPUSType_DawnExperimentalImmediateDataLimits = 327739,
       WGPUSType_Force32 = 2147483647);
    PWGPUSType = ^TWGPUSType;
 
@@ -1340,14 +1343,6 @@ type
       minBindingSize: UInt64;
    end;
 
-   TWGPUBufferDescriptor = record
-      nextInChain: PWGPUChainedStruct;
-      &label: PUTF8Char;
-      usage: TWGPUBufferUsage;
-      size: UInt64;
-      mappedAtCreation: TWGPUBool;
-   end;
-
    TWGPUBufferHostMappedPointer = record
       chain: TWGPUChainedStruct;
       pointer: Pointer;
@@ -1372,16 +1367,6 @@ type
    TWGPUColorTargetStateExpandResolveTextureDawn = record
       chain: TWGPUChainedStruct;
       enabled: TWGPUBool;
-   end;
-
-   TWGPUCommandBufferDescriptor = record
-      nextInChain: PWGPUChainedStruct;
-      &label: PUTF8Char;
-   end;
-
-   TWGPUCommandEncoderDescriptor = record
-      nextInChain: PWGPUChainedStruct;
-      &label: PUTF8Char;
    end;
 
    TWGPUCompilationInfoCallbackInfo = record
@@ -1474,6 +1459,11 @@ type
    TWGPUDawnEncoderInternalUsageDescriptor = record
       chain: TWGPUChainedStruct;
       useInternalUsages: TWGPUBool;
+   end;
+
+   TWGPUDawnExperimentalImmediateDataLimits = record
+      chain: TWGPUChainedStructOut;
+      maxImmediateDataRangeByteSize: UInt32;
    end;
 
    TWGPUDawnExperimentalSubgroupLimits = record
@@ -1616,13 +1606,6 @@ type
       z: UInt32;
    end;
 
-   TWGPUPipelineLayoutDescriptor = record
-      nextInChain: PWGPUChainedStruct;
-      &label: PUTF8Char;
-      bindGroupLayoutCount: NativeUInt;
-      bindGroupLayouts: PWGPUBindGroupLayout;
-   end;
-
    TWGPUPipelineLayoutStorageAttachment = record
       nextInChain: PWGPUChainedStruct;
       offset: UInt64;
@@ -1646,39 +1629,11 @@ type
       unclippedDepth: TWGPUBool;
    end;
 
-   TWGPUQuerySetDescriptor = record
-      nextInChain: PWGPUChainedStruct;
-      &label: PUTF8Char;
-      &type: TWGPUQueryType;
-      count: UInt32;
-   end;
-
-   TWGPUQueueDescriptor = record
-      nextInChain: PWGPUChainedStruct;
-      &label: PUTF8Char;
-   end;
-
    TWGPUQueueWorkDoneCallbackInfo = record
       nextInChain: PWGPUChainedStruct;
       mode: TWGPUCallbackMode;
       callback: TWGPUQueueWorkDoneCallback;
       userdata: Pointer;
-   end;
-
-   TWGPURenderBundleDescriptor = record
-      nextInChain: PWGPUChainedStruct;
-      &label: PUTF8Char;
-   end;
-
-   TWGPURenderBundleEncoderDescriptor = record
-      nextInChain: PWGPUChainedStruct;
-      &label: PUTF8Char;
-      colorFormatCount: NativeUInt;
-      colorFormats: PWGPUTextureFormat;
-      depthStencilFormat: TWGPUTextureFormat;
-      sampleCount: UInt32;
-      depthReadOnly: TWGPUBool;
-      stencilReadOnly: TWGPUBool;
    end;
 
    TWGPURenderPassDepthStencilAttachment = record
@@ -1740,29 +1695,9 @@ type
       &type: TWGPUSamplerBindingType;
    end;
 
-   TWGPUSamplerDescriptor = record
-      nextInChain: PWGPUChainedStruct;
-      &label: PUTF8Char;
-      addressModeU: TWGPUAddressMode;
-      addressModeV: TWGPUAddressMode;
-      addressModeW: TWGPUAddressMode;
-      magFilter: TWGPUFilterMode;
-      minFilter: TWGPUFilterMode;
-      mipmapFilter: TWGPUMipmapFilterMode;
-      lodMinClamp: Single;
-      lodMaxClamp: Single;
-      compare: TWGPUCompareFunction;
-      maxAnisotropy: UInt16;
-   end;
-
    TWGPUShaderModuleCompilationOptions = record
       chain: TWGPUChainedStruct;
       strictMath: TWGPUBool;
-   end;
-
-   TWGPUShaderModuleDescriptor = record
-      nextInChain: PWGPUChainedStruct;
-      &label: PUTF8Char;
    end;
 
    TWGPUShaderSourceSPIRV = record
@@ -1777,11 +1712,6 @@ type
       fenceCount: NativeUInt;
       fences: PWGPUSharedFence;
       signaledValues: PUInt64;
-   end;
-
-   TWGPUSharedBufferMemoryDescriptor = record
-      nextInChain: PWGPUChainedStruct;
-      &label: PUTF8Char;
    end;
 
    TWGPUSharedBufferMemoryEndAccessState = record
@@ -1816,11 +1746,6 @@ type
    TWGPUSharedFenceMTLSharedEventExportInfo = record
       chain: TWGPUChainedStructOut;
       sharedEvent: Pointer;
-   end;
-
-   TWGPUSharedFenceDescriptor = record
-      nextInChain: PWGPUChainedStruct;
-      &label: PUTF8Char;
    end;
 
    TWGPUSharedFenceExportInfo = record
@@ -1894,11 +1819,6 @@ type
       signaledValues: PUInt64;
    end;
 
-   TWGPUSharedTextureMemoryDescriptor = record
-      nextInChain: PWGPUChainedStruct;
-      &label: PUTF8Char;
-   end;
-
    TWGPUSharedTextureMemoryDmaBufPlane = record
       fd: Integer;
       offset: UInt64;
@@ -1968,6 +1888,8 @@ type
    TWGPUStringView = record
       data: PUTF8Char;
       length: NativeUInt;
+      class operator Implicit(const s : UTF8String) : TWGPUStringView;
+      class operator Implicit(const view : TWGPUStringView) : UTF8String;
    end;
 
    TWGPUSurfaceCapabilities = record
@@ -1992,11 +1914,6 @@ type
       width: UInt32;
       height: UInt32;
       presentMode: TWGPUPresentMode;
-   end;
-
-   TWGPUSurfaceDescriptor = record
-      nextInChain: PWGPUChainedStruct;
-      &label: PUTF8Char;
    end;
 
    TWGPUSurfaceDescriptorFromWindowsCoreWindow = record
@@ -2054,16 +1971,6 @@ type
       status: TWGPUSurfaceGetCurrentTextureStatus;
    end;
 
-   TWGPUSwapChainDescriptor = record
-      nextInChain: PWGPUChainedStruct;
-      &label: PUTF8Char;
-      usage: TWGPUTextureUsage;
-      format: TWGPUTextureFormat;
-      width: UInt32;
-      height: UInt32;
-      presentMode: TWGPUPresentMode;
-   end;
-
    TWGPUTextureBindingLayout = record
       nextInChain: PWGPUChainedStruct;
       sampleType: TWGPUTextureSampleType;
@@ -2081,19 +1988,6 @@ type
       offset: UInt64;
       bytesPerRow: UInt32;
       rowsPerImage: UInt32;
-   end;
-
-   TWGPUTextureViewDescriptor = record
-      nextInChain: PWGPUChainedStruct;
-      &label: PUTF8Char;
-      format: TWGPUTextureFormat;
-      dimension: TWGPUTextureViewDimension;
-      baseMipLevel: UInt32;
-      mipLevelCount: UInt32;
-      baseArrayLayer: UInt32;
-      arrayLayerCount: UInt32;
-      aspect: TWGPUTextureAspect;
-      usage: TWGPUTextureUsage;
    end;
 
    TWGPUUncapturedErrorCallbackInfo = record
@@ -2136,7 +2030,7 @@ type
 
    TWGPUBindGroupDescriptor = record
       nextInChain: PWGPUChainedStruct;
-      &label: PUTF8Char;
+      &label: TWGPUStringView;
       layout: TWGPUBindGroupLayout;
       entryCount: NativeUInt;
       entries: PWGPUBindGroupEntry;
@@ -2157,6 +2051,24 @@ type
       alpha: TWGPUBlendComponent;
    end;
 
+   TWGPUBufferDescriptor = record
+      nextInChain: PWGPUChainedStruct;
+      &label: TWGPUStringView;
+      usage: TWGPUBufferUsage;
+      size: UInt64;
+      mappedAtCreation: TWGPUBool;
+   end;
+
+   TWGPUCommandBufferDescriptor = record
+      nextInChain: PWGPUChainedStruct;
+      &label: TWGPUStringView;
+   end;
+
+   TWGPUCommandEncoderDescriptor = record
+      nextInChain: PWGPUChainedStruct;
+      &label: TWGPUStringView;
+   end;
+
    TWGPUCompilationInfo = record
       nextInChain: PWGPUChainedStruct;
       messageCount: NativeUInt;
@@ -2165,7 +2077,7 @@ type
 
    TWGPUComputePassDescriptor = record
       nextInChain: PWGPUChainedStruct;
-      &label: PUTF8Char;
+      &label: TWGPUStringView;
       timestampWrites: PWGPUComputePassTimestampWrites;
    end;
 
@@ -2191,7 +2103,7 @@ type
 
    TWGPUExternalTextureDescriptor = record
       nextInChain: PWGPUChainedStruct;
-      &label: PUTF8Char;
+      &label: TWGPUStringView;
       plane0: TWGPUTextureView;
       plane1: TWGPUTextureView;
       visibleOrigin: TWGPUOrigin2D;
@@ -2234,6 +2146,14 @@ type
       features: TWGPUInstanceFeatures;
    end;
 
+   TWGPUPipelineLayoutDescriptor = record
+      nextInChain: PWGPUChainedStruct;
+      &label: TWGPUStringView;
+      bindGroupLayoutCount: NativeUInt;
+      bindGroupLayouts: PWGPUBindGroupLayout;
+      immediateDataRangeByteSize: UInt32;
+   end;
+
    TWGPUPipelineLayoutPixelLocalStorage = record
       chain: TWGPUChainedStruct;
       totalPixelLocalStorageSize: UInt64;
@@ -2247,6 +2167,34 @@ type
       entryPoint: PUTF8Char;
       constantCount: NativeUInt;
       constants: PWGPUConstantEntry;
+   end;
+
+   TWGPUQuerySetDescriptor = record
+      nextInChain: PWGPUChainedStruct;
+      &label: TWGPUStringView;
+      &type: TWGPUQueryType;
+      count: UInt32;
+   end;
+
+   TWGPUQueueDescriptor = record
+      nextInChain: PWGPUChainedStruct;
+      &label: TWGPUStringView;
+   end;
+
+   TWGPURenderBundleDescriptor = record
+      nextInChain: PWGPUChainedStruct;
+      &label: TWGPUStringView;
+   end;
+
+   TWGPURenderBundleEncoderDescriptor = record
+      nextInChain: PWGPUChainedStruct;
+      &label: TWGPUStringView;
+      colorFormatCount: NativeUInt;
+      colorFormats: PWGPUTextureFormat;
+      depthStencilFormat: TWGPUTextureFormat;
+      sampleCount: UInt32;
+      depthReadOnly: TWGPUBool;
+      stencilReadOnly: TWGPUBool;
    end;
 
    TWGPURenderPassColorAttachment = record
@@ -2273,14 +2221,49 @@ type
       limits: TWGPULimits;
    end;
 
+   TWGPUSamplerDescriptor = record
+      nextInChain: PWGPUChainedStruct;
+      &label: TWGPUStringView;
+      addressModeU: TWGPUAddressMode;
+      addressModeV: TWGPUAddressMode;
+      addressModeW: TWGPUAddressMode;
+      magFilter: TWGPUFilterMode;
+      minFilter: TWGPUFilterMode;
+      mipmapFilter: TWGPUMipmapFilterMode;
+      lodMinClamp: Single;
+      lodMaxClamp: Single;
+      compare: TWGPUCompareFunction;
+      maxAnisotropy: UInt16;
+   end;
+
+   TWGPUShaderModuleDescriptor = record
+      nextInChain: PWGPUChainedStruct;
+      &label: TWGPUStringView;
+   end;
+
    TWGPUShaderSourceWGSL = record
       chain: TWGPUChainedStruct;
       code: TWGPUStringView;
    end;
 
+   TWGPUSharedBufferMemoryDescriptor = record
+      nextInChain: PWGPUChainedStruct;
+      &label: TWGPUStringView;
+   end;
+
+   TWGPUSharedFenceDescriptor = record
+      nextInChain: PWGPUChainedStruct;
+      &label: TWGPUStringView;
+   end;
+
    TWGPUSharedTextureMemoryAHardwareBufferProperties = record
       chain: TWGPUChainedStructOut;
       yCbCrInfo: TWGPUYCbCrVkDescriptor;
+   end;
+
+   TWGPUSharedTextureMemoryDescriptor = record
+      nextInChain: PWGPUChainedStruct;
+      &label: TWGPUStringView;
    end;
 
    TWGPUSharedTextureMemoryDmaBufDescriptor = record
@@ -2304,9 +2287,24 @@ type
       limits: TWGPULimits;
    end;
 
+   TWGPUSurfaceDescriptor = record
+      nextInChain: PWGPUChainedStruct;
+      &label: TWGPUStringView;
+   end;
+
+   TWGPUSwapChainDescriptor = record
+      nextInChain: PWGPUChainedStruct;
+      &label: TWGPUStringView;
+      usage: TWGPUTextureUsage;
+      format: TWGPUTextureFormat;
+      width: UInt32;
+      height: UInt32;
+      presentMode: TWGPUPresentMode;
+   end;
+
    TWGPUTextureDescriptor = record
       nextInChain: PWGPUChainedStruct;
-      &label: PUTF8Char;
+      &label: TWGPUStringView;
       usage: TWGPUTextureUsage;
       dimension: TWGPUTextureDimension;
       size: TWGPUExtent3D;
@@ -2315,6 +2313,18 @@ type
       sampleCount: UInt32;
       viewFormatCount: NativeUInt;
       viewFormats: PWGPUTextureFormat;
+   end;
+
+   TWGPUTextureViewDescriptor = record
+      nextInChain: PWGPUChainedStruct;
+      &label: TWGPUStringView;
+      format: TWGPUTextureFormat;
+      dimension: TWGPUTextureViewDimension;
+      baseMipLevel: UInt32;
+      mipLevelCount: UInt32;
+      baseArrayLayer: UInt32;
+      arrayLayerCount: UInt32;
+      aspect: TWGPUTextureAspect;
    end;
 
    TWGPUVertexBufferLayout = record
@@ -2326,7 +2336,7 @@ type
 
    TWGPUBindGroupLayoutDescriptor = record
       nextInChain: PWGPUChainedStruct;
-      &label: PUTF8Char;
+      &label: TWGPUStringView;
       entryCount: NativeUInt;
       entries: PWGPUBindGroupLayoutEntry;
    end;
@@ -2340,14 +2350,14 @@ type
 
    TWGPUComputePipelineDescriptor = record
       nextInChain: PWGPUChainedStruct;
-      &label: PUTF8Char;
+      &label: TWGPUStringView;
       layout: TWGPUPipelineLayout;
       compute: TWGPUProgrammableStageDescriptor;
    end;
 
    TWGPUDeviceDescriptor = record
       nextInChain: PWGPUChainedStruct;
-      &label: PUTF8Char;
+      &label: TWGPUStringView;
       requiredFeatureCount: NativeUInt;
       requiredFeatures: PWGPUFeatureName;
       requiredLimits: PWGPURequiredLimits;
@@ -2362,7 +2372,7 @@ type
 
    TWGPURenderPassDescriptor = record
       nextInChain: PWGPUChainedStruct;
-      &label: PUTF8Char;
+      &label: TWGPUStringView;
       colorAttachmentCount: NativeUInt;
       colorAttachments: PWGPURenderPassColorAttachment;
       depthStencilAttachment: PWGPURenderPassDepthStencilAttachment;
@@ -2399,7 +2409,7 @@ type
 
    TWGPURenderPipelineDescriptor = record
       nextInChain: PWGPUChainedStruct;
-      &label: PUTF8Char;
+      &label: TWGPUStringView;
       layout: TWGPUPipelineLayout;
       vertex: TWGPUVertexState;
       primitive: TWGPUPrimitiveState;
@@ -3389,6 +3399,16 @@ begin
    wgpuTextureViewRelease := GetProcAddress(vLib, 'wgpuTextureViewRelease');
 end;
 
-end.
+class operator TWGPUStringView.Implicit(const s : UTF8String) : TWGPUStringView;
+begin
+   Result.data := Pointer(s);
+   Result.length := System.Length(s);
+end;
 
+class operator TWGPUStringView.Implicit(const view : TWGPUStringView) : UTF8String;
+begin
+   SetString(Result, view.data, view.length);
+end;
+
+end.
 
