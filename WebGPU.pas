@@ -152,8 +152,6 @@ type
    PPWGPUSharedTextureMemoryImpl = ^PWGPUSharedTextureMemoryImpl;
    PWGPUSurfaceImpl = Pointer;
    PPWGPUSurfaceImpl = ^PWGPUSurfaceImpl;
-   PWGPUSwapChainImpl = Pointer;
-   PPWGPUSwapChainImpl = ^PWGPUSwapChainImpl;
    PWGPUTextureImpl = Pointer;
    PPWGPUTextureImpl = ^PWGPUTextureImpl;
    PWGPUTextureViewImpl = Pointer;
@@ -184,14 +182,12 @@ type
    PWGPUCompilationInfoCallbackInfo = ^TWGPUCompilationInfoCallbackInfo;
    PWGPUCompilationMessage = ^TWGPUCompilationMessage;
    PWGPUComputePassTimestampWrites = ^TWGPUComputePassTimestampWrites;
-   PWGPUConstantEntry = ^TWGPUConstantEntry;
    PWGPUCopyTextureForBrowserOptions = ^TWGPUCopyTextureForBrowserOptions;
    PWGPUCreateComputePipelineAsyncCallbackInfo = ^TWGPUCreateComputePipelineAsyncCallbackInfo;
    PWGPUCreateRenderPipelineAsyncCallbackInfo = ^TWGPUCreateRenderPipelineAsyncCallbackInfo;
    PWGPUDawnWGSLBlocklist = ^TWGPUDawnWGSLBlocklist;
    PWGPUDawnAdapterPropertiesPowerPreference = ^TWGPUDawnAdapterPropertiesPowerPreference;
    PWGPUDawnBufferDescriptorErrorInfoFromWireClient = ^TWGPUDawnBufferDescriptorErrorInfoFromWireClient;
-   PWGPUDawnCacheDeviceDescriptor = ^TWGPUDawnCacheDeviceDescriptor;
    PWGPUDawnComputePipelineFullSubgroups = ^TWGPUDawnComputePipelineFullSubgroups;
    PWGPUDawnEncoderInternalUsageDescriptor = ^TWGPUDawnEncoderInternalUsageDescriptor;
    PWGPUDawnExperimentalImmediateDataLimits = ^TWGPUDawnExperimentalImmediateDataLimits;
@@ -266,7 +262,6 @@ type
    PWGPUSurfaceDescriptorFromWindowsSwapChainPanel = ^TWGPUSurfaceDescriptorFromWindowsSwapChainPanel;
    PWGPUSurfaceSourceXCBWindow = ^TWGPUSurfaceSourceXCBWindow;
    PWGPUSurfaceSourceAndroidNativeWindow = ^TWGPUSurfaceSourceAndroidNativeWindow;
-   PWGPUSurfaceSourceCanvasHTMLSelector_Emscripten = ^TWGPUSurfaceSourceCanvasHTMLSelector_Emscripten;
    PWGPUSurfaceSourceMetalLayer = ^TWGPUSurfaceSourceMetalLayer;
    PWGPUSurfaceSourceWaylandSurface = ^TWGPUSurfaceSourceWaylandSurface;
    PWGPUSurfaceSourceWindowsHWND = ^TWGPUSurfaceSourceWindowsHWND;
@@ -288,6 +283,8 @@ type
    PWGPUCommandEncoderDescriptor = ^TWGPUCommandEncoderDescriptor;
    PWGPUCompilationInfo = ^TWGPUCompilationInfo;
    PWGPUComputePassDescriptor = ^TWGPUComputePassDescriptor;
+   PWGPUConstantEntry = ^TWGPUConstantEntry;
+   PWGPUDawnCacheDeviceDescriptor = ^TWGPUDawnCacheDeviceDescriptor;
    PWGPUDepthStencilState = ^TWGPUDepthStencilState;
    PWGPUDrmFormatCapabilities = ^TWGPUDrmFormatCapabilities;
    PWGPUExternalTextureDescriptor = ^TWGPUExternalTextureDescriptor;
@@ -298,7 +295,6 @@ type
    PWGPUInstanceDescriptor = ^TWGPUInstanceDescriptor;
    PWGPUPipelineLayoutDescriptor = ^TWGPUPipelineLayoutDescriptor;
    PWGPUPipelineLayoutPixelLocalStorage = ^TWGPUPipelineLayoutPixelLocalStorage;
-   PWGPUProgrammableStageDescriptor = ^TWGPUProgrammableStageDescriptor;
    PWGPUQuerySetDescriptor = ^TWGPUQuerySetDescriptor;
    PWGPUQueueDescriptor = ^TWGPUQueueDescriptor;
    PWGPURenderBundleDescriptor = ^TWGPURenderBundleDescriptor;
@@ -317,17 +313,18 @@ type
    PWGPUSharedTextureMemoryProperties = ^TWGPUSharedTextureMemoryProperties;
    PWGPUSupportedLimits = ^TWGPUSupportedLimits;
    PWGPUSurfaceDescriptor = ^TWGPUSurfaceDescriptor;
-   PWGPUSwapChainDescriptor = ^TWGPUSwapChainDescriptor;
+   PWGPUSurfaceSourceCanvasHTMLSelector_Emscripten = ^TWGPUSurfaceSourceCanvasHTMLSelector_Emscripten;
    PWGPUTextureDescriptor = ^TWGPUTextureDescriptor;
    PWGPUTextureViewDescriptor = ^TWGPUTextureViewDescriptor;
    PWGPUVertexBufferLayout = ^TWGPUVertexBufferLayout;
    PWGPUBindGroupLayoutDescriptor = ^TWGPUBindGroupLayoutDescriptor;
    PWGPUColorTargetState = ^TWGPUColorTargetState;
-   PWGPUComputePipelineDescriptor = ^TWGPUComputePipelineDescriptor;
    PWGPUDeviceDescriptor = ^TWGPUDeviceDescriptor;
+   PWGPUProgrammableStageDescriptor = ^TWGPUProgrammableStageDescriptor;
    PWGPURenderPassDescriptor = ^TWGPURenderPassDescriptor;
    PWGPURenderPassPixelLocalStorage = ^TWGPURenderPassPixelLocalStorage;
    PWGPUVertexState = ^TWGPUVertexState;
+   PWGPUComputePipelineDescriptor = ^TWGPUComputePipelineDescriptor;
    PWGPUFragmentState = ^TWGPUFragmentState;
    PWGPURenderPipelineDescriptor = ^TWGPURenderPipelineDescriptor;
 
@@ -416,8 +413,6 @@ type
    PWGPUSharedTextureMemory = ^TWGPUSharedTextureMemory;
    TWGPUSurface = UIntPtr;
    PWGPUSurface = ^TWGPUSurface;
-   TWGPUSwapChain = UIntPtr;
-   PWGPUSwapChain = ^TWGPUSwapChain;
    TWGPUTexture = UIntPtr;
    PWGPUTexture = ^TWGPUTexture;
    TWGPUTextureView = UIntPtr;
@@ -1395,12 +1390,6 @@ type
       endOfPassWriteIndex: UInt32;
    end;
 
-   TWGPUConstantEntry = record
-      nextInChain: PWGPUChainedStruct;
-      key: PUTF8Char;
-      value: Double;
-   end;
-
    TWGPUCopyTextureForBrowserOptions = record
       nextInChain: PWGPUChainedStruct;
       flipY: TWGPUBool;
@@ -1441,14 +1430,6 @@ type
    TWGPUDawnBufferDescriptorErrorInfoFromWireClient = record
       chain: TWGPUChainedStruct;
       outOfMemory: TWGPUBool;
-   end;
-
-   TWGPUDawnCacheDeviceDescriptor = record
-      chain: TWGPUChainedStruct;
-      isolationKey: PUTF8Char;
-      loadDataFunction: TWGPUDawnLoadCacheDataFunction;
-      storeDataFunction: TWGPUDawnStoreCacheDataFunction;
-      functionUserdata: Pointer;
    end;
 
    TWGPUDawnComputePipelineFullSubgroups = record
@@ -1937,11 +1918,6 @@ type
       window: Pointer;
    end;
 
-   TWGPUSurfaceSourceCanvasHTMLSelector_Emscripten = record
-      chain: TWGPUChainedStruct;
-      selector: PUTF8Char;
-   end;
-
    TWGPUSurfaceSourceMetalLayer = record
       chain: TWGPUChainedStruct;
       layer: Pointer;
@@ -2081,6 +2057,20 @@ type
       timestampWrites: PWGPUComputePassTimestampWrites;
    end;
 
+   TWGPUConstantEntry = record
+      nextInChain: PWGPUChainedStruct;
+      key: TWGPUStringView;
+      value: Double;
+   end;
+
+   TWGPUDawnCacheDeviceDescriptor = record
+      chain: TWGPUChainedStruct;
+      isolationKey: TWGPUStringView;
+      loadDataFunction: TWGPUDawnLoadCacheDataFunction;
+      storeDataFunction: TWGPUDawnStoreCacheDataFunction;
+      functionUserdata: Pointer;
+   end;
+
    TWGPUDepthStencilState = record
       nextInChain: PWGPUChainedStruct;
       format: TWGPUTextureFormat;
@@ -2159,14 +2149,6 @@ type
       totalPixelLocalStorageSize: UInt64;
       storageAttachmentCount: NativeUInt;
       storageAttachments: PWGPUPipelineLayoutStorageAttachment;
-   end;
-
-   TWGPUProgrammableStageDescriptor = record
-      nextInChain: PWGPUChainedStruct;
-      module: TWGPUShaderModule;
-      entryPoint: PUTF8Char;
-      constantCount: NativeUInt;
-      constants: PWGPUConstantEntry;
    end;
 
    TWGPUQuerySetDescriptor = record
@@ -2292,14 +2274,9 @@ type
       &label: TWGPUStringView;
    end;
 
-   TWGPUSwapChainDescriptor = record
-      nextInChain: PWGPUChainedStruct;
-      &label: TWGPUStringView;
-      usage: TWGPUTextureUsage;
-      format: TWGPUTextureFormat;
-      width: UInt32;
-      height: UInt32;
-      presentMode: TWGPUPresentMode;
+   TWGPUSurfaceSourceCanvasHTMLSelector_Emscripten = record
+      chain: TWGPUChainedStruct;
+      selector: TWGPUStringView;
    end;
 
    TWGPUTextureDescriptor = record
@@ -2325,6 +2302,7 @@ type
       baseArrayLayer: UInt32;
       arrayLayerCount: UInt32;
       aspect: TWGPUTextureAspect;
+      usage: TWGPUTextureUsage;
    end;
 
    TWGPUVertexBufferLayout = record
@@ -2348,13 +2326,6 @@ type
       writeMask: TWGPUColorWriteMask;
    end;
 
-   TWGPUComputePipelineDescriptor = record
-      nextInChain: PWGPUChainedStruct;
-      &label: TWGPUStringView;
-      layout: TWGPUPipelineLayout;
-      compute: TWGPUProgrammableStageDescriptor;
-   end;
-
    TWGPUDeviceDescriptor = record
       nextInChain: PWGPUChainedStruct;
       &label: TWGPUStringView;
@@ -2368,6 +2339,14 @@ type
       uncapturedErrorCallbackInfo: TWGPUUncapturedErrorCallbackInfo;
       deviceLostCallbackInfo2: TWGPUDeviceLostCallbackInfo2;
       uncapturedErrorCallbackInfo2: TWGPUUncapturedErrorCallbackInfo2;
+   end;
+
+   TWGPUProgrammableStageDescriptor = record
+      nextInChain: PWGPUChainedStruct;
+      module: TWGPUShaderModule;
+      entryPoint: TWGPUStringView;
+      constantCount: NativeUInt;
+      constants: PWGPUConstantEntry;
    end;
 
    TWGPURenderPassDescriptor = record
@@ -2390,17 +2369,24 @@ type
    TWGPUVertexState = record
       nextInChain: PWGPUChainedStruct;
       module: TWGPUShaderModule;
-      entryPoint: PUTF8Char;
+      entryPoint: TWGPUStringView;
       constantCount: NativeUInt;
       constants: PWGPUConstantEntry;
       bufferCount: NativeUInt;
       buffers: PWGPUVertexBufferLayout;
    end;
 
+   TWGPUComputePipelineDescriptor = record
+      nextInChain: PWGPUChainedStruct;
+      &label: TWGPUStringView;
+      layout: TWGPUPipelineLayout;
+      compute: TWGPUProgrammableStageDescriptor;
+   end;
+
    TWGPUFragmentState = record
       nextInChain: PWGPUChainedStruct;
       module: TWGPUShaderModule;
-      entryPoint: PUTF8Char;
+      entryPoint: TWGPUStringView;
       constantCount: NativeUInt;
       constants: PWGPUConstantEntry;
       targetCount: NativeUInt;
@@ -2542,7 +2528,6 @@ type
    TWGPUProcDeviceCreateRenderPipelineAsyncF = function(device: TWGPUDevice; const descriptor: PWGPURenderPipelineDescriptor; callbackInfo: TWGPUCreateRenderPipelineAsyncCallbackInfo): TWGPUFuture; cdecl;
    TWGPUProcDeviceCreateSampler = function(device: TWGPUDevice; const descriptor: PWGPUSamplerDescriptor): TWGPUSampler; cdecl;
    TWGPUProcDeviceCreateShaderModule = function(device: TWGPUDevice; const descriptor: PWGPUShaderModuleDescriptor): TWGPUShaderModule; cdecl;
-   TWGPUProcDeviceCreateSwapChain = function(device: TWGPUDevice; surface: TWGPUSurface; const descriptor: PWGPUSwapChainDescriptor): TWGPUSwapChain; cdecl;
    TWGPUProcDeviceCreateTexture = function(device: TWGPUDevice; const descriptor: PWGPUTextureDescriptor): TWGPUTexture; cdecl;
    TWGPUProcDeviceDestroy = procedure(device: TWGPUDevice); cdecl;
    TWGPUProcDeviceEnumerateFeatures = function(device: TWGPUDevice; features: PWGPUFeatureName): NativeUInt; cdecl;
@@ -2703,18 +2688,12 @@ type
    TWGPUProcSurfaceConfigure = procedure(surface: TWGPUSurface; const config: PWGPUSurfaceConfiguration); cdecl;
    TWGPUProcSurfaceGetCapabilities = function(surface: TWGPUSurface; adapter: TWGPUAdapter; capabilities: PWGPUSurfaceCapabilities): TWGPUStatus; cdecl;
    TWGPUProcSurfaceGetCurrentTexture = procedure(surface: TWGPUSurface; surfaceTexture: PWGPUSurfaceTexture); cdecl;
-   TWGPUProcSurfaceGetPreferredFormat = function(surface: TWGPUSurface; adapter: TWGPUAdapter): TWGPUTextureFormat; cdecl;
    TWGPUProcSurfacePresent = procedure(surface: TWGPUSurface); cdecl;
    TWGPUProcSurfaceSetLabel = procedure(surface: TWGPUSurface; const &label: PUTF8Char); cdecl;
    TWGPUProcSurfaceSetLabel2 = procedure(surface: TWGPUSurface; &label: TWGPUStringView); cdecl;
    TWGPUProcSurfaceUnconfigure = procedure(surface: TWGPUSurface); cdecl;
    TWGPUProcSurfaceAddRef = procedure(surface: TWGPUSurface); cdecl;
    TWGPUProcSurfaceRelease = procedure(surface: TWGPUSurface); cdecl;
-   TWGPUProcSwapChainGetCurrentTexture = function(swapChain: TWGPUSwapChain): TWGPUTexture; cdecl;
-   TWGPUProcSwapChainGetCurrentTextureView = function(swapChain: TWGPUSwapChain): TWGPUTextureView; cdecl;
-   TWGPUProcSwapChainPresent = procedure(swapChain: TWGPUSwapChain); cdecl;
-   TWGPUProcSwapChainAddRef = procedure(swapChain: TWGPUSwapChain); cdecl;
-   TWGPUProcSwapChainRelease = procedure(swapChain: TWGPUSwapChain); cdecl;
    TWGPUProcTextureCreateErrorView = function(texture: TWGPUTexture; const descriptor: PWGPUTextureViewDescriptor): TWGPUTextureView; cdecl;
    TWGPUProcTextureCreateView = function(texture: TWGPUTexture; const descriptor: PWGPUTextureViewDescriptor): TWGPUTextureView; cdecl;
    TWGPUProcTextureDestroy = procedure(texture: TWGPUTexture); cdecl;
@@ -2887,7 +2866,6 @@ var
    wgpuDeviceCreateRenderPipelineAsyncF : function(device: TWGPUDevice; const descriptor: PWGPURenderPipelineDescriptor; callbackInfo: TWGPUCreateRenderPipelineAsyncCallbackInfo): TWGPUFuture; cdecl;
    wgpuDeviceCreateSampler : function(device: TWGPUDevice; const descriptor: PWGPUSamplerDescriptor): TWGPUSampler; cdecl;
    wgpuDeviceCreateShaderModule : function(device: TWGPUDevice; const descriptor: PWGPUShaderModuleDescriptor): TWGPUShaderModule; cdecl;
-   wgpuDeviceCreateSwapChain : function(device: TWGPUDevice; surface: TWGPUSurface; const descriptor: PWGPUSwapChainDescriptor): TWGPUSwapChain; cdecl;
    wgpuDeviceCreateTexture : function(device: TWGPUDevice; const descriptor: PWGPUTextureDescriptor): TWGPUTexture; cdecl;
    wgpuDeviceDestroy : procedure(device: TWGPUDevice); cdecl;
    wgpuDeviceEnumerateFeatures : function(device: TWGPUDevice; features: PWGPUFeatureName): NativeUInt; cdecl;
@@ -3048,18 +3026,12 @@ var
    wgpuSurfaceConfigure : procedure(surface: TWGPUSurface; const config: PWGPUSurfaceConfiguration); cdecl;
    wgpuSurfaceGetCapabilities : function(surface: TWGPUSurface; adapter: TWGPUAdapter; capabilities: PWGPUSurfaceCapabilities): TWGPUStatus; cdecl;
    wgpuSurfaceGetCurrentTexture : procedure(surface: TWGPUSurface; surfaceTexture: PWGPUSurfaceTexture); cdecl;
-   wgpuSurfaceGetPreferredFormat : function(surface: TWGPUSurface; adapter: TWGPUAdapter): TWGPUTextureFormat; cdecl;
    wgpuSurfacePresent : procedure(surface: TWGPUSurface); cdecl;
    wgpuSurfaceSetLabel : procedure(surface: TWGPUSurface; const &label: PUTF8Char); cdecl;
    wgpuSurfaceSetLabel2 : procedure(surface: TWGPUSurface; &label: TWGPUStringView); cdecl;
    wgpuSurfaceUnconfigure : procedure(surface: TWGPUSurface); cdecl;
    wgpuSurfaceAddRef : procedure(surface: TWGPUSurface); cdecl;
    wgpuSurfaceRelease : procedure(surface: TWGPUSurface); cdecl;
-   wgpuSwapChainGetCurrentTexture : function(swapChain: TWGPUSwapChain): TWGPUTexture; cdecl;
-   wgpuSwapChainGetCurrentTextureView : function(swapChain: TWGPUSwapChain): TWGPUTextureView; cdecl;
-   wgpuSwapChainPresent : procedure(swapChain: TWGPUSwapChain); cdecl;
-   wgpuSwapChainAddRef : procedure(swapChain: TWGPUSwapChain); cdecl;
-   wgpuSwapChainRelease : procedure(swapChain: TWGPUSwapChain); cdecl;
    wgpuTextureCreateErrorView : function(texture: TWGPUTexture; const descriptor: PWGPUTextureViewDescriptor): TWGPUTextureView; cdecl;
    wgpuTextureCreateView : function(texture: TWGPUTexture; const descriptor: PWGPUTextureViewDescriptor): TWGPUTextureView; cdecl;
    wgpuTextureDestroy : procedure(texture: TWGPUTexture); cdecl;
@@ -3205,7 +3177,6 @@ begin
    wgpuDeviceCreateRenderPipelineAsyncF := GetProcAddress(vLib, 'wgpuDeviceCreateRenderPipelineAsyncF');
    wgpuDeviceCreateSampler := GetProcAddress(vLib, 'wgpuDeviceCreateSampler');
    wgpuDeviceCreateShaderModule := GetProcAddress(vLib, 'wgpuDeviceCreateShaderModule');
-   wgpuDeviceCreateSwapChain := GetProcAddress(vLib, 'wgpuDeviceCreateSwapChain');
    wgpuDeviceCreateTexture := GetProcAddress(vLib, 'wgpuDeviceCreateTexture');
    wgpuDeviceDestroy := GetProcAddress(vLib, 'wgpuDeviceDestroy');
    wgpuDeviceEnumerateFeatures := GetProcAddress(vLib, 'wgpuDeviceEnumerateFeatures');
@@ -3366,18 +3337,12 @@ begin
    wgpuSurfaceConfigure := GetProcAddress(vLib, 'wgpuSurfaceConfigure');
    wgpuSurfaceGetCapabilities := GetProcAddress(vLib, 'wgpuSurfaceGetCapabilities');
    wgpuSurfaceGetCurrentTexture := GetProcAddress(vLib, 'wgpuSurfaceGetCurrentTexture');
-   wgpuSurfaceGetPreferredFormat := GetProcAddress(vLib, 'wgpuSurfaceGetPreferredFormat');
    wgpuSurfacePresent := GetProcAddress(vLib, 'wgpuSurfacePresent');
    wgpuSurfaceSetLabel := GetProcAddress(vLib, 'wgpuSurfaceSetLabel');
    wgpuSurfaceSetLabel2 := GetProcAddress(vLib, 'wgpuSurfaceSetLabel2');
    wgpuSurfaceUnconfigure := GetProcAddress(vLib, 'wgpuSurfaceUnconfigure');
    wgpuSurfaceAddRef := GetProcAddress(vLib, 'wgpuSurfaceAddRef');
    wgpuSurfaceRelease := GetProcAddress(vLib, 'wgpuSurfaceRelease');
-   wgpuSwapChainGetCurrentTexture := GetProcAddress(vLib, 'wgpuSwapChainGetCurrentTexture');
-   wgpuSwapChainGetCurrentTextureView := GetProcAddress(vLib, 'wgpuSwapChainGetCurrentTextureView');
-   wgpuSwapChainPresent := GetProcAddress(vLib, 'wgpuSwapChainPresent');
-   wgpuSwapChainAddRef := GetProcAddress(vLib, 'wgpuSwapChainAddRef');
-   wgpuSwapChainRelease := GetProcAddress(vLib, 'wgpuSwapChainRelease');
    wgpuTextureCreateErrorView := GetProcAddress(vLib, 'wgpuTextureCreateErrorView');
    wgpuTextureCreateView := GetProcAddress(vLib, 'wgpuTextureCreateView');
    wgpuTextureDestroy := GetProcAddress(vLib, 'wgpuTextureDestroy');

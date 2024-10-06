@@ -45,7 +45,6 @@ type
    IWGPUSharedFence = interface;
    IWGPUSharedTextureMemory = interface;
    IWGPUSurface = interface;
-   IWGPUSwapChain = interface;
    IWGPUTexture = interface;
    IWGPUTextureView = interface;
 
@@ -186,7 +185,6 @@ type
       function CreateRenderPipelineAsyncF(const aDescriptor: TWGPURenderPipelineDescriptor; const aCallbackInfo: TWGPUCreateRenderPipelineAsyncCallbackInfo): TWGPUFuture;
       function CreateSampler(const aDescriptor: TWGPUSamplerDescriptor): IWGPUSampler;
       function CreateShaderModule(const aDescriptor: TWGPUShaderModuleDescriptor): IWGPUShaderModule;
-      function CreateSwapChain(const aSurface: IWGPUSurface; const aDescriptor: TWGPUSwapChainDescriptor): IWGPUSwapChain;
       function CreateTexture(const aDescriptor: TWGPUTextureDescriptor): IWGPUTexture;
       function EnumerateFeatures : TWGPUFeatureNameArray; overload;
       function EnumerateFeatures(const aFeatures: PWGPUFeatureName): NativeUInt; overload;
@@ -391,19 +389,10 @@ type
       procedure Configure(const aConfig: TWGPUSurfaceConfiguration);
       function GetCapabilities(const aAdapter: IWGPUAdapter; const aCapabilities: PWGPUSurfaceCapabilities): TWGPUStatus;
       function GetCurrentTexture : IWGPUTexture;
-      function GetPreferredFormat(const aAdapter: IWGPUAdapter): TWGPUTextureFormat;
       procedure Present;
       procedure SetLabel(const aLabel: UTF8String);
       procedure SetLabel2(const aLabel: TWGPUStringView);
       procedure Unconfigure;
-   end;
-
-   IWGPUSwapChain = interface
-      ['{B04973B1-5BFA-1BB3-40F9-701E79FDF390}']
-      function GetHandle: TWGPUSwapChain;
-      function GetCurrentTexture: IWGPUTexture;
-      function GetCurrentTextureView: IWGPUTextureView;
-      procedure Present;
    end;
 
    IWGPUTexture = interface
@@ -604,7 +593,6 @@ type
       function CreateRenderPipelineAsyncF(const aDescriptor: TWGPURenderPipelineDescriptor; const aCallbackInfo: TWGPUCreateRenderPipelineAsyncCallbackInfo): TWGPUFuture;
       function CreateSampler(const aDescriptor: TWGPUSamplerDescriptor): IWGPUSampler;
       function CreateShaderModule(const aDescriptor: TWGPUShaderModuleDescriptor): IWGPUShaderModule;
-      function CreateSwapChain(const aSurface: IWGPUSurface; const aDescriptor: TWGPUSwapChainDescriptor): IWGPUSwapChain;
       function CreateTexture(const aDescriptor: TWGPUTextureDescriptor): IWGPUTexture;
       function EnumerateFeatures : TWGPUFeatureNameArray; overload;
       function EnumerateFeatures(const aFeatures: PWGPUFeatureName): NativeUInt; overload;
@@ -839,21 +827,10 @@ type
       procedure Configure(const aConfig: TWGPUSurfaceConfiguration);
       function GetCapabilities(const aAdapter: IWGPUAdapter; const aCapabilities: PWGPUSurfaceCapabilities): TWGPUStatus;
       function GetCurrentTexture : IWGPUTexture;
-      function GetPreferredFormat(const aAdapter: IWGPUAdapter): TWGPUTextureFormat;
       procedure Present;
       procedure SetLabel(const aLabel: UTF8String);
       procedure SetLabel2(const aLabel: TWGPUStringView);
       procedure Unconfigure;
-   end;
-
-   TiwgpuSwapChain = class(TInterfacedObject, IWGPUSwapChain)
-      FHandle: TWGPUSwapChain;
-      constructor Create(const h: TWGPUSwapChain);
-      destructor Destroy; override;
-      function GetHandle: TWGPUSwapChain;
-      function GetCurrentTexture: IWGPUTexture;
-      function GetCurrentTextureView: IWGPUTextureView;
-      procedure Present;
    end;
 
    TiwgpuTexture = class(TInterfacedObject, IWGPUTexture)
@@ -1526,11 +1503,6 @@ end;
 function TiwgpuDevice.CreateShaderModule(const aDescriptor: TWGPUShaderModuleDescriptor): IWGPUShaderModule;
 begin
    Result := TiwgpuShaderModule.Create(wgpuDeviceCreateShaderModule(FHandle, @aDescriptor));
-end;
-
-function TiwgpuDevice.CreateSwapChain(const aSurface: IWGPUSurface; const aDescriptor: TWGPUSwapChainDescriptor): IWGPUSwapChain;
-begin
-   Result := TiwgpuSwapChain.Create(wgpuDeviceCreateSwapChain(FHandle, aSurface.GetHandle, @aDescriptor));
 end;
 
 function TiwgpuDevice.CreateTexture(const aDescriptor: TWGPUTextureDescriptor): IWGPUTexture;
@@ -2505,11 +2477,6 @@ begin
    else Result := nil;
 end;
 
-function TiwgpuSurface.GetPreferredFormat(const aAdapter: IWGPUAdapter): TWGPUTextureFormat;
-begin
-   Result := wgpuSurfaceGetPreferredFormat(FHandle, aAdapter.GetHandle);
-end;
-
 procedure TiwgpuSurface.Present;
 begin
    wgpuSurfacePresent(FHandle);
@@ -2528,42 +2495,6 @@ end;
 procedure TiwgpuSurface.Unconfigure;
 begin
    wgpuSurfaceUnconfigure(FHandle);
-end;
-
-//
-// TiwgpuSwapChain
-//
-
-constructor TiwgpuSwapChain.Create(const h: TWGPUSwapChain);
-begin
-   inherited Create;
-   FHandle := h;
-end;
-
-destructor TiwgpuSwapChain.Destroy;
-begin
-   inherited Destroy;
-   wgpuSwapChainRelease(FHandle);
-end;
-
-function TiwgpuSwapChain.GetHandle: TWGPUSwapChain;
-begin
-   Result := FHandle;
-end;
-
-function TiwgpuSwapChain.GetCurrentTexture: IWGPUTexture;
-begin
-   Result := TiwgpuTexture.Create(wgpuSwapChainGetCurrentTexture(FHandle));
-end;
-
-function TiwgpuSwapChain.GetCurrentTextureView: IWGPUTextureView;
-begin
-   Result := TiwgpuTextureView.Create(wgpuSwapChainGetCurrentTextureView(FHandle));
-end;
-
-procedure TiwgpuSwapChain.Present;
-begin
-   wgpuSwapChainPresent(FHandle);
 end;
 
 //
