@@ -109,7 +109,8 @@ type
    IWGPUCommandEncoder = interface
       ['{164CAC2F-76B4-7E3E-A25E-5EAE1600611F}']
       function GetHandle: TWGPUCommandEncoder;
-      function BeginComputePass(const aDescriptor: TWGPUComputePassDescriptor): IWGPUComputePassEncoder;
+      function BeginComputePass: IWGPUComputePassEncoder; overload;
+      function BeginComputePass(const aDescriptor: TWGPUComputePassDescriptor): IWGPUComputePassEncoder; overload;
       function BeginRenderPass(const aDescriptor: TWGPURenderPassDescriptor): IWGPURenderPassEncoder;
       procedure ClearBuffer(const aBuffer: IWGPUBuffer; aOffset: UInt64; aSize: UInt64);
       procedure CopyBufferToBuffer(const aSource: IWGPUBuffer; aSourceOffset: UInt64; const aDestination: IWGPUBuffer; aDestinationOffset: UInt64; aSize: UInt64);
@@ -511,7 +512,8 @@ type
       constructor Create(const h: TWGPUCommandEncoder);
       destructor Destroy; override;
       function GetHandle: TWGPUCommandEncoder;
-      function BeginComputePass(const aDescriptor: TWGPUComputePassDescriptor): IWGPUComputePassEncoder;
+      function BeginComputePass : IWGPUComputePassEncoder; overload;
+      function BeginComputePass(const aDescriptor: TWGPUComputePassDescriptor) : IWGPUComputePassEncoder; overload;
       function BeginRenderPass(const aDescriptor: TWGPURenderPassDescriptor): IWGPURenderPassEncoder;
       procedure ClearBuffer(const aBuffer: IWGPUBuffer; aOffset: UInt64; aSize: UInt64);
       procedure CopyBufferToBuffer(const aSource: IWGPUBuffer; aSourceOffset: UInt64; const aDestination: IWGPUBuffer; aDestinationOffset: UInt64; aSize: UInt64);
@@ -1137,7 +1139,12 @@ begin
    Result := FHandle;
 end;
 
-function TiwgpuCommandEncoder.BeginComputePass(const aDescriptor: TWGPUComputePassDescriptor): IWGPUComputePassEncoder;
+function TiwgpuCommandEncoder.BeginComputePass : IWGPUComputePassEncoder;
+begin
+   Result := TiwgpuComputePassEncoder.Create(wgpuCommandEncoderBeginComputePass(FHandle, nil));
+end;
+
+function TiwgpuCommandEncoder.BeginComputePass(const aDescriptor: TWGPUComputePassDescriptor) : IWGPUComputePassEncoder;
 begin
    Result := TiwgpuComputePassEncoder.Create(wgpuCommandEncoderBeginComputePass(FHandle, @aDescriptor));
 end;
