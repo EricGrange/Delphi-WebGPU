@@ -169,7 +169,6 @@ type
    PWGPURequestDeviceCallbackInfo2 = ^TWGPURequestDeviceCallbackInfo2;
    PWGPUUncapturedErrorCallbackInfo2 = ^TWGPUUncapturedErrorCallbackInfo2;
    PWGPUINTERNAL__HAVE_EMDAWNWEBGPU_HEADER = ^TWGPUINTERNAL__HAVE_EMDAWNWEBGPU_HEADER;
-   PWGPUAdapterInfo = ^TWGPUAdapterInfo;
    PWGPUAdapterPropertiesD3D = ^TWGPUAdapterPropertiesD3D;
    PWGPUAdapterPropertiesVk = ^TWGPUAdapterPropertiesVk;
    PWGPUBindGroupEntry = ^TWGPUBindGroupEntry;
@@ -180,7 +179,6 @@ type
    PWGPUColor = ^TWGPUColor;
    PWGPUColorTargetStateExpandResolveTextureDawn = ^TWGPUColorTargetStateExpandResolveTextureDawn;
    PWGPUCompilationInfoCallbackInfo = ^TWGPUCompilationInfoCallbackInfo;
-   PWGPUCompilationMessage = ^TWGPUCompilationMessage;
    PWGPUComputePassTimestampWrites = ^TWGPUComputePassTimestampWrites;
    PWGPUCopyTextureForBrowserOptions = ^TWGPUCopyTextureForBrowserOptions;
    PWGPUCreateComputePipelineAsyncCallbackInfo = ^TWGPUCreateComputePipelineAsyncCallbackInfo;
@@ -274,6 +272,7 @@ type
    PWGPUVertexAttribute = ^TWGPUVertexAttribute;
    PWGPUYCbCrVkDescriptor = ^TWGPUYCbCrVkDescriptor;
    PWGPUAHardwareBufferProperties = ^TWGPUAHardwareBufferProperties;
+   PWGPUAdapterInfo = ^TWGPUAdapterInfo;
    PWGPUAdapterPropertiesMemoryHeaps = ^TWGPUAdapterPropertiesMemoryHeaps;
    PWGPUBindGroupDescriptor = ^TWGPUBindGroupDescriptor;
    PWGPUBindGroupLayoutEntry = ^TWGPUBindGroupLayoutEntry;
@@ -281,7 +280,7 @@ type
    PWGPUBufferDescriptor = ^TWGPUBufferDescriptor;
    PWGPUCommandBufferDescriptor = ^TWGPUCommandBufferDescriptor;
    PWGPUCommandEncoderDescriptor = ^TWGPUCommandEncoderDescriptor;
-   PWGPUCompilationInfo = ^TWGPUCompilationInfo;
+   PWGPUCompilationMessage = ^TWGPUCompilationMessage;
    PWGPUComputePassDescriptor = ^TWGPUComputePassDescriptor;
    PWGPUConstantEntry = ^TWGPUConstantEntry;
    PWGPUDawnCacheDeviceDescriptor = ^TWGPUDawnCacheDeviceDescriptor;
@@ -319,6 +318,7 @@ type
    PWGPUVertexBufferLayout = ^TWGPUVertexBufferLayout;
    PWGPUBindGroupLayoutDescriptor = ^TWGPUBindGroupLayoutDescriptor;
    PWGPUColorTargetState = ^TWGPUColorTargetState;
+   PWGPUCompilationInfo = ^TWGPUCompilationInfo;
    PWGPUDeviceDescriptor = ^TWGPUDeviceDescriptor;
    PWGPUProgrammableStageDescriptor = ^TWGPUProgrammableStageDescriptor;
    PWGPURenderPassDescriptor = ^TWGPURenderPassDescriptor;
@@ -644,7 +644,7 @@ type
       WGPUFeatureName_DawnNative = 327682,
       WGPUFeatureName_ChromiumExperimentalTimestampQueryInsidePasses = 327683,
       WGPUFeatureName_ImplicitDeviceSynchronization = 327684,
-      WGPUFeatureName_SurfaceCapabilities = 327685,
+      WGPUFeatureName_ChromiumExperimentalImmediateData = 327685,
       WGPUFeatureName_TransientAttachments = 327686,
       WGPUFeatureName_MSAARenderToSingleSampled = 327687,
       WGPUFeatureName_DualSourceBlending = 327688,
@@ -696,7 +696,6 @@ type
       WGPUFeatureName_DawnPartialLoadResolveTexture = 327734,
       WGPUFeatureName_MultiDrawIndirect = 327735,
       WGPUFeatureName_ClipDistances = 327736,
-      WGPUFeatureName_ChromiumExperimentalImmediateData = 327737,
       WGPUFeatureName_Force32 = 2147483647);
    PWGPUFeatureName = ^TWGPUFeatureName;
 
@@ -1292,19 +1291,6 @@ type
       unused: TWGPUBool;
    end;
 
-   TWGPUAdapterInfo = record
-      nextInChain: PWGPUChainedStructOut;
-      vendor: PUTF8Char;
-      architecture: PUTF8Char;
-      device: PUTF8Char;
-      description: PUTF8Char;
-      backendType: TWGPUBackendType;
-      adapterType: TWGPUAdapterType;
-      vendorID: UInt32;
-      deviceID: UInt32;
-      compatibilityMode: TWGPUBool;
-   end;
-
    TWGPUAdapterPropertiesD3D = record
       chain: TWGPUChainedStructOut;
       shaderModel: UInt32;
@@ -1369,19 +1355,6 @@ type
       mode: TWGPUCallbackMode;
       callback: TWGPUCompilationInfoCallback;
       userdata: Pointer;
-   end;
-
-   TWGPUCompilationMessage = record
-      nextInChain: PWGPUChainedStruct;
-      &message: PUTF8Char;
-      &type: TWGPUCompilationMessageType;
-      lineNum: UInt64;
-      linePos: UInt64;
-      offset: UInt64;
-      length: UInt64;
-      utf16LinePos: UInt64;
-      utf16Offset: UInt64;
-      utf16Length: UInt64;
    end;
 
    TWGPUComputePassTimestampWrites = record
@@ -1998,6 +1971,19 @@ type
       yCbCrInfo: TWGPUYCbCrVkDescriptor;
    end;
 
+   TWGPUAdapterInfo = record
+      nextInChain: PWGPUChainedStructOut;
+      vendor: TWGPUStringView;
+      architecture: TWGPUStringView;
+      device: TWGPUStringView;
+      description: TWGPUStringView;
+      backendType: TWGPUBackendType;
+      adapterType: TWGPUAdapterType;
+      vendorID: UInt32;
+      deviceID: UInt32;
+      compatibilityMode: TWGPUBool;
+   end;
+
    TWGPUAdapterPropertiesMemoryHeaps = record
       chain: TWGPUChainedStructOut;
       heapCount: NativeUInt;
@@ -2045,10 +2031,17 @@ type
       &label: TWGPUStringView;
    end;
 
-   TWGPUCompilationInfo = record
+   TWGPUCompilationMessage = record
       nextInChain: PWGPUChainedStruct;
-      messageCount: NativeUInt;
-      messages: PWGPUCompilationMessage;
+      &message: TWGPUStringView;
+      &type: TWGPUCompilationMessageType;
+      lineNum: UInt64;
+      linePos: UInt64;
+      offset: UInt64;
+      length: UInt64;
+      utf16LinePos: UInt64;
+      utf16Offset: UInt64;
+      utf16Length: UInt64;
    end;
 
    TWGPUComputePassDescriptor = record
@@ -2326,6 +2319,12 @@ type
       writeMask: TWGPUColorWriteMask;
    end;
 
+   TWGPUCompilationInfo = record
+      nextInChain: PWGPUChainedStruct;
+      messageCount: NativeUInt;
+      messages: PWGPUCompilationMessage;
+   end;
+
    TWGPUDeviceDescriptor = record
       nextInChain: PWGPUChainedStruct;
       &label: TWGPUStringView;
@@ -2420,8 +2419,7 @@ type
    TWGPUProcCreateInstance = function(const descriptor: PWGPUInstanceDescriptor): TWGPUInstance; cdecl;
    TWGPUProcDrmFormatCapabilitiesFreeMembers = procedure(value: TWGPUDrmFormatCapabilities); cdecl;
    TWGPUProcGetInstanceFeatures = function(features: PWGPUInstanceFeatures): TWGPUStatus; cdecl;
-   TWGPUProcGetProcAddress = function(device: TWGPUDevice; const procName: PUTF8Char): TWGPUProc; cdecl;
-   TWGPUProcGetProcAddress2 = function(device: TWGPUDevice; procName: TWGPUStringView): TWGPUProc; cdecl;
+   TWGPUProcGetProcAddress = function(procName: TWGPUStringView): TWGPUProc; cdecl;
    TWGPUProcSharedBufferMemoryEndAccessStateFreeMembers = procedure(value: TWGPUSharedBufferMemoryEndAccessState); cdecl;
    TWGPUProcSharedTextureMemoryEndAccessStateFreeMembers = procedure(value: TWGPUSharedTextureMemoryEndAccessState); cdecl;
    TWGPUProcSurfaceCapabilitiesFreeMembers = procedure(value: TWGPUSurfaceCapabilities); cdecl;
@@ -2537,7 +2535,6 @@ type
    TWGPUProcDeviceGetAdapter = function(device: TWGPUDevice): TWGPUAdapter; cdecl;
    TWGPUProcDeviceGetLimits = function(device: TWGPUDevice; limits: PWGPUSupportedLimits): TWGPUStatus; cdecl;
    TWGPUProcDeviceGetQueue = function(device: TWGPUDevice): TWGPUQueue; cdecl;
-   TWGPUProcDeviceGetSupportedSurfaceUsage = function(device: TWGPUDevice; surface: TWGPUSurface): TWGPUTextureUsage; cdecl;
    TWGPUProcDeviceHasFeature = function(device: TWGPUDevice; feature: TWGPUFeatureName): TWGPUBool; cdecl;
    TWGPUProcDeviceImportSharedBufferMemory = function(device: TWGPUDevice; const descriptor: PWGPUSharedBufferMemoryDescriptor): TWGPUSharedBufferMemory; cdecl;
    TWGPUProcDeviceImportSharedFence = function(device: TWGPUDevice; const descriptor: PWGPUSharedFenceDescriptor): TWGPUSharedFence; cdecl;
@@ -2758,8 +2755,7 @@ var
    wgpuCreateInstance : function(const descriptor: PWGPUInstanceDescriptor): TWGPUInstance; cdecl;
    wgpuDrmFormatCapabilitiesFreeMembers : procedure(value: TWGPUDrmFormatCapabilities); cdecl;
    wgpuGetInstanceFeatures : function(features: PWGPUInstanceFeatures): TWGPUStatus; cdecl;
-   wgpuGetProcAddress : function(device: TWGPUDevice; const procName: PUTF8Char): TWGPUProc; cdecl;
-   wgpuGetProcAddress2 : function(device: TWGPUDevice; procName: TWGPUStringView): TWGPUProc; cdecl;
+   wgpuGetProcAddress : function(procName: TWGPUStringView): TWGPUProc; cdecl;
    wgpuSharedBufferMemoryEndAccessStateFreeMembers : procedure(value: TWGPUSharedBufferMemoryEndAccessState); cdecl;
    wgpuSharedTextureMemoryEndAccessStateFreeMembers : procedure(value: TWGPUSharedTextureMemoryEndAccessState); cdecl;
    wgpuSurfaceCapabilitiesFreeMembers : procedure(value: TWGPUSurfaceCapabilities); cdecl;
@@ -2875,7 +2871,6 @@ var
    wgpuDeviceGetAdapter : function(device: TWGPUDevice): TWGPUAdapter; cdecl;
    wgpuDeviceGetLimits : function(device: TWGPUDevice; limits: PWGPUSupportedLimits): TWGPUStatus; cdecl;
    wgpuDeviceGetQueue : function(device: TWGPUDevice): TWGPUQueue; cdecl;
-   wgpuDeviceGetSupportedSurfaceUsage : function(device: TWGPUDevice; surface: TWGPUSurface): TWGPUTextureUsage; cdecl;
    wgpuDeviceHasFeature : function(device: TWGPUDevice; feature: TWGPUFeatureName): TWGPUBool; cdecl;
    wgpuDeviceImportSharedBufferMemory : function(device: TWGPUDevice; const descriptor: PWGPUSharedBufferMemoryDescriptor): TWGPUSharedBufferMemory; cdecl;
    wgpuDeviceImportSharedFence : function(device: TWGPUDevice; const descriptor: PWGPUSharedFenceDescriptor): TWGPUSharedFence; cdecl;
@@ -3070,7 +3065,6 @@ begin
    wgpuDrmFormatCapabilitiesFreeMembers := GetProcAddress(vLib, 'wgpuDrmFormatCapabilitiesFreeMembers');
    wgpuGetInstanceFeatures := GetProcAddress(vLib, 'wgpuGetInstanceFeatures');
    wgpuGetProcAddress := GetProcAddress(vLib, 'wgpuGetProcAddress');
-   wgpuGetProcAddress2 := GetProcAddress(vLib, 'wgpuGetProcAddress2');
    wgpuSharedBufferMemoryEndAccessStateFreeMembers := GetProcAddress(vLib, 'wgpuSharedBufferMemoryEndAccessStateFreeMembers');
    wgpuSharedTextureMemoryEndAccessStateFreeMembers := GetProcAddress(vLib, 'wgpuSharedTextureMemoryEndAccessStateFreeMembers');
    wgpuSurfaceCapabilitiesFreeMembers := GetProcAddress(vLib, 'wgpuSurfaceCapabilitiesFreeMembers');
@@ -3186,7 +3180,6 @@ begin
    wgpuDeviceGetAdapter := GetProcAddress(vLib, 'wgpuDeviceGetAdapter');
    wgpuDeviceGetLimits := GetProcAddress(vLib, 'wgpuDeviceGetLimits');
    wgpuDeviceGetQueue := GetProcAddress(vLib, 'wgpuDeviceGetQueue');
-   wgpuDeviceGetSupportedSurfaceUsage := GetProcAddress(vLib, 'wgpuDeviceGetSupportedSurfaceUsage');
    wgpuDeviceHasFeature := GetProcAddress(vLib, 'wgpuDeviceHasFeature');
    wgpuDeviceImportSharedBufferMemory := GetProcAddress(vLib, 'wgpuDeviceImportSharedBufferMemory');
    wgpuDeviceImportSharedFence := GetProcAddress(vLib, 'wgpuDeviceImportSharedFence');

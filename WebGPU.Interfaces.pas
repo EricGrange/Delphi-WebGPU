@@ -161,8 +161,6 @@ type
    IWGPUDevice = interface
       ['{5C020B62-26AA-E9DA-55D6-93B84ECEA57A}']
       function GetHandle: TWGPUDevice;
-      function GetProcAddress(const aProcName: UTF8String): TWGPUProc;
-      function GetProcAddress2(const aProcName: TWGPUStringView): TWGPUProc;
       function CreateBindGroup(const aDescriptor: TWGPUBindGroupDescriptor): IWGPUBindGroup;
       function CreateBindGroupLayout(const aDescriptor: TWGPUBindGroupLayoutDescriptor): IWGPUBindGroupLayout;
       function CreateBuffer(const aDescriptor: TWGPUBufferDescriptor): IWGPUBuffer;
@@ -195,7 +193,6 @@ type
       function GetAdapter: IWGPUAdapter;
       function GetLimits(const aLimits: PWGPUSupportedLimits): TWGPUStatus;
       function GetQueue: IWGPUQueue;
-      function GetSupportedSurfaceUsage(const aSurface: IWGPUSurface): TWGPUTextureUsage;
       function HasFeature(const aFeature: TWGPUFeatureName): TWGPUBool;
       function ImportSharedBufferMemory(const aDescriptor: TWGPUSharedBufferMemoryDescriptor): IWGPUSharedBufferMemory;
       function ImportSharedFence(const aDescriptor: TWGPUSharedFenceDescriptor): IWGPUSharedFence;
@@ -570,8 +567,6 @@ type
       constructor Create(const h: TWGPUDevice);
       destructor Destroy; override;
       function GetHandle: TWGPUDevice;
-      function GetProcAddress(const aProcName: UTF8String): TWGPUProc;
-      function GetProcAddress2(const aProcName: TWGPUStringView): TWGPUProc;
       function CreateBindGroup(const aDescriptor: TWGPUBindGroupDescriptor): IWGPUBindGroup;
       function CreateBindGroupLayout(const aDescriptor: TWGPUBindGroupLayoutDescriptor): IWGPUBindGroupLayout;
       function CreateBuffer(const aDescriptor: TWGPUBufferDescriptor): IWGPUBuffer;
@@ -604,7 +599,6 @@ type
       function GetAdapter: IWGPUAdapter;
       function GetLimits(const aLimits: PWGPUSupportedLimits): TWGPUStatus;
       function GetQueue: IWGPUQueue;
-      function GetSupportedSurfaceUsage(const aSurface: IWGPUSurface): TWGPUTextureUsage;
       function HasFeature(const aFeature: TWGPUFeatureName): TWGPUBool;
       function ImportSharedBufferMemory(const aDescriptor: TWGPUSharedBufferMemoryDescriptor): IWGPUSharedBufferMemory;
       function ImportSharedFence(const aDescriptor: TWGPUSharedFenceDescriptor): IWGPUSharedFence;
@@ -1387,16 +1381,6 @@ begin
    Result := FHandle;
 end;
 
-function TiwgpuDevice.GetProcAddress(const aProcName: UTF8String): TWGPUProc;
-begin
-   Result := wgpuGetProcAddress(FHandle, Pointer(aProcName));
-end;
-
-function TiwgpuDevice.GetProcAddress2(const aProcName: TWGPUStringView): TWGPUProc;
-begin
-   Result := wgpuGetProcAddress2(FHandle, aProcName);
-end;
-
 function TiwgpuDevice.CreateBindGroup(const aDescriptor: TWGPUBindGroupDescriptor): IWGPUBindGroup;
 begin
    Result := TiwgpuBindGroup.Create(wgpuDeviceCreateBindGroup(FHandle, @aDescriptor));
@@ -1557,11 +1541,6 @@ end;
 function TiwgpuDevice.GetQueue: IWGPUQueue;
 begin
    Result := TiwgpuQueue.Create(wgpuDeviceGetQueue(FHandle));
-end;
-
-function TiwgpuDevice.GetSupportedSurfaceUsage(const aSurface: IWGPUSurface): TWGPUTextureUsage;
-begin
-   Result := wgpuDeviceGetSupportedSurfaceUsage(FHandle, aSurface.GetHandle);
 end;
 
 function TiwgpuDevice.HasFeature(const aFeature: TWGPUFeatureName): TWGPUBool;

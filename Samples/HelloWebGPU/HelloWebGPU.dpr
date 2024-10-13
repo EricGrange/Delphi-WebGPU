@@ -135,7 +135,7 @@ begin
    Writeln('Compilation ', PChar(userData1), ' ', Ord(status));
    var p := compilationInfo.messages;
    for var i := 1 to compilationInfo.messageCount do begin
-      Writeln('Line ', p.lineNum, ':', p.linePos, ' ', p.message);
+      Writeln('Line ', p.lineNum, ':', p.linePos, ' ', p.message.data);
       Inc(p);
    end;
 end;
