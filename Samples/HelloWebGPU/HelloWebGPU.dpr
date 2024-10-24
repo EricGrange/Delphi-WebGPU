@@ -117,12 +117,12 @@ end;
 
 procedure UncapturedErrorCallback(
    const device: PWGPUDevice;
-   &type: TWGPUErrorType; const &message: PUTF8Char;
+   &type: TWGPUErrorType; const &message: TWGPUStringView;
    userdata1: Pointer; userdata2: Pointer
    ); cdecl;
 begin
-   if &message <> nil then
-      Writeln(Ord(&type).ToHexString, ' ', &message);
+   if &message.data <> nil then
+      Writeln(Ord(&type).ToHexString, ' ', &message.data);
 end;
 
 procedure CompilationCallback(
@@ -142,25 +142,25 @@ end;
 
 procedure PipelineInfoCallback(
    status: TWGPUCreatePipelineAsyncStatus;
-   pipeline: TWGPURenderPipeline; const &message: PUTF8Char;
+   pipeline: TWGPURenderPipeline; const &message: TWGPUStringView;
    userdata1: Pointer; userdata2: Pointer
    ); cdecl;
 begin
-   Writeln('Pipeline ', &message);
+   Writeln('Pipeline ', &message.data);
 end;
 
-procedure DeviceCallback(status: TWGPURequestDeviceStatus; device: TWGPUDevice; const &message: PUTF8Char; userdata: Pointer); cdecl;
+procedure DeviceCallback(status: TWGPURequestDeviceStatus; device: TWGPUDevice; const &message: TWGPUStringView; userdata: Pointer); cdecl;
 begin
    vDevice := device;
    if status <> WGPURequestDeviceStatus_Success then
-      Writeln(Ord(status), &message);
+      Writeln(Ord(status), &message.data);
 end;
 
-procedure AdapterCallback(status: TWGPURequestAdapterStatus; adapter: TWGPUAdapter; const &message: PUTF8Char; userdata: Pointer); cdecl;
+procedure AdapterCallback(status: TWGPURequestAdapterStatus; adapter: TWGPUAdapter; const &message: TWGPUStringView; userdata: Pointer); cdecl;
 begin
    vAdapter := adapter;
    if status <> WGPURequestAdapterStatus_Success then
-      Writeln(Ord(status), &message);
+      Writeln(Ord(status), &message.data);
 end;
 
 procedure InitializeWebGPU;
