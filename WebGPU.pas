@@ -1,4 +1,4 @@
-﻿// BSD 3-Clause License
+// BSD 3-Clause License
 //
 // Copyright (c) 2019, "WebGPU native" developers
 // All rights reserved.
@@ -2521,6 +2521,7 @@ type
    TWGPUProcDeviceGetAHardwareBufferProperties = function(device: TWGPUDevice; handle: Pointer; properties: PWGPUAHardwareBufferProperties): TWGPUStatus; cdecl;
    TWGPUProcDeviceGetAdapter = function(device: TWGPUDevice): TWGPUAdapter; cdecl;
    TWGPUProcDeviceGetLimits = function(device: TWGPUDevice; limits: PWGPUSupportedLimits): TWGPUStatus; cdecl;
+   TWGPUProcDeviceGetLostFuture = function(device: TWGPUDevice): TWGPUFuture; cdecl;
    TWGPUProcDeviceGetQueue = function(device: TWGPUDevice): TWGPUQueue; cdecl;
    TWGPUProcDeviceHasFeature = function(device: TWGPUDevice; feature: TWGPUFeatureName): TWGPUBool; cdecl;
    TWGPUProcDeviceImportSharedBufferMemory = function(device: TWGPUDevice; const descriptor: PWGPUSharedBufferMemoryDescriptor): TWGPUSharedBufferMemory; cdecl;
@@ -2822,6 +2823,7 @@ var
    wgpuDeviceGetAHardwareBufferProperties : function(device: TWGPUDevice; handle: Pointer; properties: PWGPUAHardwareBufferProperties): TWGPUStatus; cdecl;
    wgpuDeviceGetAdapter : function(device: TWGPUDevice): TWGPUAdapter; cdecl;
    wgpuDeviceGetLimits : function(device: TWGPUDevice; limits: PWGPUSupportedLimits): TWGPUStatus; cdecl;
+   wgpuDeviceGetLostFuture : function(device: TWGPUDevice): TWGPUFuture; cdecl;
    wgpuDeviceGetQueue : function(device: TWGPUDevice): TWGPUQueue; cdecl;
    wgpuDeviceHasFeature : function(device: TWGPUDevice; feature: TWGPUFeatureName): TWGPUBool; cdecl;
    wgpuDeviceImportSharedBufferMemory : function(device: TWGPUDevice; const descriptor: PWGPUSharedBufferMemoryDescriptor): TWGPUSharedBufferMemory; cdecl;
@@ -3096,6 +3098,7 @@ begin
    wgpuDeviceGetAHardwareBufferProperties := GetProcAddress(vLib, 'wgpuDeviceGetAHardwareBufferProperties');
    wgpuDeviceGetAdapter := GetProcAddress(vLib, 'wgpuDeviceGetAdapter');
    wgpuDeviceGetLimits := GetProcAddress(vLib, 'wgpuDeviceGetLimits');
+   wgpuDeviceGetLostFuture := GetProcAddress(vLib, 'wgpuDeviceGetLostFuture');
    wgpuDeviceGetQueue := GetProcAddress(vLib, 'wgpuDeviceGetQueue');
    wgpuDeviceHasFeature := GetProcAddress(vLib, 'wgpuDeviceHasFeature');
    wgpuDeviceImportSharedBufferMemory := GetProcAddress(vLib, 'wgpuDeviceImportSharedBufferMemory');
@@ -3265,4 +3268,3 @@ begin
 end;
 
 end.
-

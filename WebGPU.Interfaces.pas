@@ -91,7 +91,7 @@ type
       procedure MapAsync(const aMode: TWGPUMapMode; aOffset: NativeUInt; aSize: NativeUInt; const aCallback: TWGPUBufferMapCallback; const aUserdata: Pointer);
       function MapAsync2(const aMode: TWGPUMapMode; aOffset: NativeUInt; aSize: NativeUInt; const aCallbackInfo: TWGPUBufferMapCallbackInfo2): TWGPUFuture;
       function MapAsyncF(const aMode: TWGPUMapMode; aOffset: NativeUInt; aSize: NativeUInt; const aCallbackInfo: TWGPUBufferMapCallbackInfo): TWGPUFuture;
-      procedure SetLabel(const aLabel: UTF8String);
+      procedure SetLabel(const aLabel: TWGPUStringView);
       procedure Unmap;
       property &Label : UTF8String read GetLabel write SetLabel;
    end;
@@ -178,6 +178,7 @@ type
       function GetAHardwareBufferProperties(const aHandle: Pointer; const aProperties: PWGPUAHardwareBufferProperties): TWGPUStatus;
       function GetAdapter: IWGPUAdapter;
       function GetLimits(const aLimits: PWGPUSupportedLimits): TWGPUStatus;
+      function GetLostFuture: TWGPUFuture;
       function GetQueue: IWGPUQueue;
       function HasFeature(const aFeature: TWGPUFeatureName): TWGPUBool;
       function ImportSharedBufferMemory(const aDescriptor: TWGPUSharedBufferMemoryDescriptor): IWGPUSharedBufferMemory;
@@ -374,7 +375,7 @@ type
       function GetSampleCount: UInt32;
       function GetUsage: TWGPUTextureUsage;
       function GetWidth: UInt32;
-      procedure SetLabel(const aLabel: UTF8String);
+      procedure SetLabel(const aLabel: TWGPUStringView);
       property &Label : UTF8String read GetLabel write SetLabel;
    end;
 
@@ -453,7 +454,7 @@ type
       procedure MapAsync(const aMode: TWGPUMapMode; aOffset: NativeUInt; aSize: NativeUInt; const aCallback: TWGPUBufferMapCallback; const aUserdata: Pointer);
       function MapAsync2(const aMode: TWGPUMapMode; aOffset: NativeUInt; aSize: NativeUInt; const aCallbackInfo: TWGPUBufferMapCallbackInfo2): TWGPUFuture;
       function MapAsyncF(const aMode: TWGPUMapMode; aOffset: NativeUInt; aSize: NativeUInt; const aCallbackInfo: TWGPUBufferMapCallbackInfo): TWGPUFuture;
-      procedure SetLabel(const aLabel: UTF8String);
+      procedure SetLabel(const aLabel: TWGPUStringView);
       procedure Unmap;
    end;
 
@@ -549,6 +550,7 @@ type
       function GetAHardwareBufferProperties(const aHandle: Pointer; const aProperties: PWGPUAHardwareBufferProperties): TWGPUStatus;
       function GetAdapter: IWGPUAdapter;
       function GetLimits(const aLimits: PWGPUSupportedLimits): TWGPUStatus;
+      function GetLostFuture: TWGPUFuture;
       function GetQueue: IWGPUQueue;
       function HasFeature(const aFeature: TWGPUFeatureName): TWGPUBool;
       function ImportSharedBufferMemory(const aDescriptor: TWGPUSharedBufferMemoryDescriptor): IWGPUSharedBufferMemory;
@@ -778,7 +780,7 @@ type
       function GetSampleCount: UInt32;
       function GetUsage: TWGPUTextureUsage;
       function GetWidth: UInt32;
-      procedure SetLabel(const aLabel: UTF8String);
+      procedure SetLabel(const aLabel: TWGPUStringView);
    end;
 
    TiwgpuTextureView = class(TInterfacedObject, IWGPUTextureView)
@@ -986,7 +988,7 @@ begin
    Result := wgpuBufferMapAsyncF(FHandle, aMode, aOffset, aSize, aCallbackInfo);
 end;
 
-procedure TiwgpuBuffer.SetLabel(const aLabel: UTF8String);
+procedure TiwgpuBuffer.SetLabel(const aLabel: TWGPUStringView);
 begin
    wgpuBufferSetLabel(FHandle, aLabel);
 end;
@@ -1396,6 +1398,11 @@ end;
 function TiwgpuDevice.GetLimits(const aLimits: PWGPUSupportedLimits): TWGPUStatus;
 begin
    Result := wgpuDeviceGetLimits(FHandle, aLimits);
+end;
+
+function TiwgpuDevice.GetLostFuture: TWGPUFuture;
+begin
+   Result := wgpuDeviceGetLostFuture(FHandle);
 end;
 
 function TiwgpuDevice.GetQueue: IWGPUQueue;
@@ -2325,7 +2332,7 @@ begin
    Result := wgpuTextureGetWidth(FHandle);
 end;
 
-procedure TiwgpuTexture.SetLabel(const aLabel: UTF8String);
+procedure TiwgpuTexture.SetLabel(const aLabel: TWGPUStringView);
 begin
    wgpuTextureSetLabel(FHandle, aLabel);
 end;

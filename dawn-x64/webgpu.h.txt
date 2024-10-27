@@ -2432,7 +2432,7 @@ typedef struct WGPUSurfaceConfiguration {
     /*.format=*/{} WGPU_COMMA \
     /*.usage=*/WGPUTextureUsage_RenderAttachment WGPU_COMMA \
     /*.viewFormatCount=*/0 WGPU_COMMA \
-    /*.viewFormats=*/{} WGPU_COMMA \
+    /*.viewFormats=*/nullptr WGPU_COMMA \
     /*.alphaMode=*/WGPUCompositeAlphaMode_Auto WGPU_COMMA \
     /*.width=*/{} WGPU_COMMA \
     /*.height=*/{} WGPU_COMMA \
@@ -3285,7 +3285,7 @@ typedef struct WGPUTextureDescriptor {
     /*.mipLevelCount=*/1 WGPU_COMMA \
     /*.sampleCount=*/1 WGPU_COMMA \
     /*.viewFormatCount=*/0 WGPU_COMMA \
-    /*.viewFormats=*/{} WGPU_COMMA \
+    /*.viewFormats=*/nullptr WGPU_COMMA \
 })
 
 typedef struct WGPUTextureViewDescriptor {
@@ -3571,6 +3571,12 @@ extern "C" {
 
 #if !defined(WGPU_SKIP_PROCS)
 
+// TODO(374150686): Remove these Emscripten specific declarations from the
+// header once they are fully deprecated.
+#ifdef __EMSCRIPTEN__
+WGPU_EXPORT WGPUDevice emscripten_webgpu_get_device(void);
+#endif
+
 typedef void (*WGPUProcAdapterInfoFreeMembers)(        WGPUAdapterInfo value) WGPU_FUNCTION_ATTRIBUTE;
 typedef void (*WGPUProcAdapterPropertiesMemoryHeapsFreeMembers)(        WGPUAdapterPropertiesMemoryHeaps value) WGPU_FUNCTION_ATTRIBUTE;
 typedef WGPUInstance (*WGPUProcCreateInstance)(        WGPU_NULLABLE WGPUInstanceDescriptor const * descriptor) WGPU_FUNCTION_ATTRIBUTE;
@@ -3695,6 +3701,7 @@ typedef void (*WGPUProcDeviceForceLoss)(WGPUDevice device, WGPUDeviceLostReason 
 typedef WGPUStatus (*WGPUProcDeviceGetAHardwareBufferProperties)(WGPUDevice device, void * handle, WGPUAHardwareBufferProperties * properties) WGPU_FUNCTION_ATTRIBUTE;
 typedef WGPUAdapter (*WGPUProcDeviceGetAdapter)(WGPUDevice device) WGPU_FUNCTION_ATTRIBUTE;
 typedef WGPUStatus (*WGPUProcDeviceGetLimits)(WGPUDevice device, WGPUSupportedLimits * limits) WGPU_FUNCTION_ATTRIBUTE;
+typedef WGPUFuture (*WGPUProcDeviceGetLostFuture)(WGPUDevice device) WGPU_FUNCTION_ATTRIBUTE;
 typedef WGPUQueue (*WGPUProcDeviceGetQueue)(WGPUDevice device) WGPU_FUNCTION_ATTRIBUTE;
 typedef WGPUBool (*WGPUProcDeviceHasFeature)(WGPUDevice device, WGPUFeatureName feature) WGPU_FUNCTION_ATTRIBUTE;
 typedef WGPUSharedBufferMemory (*WGPUProcDeviceImportSharedBufferMemory)(WGPUDevice device, WGPUSharedBufferMemoryDescriptor const * descriptor) WGPU_FUNCTION_ATTRIBUTE;
@@ -4014,6 +4021,7 @@ WGPU_EXPORT void wgpuDeviceForceLoss(WGPUDevice device, WGPUDeviceLostReason typ
 WGPU_EXPORT WGPUStatus wgpuDeviceGetAHardwareBufferProperties(WGPUDevice device, void * handle, WGPUAHardwareBufferProperties * properties) WGPU_FUNCTION_ATTRIBUTE;
 WGPU_EXPORT WGPUAdapter wgpuDeviceGetAdapter(WGPUDevice device) WGPU_FUNCTION_ATTRIBUTE;
 WGPU_EXPORT WGPUStatus wgpuDeviceGetLimits(WGPUDevice device, WGPUSupportedLimits * limits) WGPU_FUNCTION_ATTRIBUTE;
+WGPU_EXPORT WGPUFuture wgpuDeviceGetLostFuture(WGPUDevice device) WGPU_FUNCTION_ATTRIBUTE;
 WGPU_EXPORT WGPUQueue wgpuDeviceGetQueue(WGPUDevice device) WGPU_FUNCTION_ATTRIBUTE;
 WGPU_EXPORT WGPUBool wgpuDeviceHasFeature(WGPUDevice device, WGPUFeatureName feature) WGPU_FUNCTION_ATTRIBUTE;
 WGPU_EXPORT WGPUSharedBufferMemory wgpuDeviceImportSharedBufferMemory(WGPUDevice device, WGPUSharedBufferMemoryDescriptor const * descriptor) WGPU_FUNCTION_ATTRIBUTE;
