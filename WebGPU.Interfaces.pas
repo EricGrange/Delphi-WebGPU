@@ -82,7 +82,7 @@ type
    IWGPUBuffer = interface
       ['{6FC46489-F0E8-72EC-11FB-7E5935592B2A}']
       function GetHandle: TWGPUBuffer;
-      function GetLabel: UTF8String;
+      function GetLabel: TWGPUStringView;
       function GetConstMappedRange(aOffset: NativeUInt; aSize: NativeUInt): Pointer;
       function GetMapState: TWGPUBufferMapState;
       function GetMappedRange(aOffset: NativeUInt; aSize: NativeUInt): Pointer;
@@ -93,7 +93,7 @@ type
       function MapAsyncF(const aMode: TWGPUMapMode; aOffset: NativeUInt; aSize: NativeUInt; const aCallbackInfo: TWGPUBufferMapCallbackInfo): TWGPUFuture;
       procedure SetLabel(const aLabel: TWGPUStringView);
       procedure Unmap;
-      property &Label : UTF8String read GetLabel write SetLabel;
+      property &Label : TWGPUStringView read GetLabel write SetLabel;
    end;
 
    IWGPUCommandBuffer = interface
@@ -364,7 +364,7 @@ type
    IWGPUTexture = interface
       ['{13DB8189-BFB9-23F7-C715-19710FB0C5B6}']
       function GetHandle: TWGPUTexture;
-      function GetLabel: UTF8String;
+      function GetLabel: TWGPUStringView;
       function CreateErrorView(const aDescriptor: TWGPUTextureViewDescriptor): IWGPUTextureView;
       function CreateView(const aDescriptor: TWGPUTextureViewDescriptor): IWGPUTextureView;
       function GetDepthOrArrayLayers: UInt32;
@@ -376,7 +376,7 @@ type
       function GetUsage: TWGPUTextureUsage;
       function GetWidth: UInt32;
       procedure SetLabel(const aLabel: TWGPUStringView);
-      property &Label : UTF8String read GetLabel write SetLabel;
+      property &Label : TWGPUStringView read GetLabel write SetLabel;
    end;
 
    IWGPUTextureView = interface
@@ -441,11 +441,11 @@ type
 
    TiwgpuBuffer = class(TInterfacedObject, IWGPUBuffer)
       FHandle: TWGPUBuffer;
-      FLabel: UTF8String;
+      FLabel: TWGPUStringView;
       constructor Create(const h: TWGPUBuffer; const aLabel: UTF8String = '');
       destructor Destroy; override;
       function GetHandle: TWGPUBuffer;
-      function GetLabel: UTF8String;
+      function GetLabel: TWGPUStringView;
       function GetConstMappedRange(aOffset: NativeUInt; aSize: NativeUInt): Pointer;
       function GetMapState: TWGPUBufferMapState;
       function GetMappedRange(aOffset: NativeUInt; aSize: NativeUInt): Pointer;
@@ -765,11 +765,11 @@ type
 
    TiwgpuTexture = class(TInterfacedObject, IWGPUTexture)
       FHandle: TWGPUTexture;
-      FLabel: UTF8String;
+      FLabel: TWGPUStringView;
       constructor Create(const h: TWGPUTexture; const aLabel: UTF8String = '');
       destructor Destroy; override;
       function GetHandle: TWGPUTexture;
-      function GetLabel: UTF8String;
+      function GetLabel: TWGPUStringView;
       function CreateErrorView(const aDescriptor: TWGPUTextureViewDescriptor): IWGPUTextureView;
       function CreateView(const aDescriptor: TWGPUTextureViewDescriptor): IWGPUTextureView;
       function GetDepthOrArrayLayers: UInt32;
@@ -943,7 +943,7 @@ begin
    Result := FHandle;
 end;
 
-function TiwgpuBuffer.GetLabel: UTF8String;
+function TiwgpuBuffer.GetLabel: TWGPUStringView;
 begin
    Result := FLabel;
 end;
@@ -2277,7 +2277,7 @@ begin
    Result := FHandle;
 end;
 
-function TiwgpuTexture.GetLabel: UTF8String;
+function TiwgpuTexture.GetLabel: TWGPUStringView;
 begin
    Result := FLabel;
 end;
