@@ -57,6 +57,7 @@ type
       function CreateDevice(const aDescriptor: TWGPUDeviceDescriptor): IWGPUDevice;
       function EnumerateFeatures : TWGPUFeatureNameArray; overload;
       function EnumerateFeatures(const aFeatures: PWGPUFeatureName): NativeUInt; overload;
+      procedure GetFeatures(const aFeatures: PWGPUSupportedFeatures);
       function GetFormatCapabilities(const aFormat: TWGPUTextureFormat; const aCapabilities: PWGPUFormatCapabilities): TWGPUStatus;
       function GetInfo(const aInfo: PWGPUAdapterInfo): TWGPUStatus;
       function GetInstance: IWGPUInstance;
@@ -177,6 +178,7 @@ type
       procedure ForceLoss(const aType: TWGPUDeviceLostReason; const aMessage: TWGPUStringView);
       function GetAHardwareBufferProperties(const aHandle: Pointer; const aProperties: PWGPUAHardwareBufferProperties): TWGPUStatus;
       function GetAdapter: IWGPUAdapter;
+      procedure GetFeatures(const aFeatures: PWGPUSupportedFeatures);
       function GetLimits(const aLimits: PWGPUSupportedLimits): TWGPUStatus;
       function GetLostFuture: TWGPUFuture;
       function GetQueue: IWGPUQueue;
@@ -413,6 +415,7 @@ type
       function CreateDevice(const aDescriptor: TWGPUDeviceDescriptor): IWGPUDevice;
       function EnumerateFeatures : TWGPUFeatureNameArray; overload;
       function EnumerateFeatures(const aFeatures: PWGPUFeatureName): NativeUInt; overload;
+      procedure GetFeatures(const aFeatures: PWGPUSupportedFeatures);
       function GetFormatCapabilities(const aFormat: TWGPUTextureFormat; const aCapabilities: PWGPUFormatCapabilities): TWGPUStatus;
       function GetInfo(const aInfo: PWGPUAdapterInfo): TWGPUStatus;
       function GetInstance: IWGPUInstance;
@@ -549,6 +552,7 @@ type
       procedure ForceLoss(const aType: TWGPUDeviceLostReason; const aMessage: TWGPUStringView);
       function GetAHardwareBufferProperties(const aHandle: Pointer; const aProperties: PWGPUAHardwareBufferProperties): TWGPUStatus;
       function GetAdapter: IWGPUAdapter;
+      procedure GetFeatures(const aFeatures: PWGPUSupportedFeatures);
       function GetLimits(const aLimits: PWGPUSupportedLimits): TWGPUStatus;
       function GetLostFuture: TWGPUFuture;
       function GetQueue: IWGPUQueue;
@@ -827,6 +831,11 @@ end;
 function TiwgpuAdapter.EnumerateFeatures(const aFeatures: PWGPUFeatureName): NativeUInt;
 begin
    Result := wgpuAdapterEnumerateFeatures(FHandle, aFeatures);
+end;
+
+procedure TiwgpuAdapter.GetFeatures(const aFeatures: PWGPUSupportedFeatures);
+begin
+   wgpuAdapterGetFeatures(FHandle, aFeatures);
 end;
 
 function TiwgpuAdapter.GetFormatCapabilities(const aFormat: TWGPUTextureFormat; const aCapabilities: PWGPUFormatCapabilities): TWGPUStatus;
@@ -1393,6 +1402,11 @@ end;
 function TiwgpuDevice.GetAdapter: IWGPUAdapter;
 begin
    Result := TiwgpuAdapter.Create(wgpuDeviceGetAdapter(FHandle));
+end;
+
+procedure TiwgpuDevice.GetFeatures(const aFeatures: PWGPUSupportedFeatures);
+begin
+   wgpuDeviceGetFeatures(FHandle, aFeatures);
 end;
 
 function TiwgpuDevice.GetLimits(const aLimits: PWGPUSupportedLimits): TWGPUStatus;
