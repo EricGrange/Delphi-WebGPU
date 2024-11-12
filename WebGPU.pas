@@ -231,10 +231,10 @@ type
    PWGPUSharedFenceMTLSharedEventDescriptor = ^TWGPUSharedFenceMTLSharedEventDescriptor;
    PWGPUSharedFenceMTLSharedEventExportInfo = ^TWGPUSharedFenceMTLSharedEventExportInfo;
    PWGPUSharedFenceExportInfo = ^TWGPUSharedFenceExportInfo;
+   PWGPUSharedFenceSyncFDDescriptor = ^TWGPUSharedFenceSyncFDDescriptor;
+   PWGPUSharedFenceSyncFDExportInfo = ^TWGPUSharedFenceSyncFDExportInfo;
    PWGPUSharedFenceVkSemaphoreOpaqueFDDescriptor = ^TWGPUSharedFenceVkSemaphoreOpaqueFDDescriptor;
    PWGPUSharedFenceVkSemaphoreOpaqueFDExportInfo = ^TWGPUSharedFenceVkSemaphoreOpaqueFDExportInfo;
-   PWGPUSharedFenceVkSemaphoreSyncFDDescriptor = ^TWGPUSharedFenceVkSemaphoreSyncFDDescriptor;
-   PWGPUSharedFenceVkSemaphoreSyncFDExportInfo = ^TWGPUSharedFenceVkSemaphoreSyncFDExportInfo;
    PWGPUSharedFenceVkSemaphoreZirconHandleDescriptor = ^TWGPUSharedFenceVkSemaphoreZirconHandleDescriptor;
    PWGPUSharedFenceVkSemaphoreZirconHandleExportInfo = ^TWGPUSharedFenceVkSemaphoreZirconHandleExportInfo;
    PWGPUSharedTextureMemoryD3DSwapchainBeginState = ^TWGPUSharedTextureMemoryD3DSwapchainBeginState;
@@ -686,7 +686,7 @@ type
       WGPUFeatureName_SharedTextureMemoryIOSurface = 327722,
       WGPUFeatureName_SharedTextureMemoryEGLImage = 327723,
       WGPUFeatureName_SharedFenceVkSemaphoreOpaqueFD = 327724,
-      WGPUFeatureName_SharedFenceVkSemaphoreSyncFD = 327725,
+      WGPUFeatureName_SharedFenceSyncFD = 327725,
       WGPUFeatureName_SharedFenceVkSemaphoreZirconHandle = 327726,
       WGPUFeatureName_SharedFenceDXGISharedHandle = 327727,
       WGPUFeatureName_SharedFenceMTLSharedEvent = 327728,
@@ -698,6 +698,7 @@ type
       WGPUFeatureName_DawnPartialLoadResolveTexture = 327734,
       WGPUFeatureName_MultiDrawIndirect = 327735,
       WGPUFeatureName_ClipDistances = 327736,
+      WGPUFeatureName_SharedFenceVkSemaphoreSyncFD = 327737,
       WGPUFeatureName_Force32 = 2147483647);
    PWGPUFeatureName = ^TWGPUFeatureName;
 
@@ -882,8 +883,8 @@ type
       WGPUSType_SharedTextureMemoryD3DSwapchainBeginState = 327723,
       WGPUSType_SharedFenceVkSemaphoreOpaqueFDDescriptor = 327724,
       WGPUSType_SharedFenceVkSemaphoreOpaqueFDExportInfo = 327725,
-      WGPUSType_SharedFenceVkSemaphoreSyncFDDescriptor = 327726,
-      WGPUSType_SharedFenceVkSemaphoreSyncFDExportInfo = 327727,
+      WGPUSType_SharedFenceSyncFDDescriptor = 327726,
+      WGPUSType_SharedFenceSyncFDExportInfo = 327727,
       WGPUSType_SharedFenceVkSemaphoreZirconHandleDescriptor = 327728,
       WGPUSType_SharedFenceVkSemaphoreZirconHandleExportInfo = 327729,
       WGPUSType_SharedFenceDXGISharedHandleDescriptor = 327730,
@@ -909,7 +910,7 @@ type
 
    TWGPUSharedFenceType = (
       WGPUSharedFenceType_VkSemaphoreOpaqueFD = 1,
-      WGPUSharedFenceType_VkSemaphoreSyncFD = 2,
+      WGPUSharedFenceType_SyncFD = 2,
       WGPUSharedFenceType_VkSemaphoreZirconHandle = 3,
       WGPUSharedFenceType_DXGISharedHandle = 4,
       WGPUSharedFenceType_MTLSharedEvent = 5,
@@ -1116,37 +1117,47 @@ type
    PWGPUTextureViewDimension = ^TWGPUTextureViewDimension;
 
    TWGPUVertexFormat = (
-      WGPUVertexFormat_Uint8x2 = 1,
-      WGPUVertexFormat_Uint8x4 = 2,
-      WGPUVertexFormat_Sint8x2 = 3,
-      WGPUVertexFormat_Sint8x4 = 4,
-      WGPUVertexFormat_Unorm8x2 = 5,
-      WGPUVertexFormat_Unorm8x4 = 6,
-      WGPUVertexFormat_Snorm8x2 = 7,
-      WGPUVertexFormat_Snorm8x4 = 8,
-      WGPUVertexFormat_Uint16x2 = 9,
-      WGPUVertexFormat_Uint16x4 = 10,
-      WGPUVertexFormat_Sint16x2 = 11,
-      WGPUVertexFormat_Sint16x4 = 12,
-      WGPUVertexFormat_Unorm16x2 = 13,
-      WGPUVertexFormat_Unorm16x4 = 14,
-      WGPUVertexFormat_Snorm16x2 = 15,
-      WGPUVertexFormat_Snorm16x4 = 16,
-      WGPUVertexFormat_Float16x2 = 17,
-      WGPUVertexFormat_Float16x4 = 18,
-      WGPUVertexFormat_Float32 = 19,
-      WGPUVertexFormat_Float32x2 = 20,
-      WGPUVertexFormat_Float32x3 = 21,
-      WGPUVertexFormat_Float32x4 = 22,
-      WGPUVertexFormat_Uint32 = 23,
-      WGPUVertexFormat_Uint32x2 = 24,
-      WGPUVertexFormat_Uint32x3 = 25,
-      WGPUVertexFormat_Uint32x4 = 26,
-      WGPUVertexFormat_Sint32 = 27,
-      WGPUVertexFormat_Sint32x2 = 28,
-      WGPUVertexFormat_Sint32x3 = 29,
-      WGPUVertexFormat_Sint32x4 = 30,
-      WGPUVertexFormat_Unorm10_10_10_2 = 31,
+      WGPUVertexFormat_Uint8 = 1,
+      WGPUVertexFormat_Uint8x2 = 2,
+      WGPUVertexFormat_Uint8x4 = 3,
+      WGPUVertexFormat_Sint8 = 4,
+      WGPUVertexFormat_Sint8x2 = 5,
+      WGPUVertexFormat_Sint8x4 = 6,
+      WGPUVertexFormat_Unorm8 = 7,
+      WGPUVertexFormat_Unorm8x2 = 8,
+      WGPUVertexFormat_Unorm8x4 = 9,
+      WGPUVertexFormat_Snorm8 = 10,
+      WGPUVertexFormat_Snorm8x2 = 11,
+      WGPUVertexFormat_Snorm8x4 = 12,
+      WGPUVertexFormat_Uint16 = 13,
+      WGPUVertexFormat_Uint16x2 = 14,
+      WGPUVertexFormat_Uint16x4 = 15,
+      WGPUVertexFormat_Sint16 = 16,
+      WGPUVertexFormat_Sint16x2 = 17,
+      WGPUVertexFormat_Sint16x4 = 18,
+      WGPUVertexFormat_Unorm16 = 19,
+      WGPUVertexFormat_Unorm16x2 = 20,
+      WGPUVertexFormat_Unorm16x4 = 21,
+      WGPUVertexFormat_Snorm16 = 22,
+      WGPUVertexFormat_Snorm16x2 = 23,
+      WGPUVertexFormat_Snorm16x4 = 24,
+      WGPUVertexFormat_Float16 = 25,
+      WGPUVertexFormat_Float16x2 = 26,
+      WGPUVertexFormat_Float16x4 = 27,
+      WGPUVertexFormat_Float32 = 28,
+      WGPUVertexFormat_Float32x2 = 29,
+      WGPUVertexFormat_Float32x3 = 30,
+      WGPUVertexFormat_Float32x4 = 31,
+      WGPUVertexFormat_Uint32 = 32,
+      WGPUVertexFormat_Uint32x2 = 33,
+      WGPUVertexFormat_Uint32x3 = 34,
+      WGPUVertexFormat_Uint32x4 = 35,
+      WGPUVertexFormat_Sint32 = 36,
+      WGPUVertexFormat_Sint32x2 = 37,
+      WGPUVertexFormat_Sint32x3 = 38,
+      WGPUVertexFormat_Sint32x4 = 39,
+      WGPUVertexFormat_Unorm10_10_10_2 = 40,
+      WGPUVertexFormat_Unorm8x4BGRA = 41,
       WGPUVertexFormat_Force32 = 2147483647);
    PWGPUVertexFormat = ^TWGPUVertexFormat;
 
@@ -1716,22 +1727,22 @@ type
       &type: TWGPUSharedFenceType;
    end;
 
+   TWGPUSharedFenceSyncFDDescriptor = record
+      chain: TWGPUChainedStruct;
+      handle: Integer;
+   end;
+
+   TWGPUSharedFenceSyncFDExportInfo = record
+      chain: TWGPUChainedStructOut;
+      handle: Integer;
+   end;
+
    TWGPUSharedFenceVkSemaphoreOpaqueFDDescriptor = record
       chain: TWGPUChainedStruct;
       handle: Integer;
    end;
 
    TWGPUSharedFenceVkSemaphoreOpaqueFDExportInfo = record
-      chain: TWGPUChainedStructOut;
-      handle: Integer;
-   end;
-
-   TWGPUSharedFenceVkSemaphoreSyncFDDescriptor = record
-      chain: TWGPUChainedStruct;
-      handle: Integer;
-   end;
-
-   TWGPUSharedFenceVkSemaphoreSyncFDExportInfo = record
       chain: TWGPUChainedStructOut;
       handle: Integer;
    end;
@@ -2098,6 +2109,9 @@ type
       plane1: TWGPUTextureView;
       visibleOrigin: TWGPUOrigin2D;
       visibleSize: TWGPUExtent2D;
+      cropOrigin: TWGPUOrigin2D;
+      cropSize: TWGPUExtent2D;
+      apparentSize: TWGPUExtent2D;
       doYuvToRgbConversionOnly: TWGPUBool;
       yuvToRgbConversionMatrix: PSingle;
       srcTransferFunctionParameters: PSingle;
@@ -2413,6 +2427,8 @@ type
    WGPURenderPassDescriptorMaxDrawCount = TWGPURenderPassMaxDrawCount;
    WGPUShaderModuleSPIRVDescriptor = TWGPUShaderSourceSPIRV;
    WGPUShaderModuleWGSLDescriptor = TWGPUShaderSourceWGSL;
+   WGPUSharedFenceVkSemaphoreSyncFDDescriptor = TWGPUSharedFenceSyncFDDescriptor;
+   WGPUSharedFenceVkSemaphoreSyncFDExportInfo = TWGPUSharedFenceSyncFDExportInfo;
    WGPUSurfaceDescriptorFromAndroidNativeWindow = TWGPUSurfaceSourceAndroidNativeWindow;
    WGPUSurfaceDescriptorFromCanvasHTMLSelector = TWGPUSurfaceSourceCanvasHTMLSelector_Emscripten;
    WGPUSurfaceDescriptorFromMetalLayer = TWGPUSurfaceSourceMetalLayer;
