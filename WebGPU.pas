@@ -698,7 +698,6 @@ type
       WGPUFeatureName_DawnPartialLoadResolveTexture = 327734,
       WGPUFeatureName_MultiDrawIndirect = 327735,
       WGPUFeatureName_ClipDistances = 327736,
-      WGPUFeatureName_SharedFenceVkSemaphoreSyncFD = 327737,
       WGPUFeatureName_Force32 = 2147483647);
    PWGPUFeatureName = ^TWGPUFeatureName;
 
@@ -2427,8 +2426,6 @@ type
    WGPURenderPassDescriptorMaxDrawCount = TWGPURenderPassMaxDrawCount;
    WGPUShaderModuleSPIRVDescriptor = TWGPUShaderSourceSPIRV;
    WGPUShaderModuleWGSLDescriptor = TWGPUShaderSourceWGSL;
-   WGPUSharedFenceVkSemaphoreSyncFDDescriptor = TWGPUSharedFenceSyncFDDescriptor;
-   WGPUSharedFenceVkSemaphoreSyncFDExportInfo = TWGPUSharedFenceSyncFDExportInfo;
    WGPUSurfaceDescriptorFromAndroidNativeWindow = TWGPUSurfaceSourceAndroidNativeWindow;
    WGPUSurfaceDescriptorFromCanvasHTMLSelector = TWGPUSurfaceSourceCanvasHTMLSelector_Emscripten;
    WGPUSurfaceDescriptorFromMetalLayer = TWGPUSurfaceSourceMetalLayer;
@@ -2544,6 +2541,7 @@ type
    TWGPUProcDeviceForceLoss = procedure(device: TWGPUDevice; &type: TWGPUDeviceLostReason; const &message: TWGPUStringView); cdecl;
    TWGPUProcDeviceGetAHardwareBufferProperties = function(device: TWGPUDevice; handle: Pointer; properties: PWGPUAHardwareBufferProperties): TWGPUStatus; cdecl;
    TWGPUProcDeviceGetAdapter = function(device: TWGPUDevice): TWGPUAdapter; cdecl;
+   TWGPUProcDeviceGetAdapterInfo = function(device: TWGPUDevice; adapterInfo: PWGPUAdapterInfo): TWGPUStatus; cdecl;
    TWGPUProcDeviceGetFeatures = procedure(device: TWGPUDevice; features: PWGPUSupportedFeatures); cdecl;
    TWGPUProcDeviceGetLimits = function(device: TWGPUDevice; limits: PWGPUSupportedLimits): TWGPUStatus; cdecl;
    TWGPUProcDeviceGetLostFuture = function(device: TWGPUDevice): TWGPUFuture; cdecl;
@@ -2849,6 +2847,7 @@ var
    wgpuDeviceForceLoss : procedure(device: TWGPUDevice; &type: TWGPUDeviceLostReason; const &message: TWGPUStringView); cdecl;
    wgpuDeviceGetAHardwareBufferProperties : function(device: TWGPUDevice; handle: Pointer; properties: PWGPUAHardwareBufferProperties): TWGPUStatus; cdecl;
    wgpuDeviceGetAdapter : function(device: TWGPUDevice): TWGPUAdapter; cdecl;
+   wgpuDeviceGetAdapterInfo : function(device: TWGPUDevice; adapterInfo: PWGPUAdapterInfo): TWGPUStatus; cdecl;
    wgpuDeviceGetFeatures : procedure(device: TWGPUDevice; features: PWGPUSupportedFeatures); cdecl;
    wgpuDeviceGetLimits : function(device: TWGPUDevice; limits: PWGPUSupportedLimits): TWGPUStatus; cdecl;
    wgpuDeviceGetLostFuture : function(device: TWGPUDevice): TWGPUFuture; cdecl;
@@ -3127,6 +3126,7 @@ begin
    wgpuDeviceForceLoss := GetProcAddress(vLib, 'wgpuDeviceForceLoss');
    wgpuDeviceGetAHardwareBufferProperties := GetProcAddress(vLib, 'wgpuDeviceGetAHardwareBufferProperties');
    wgpuDeviceGetAdapter := GetProcAddress(vLib, 'wgpuDeviceGetAdapter');
+   wgpuDeviceGetAdapterInfo := GetProcAddress(vLib, 'wgpuDeviceGetAdapterInfo');
    wgpuDeviceGetFeatures := GetProcAddress(vLib, 'wgpuDeviceGetFeatures');
    wgpuDeviceGetLimits := GetProcAddress(vLib, 'wgpuDeviceGetLimits');
    wgpuDeviceGetLostFuture := GetProcAddress(vLib, 'wgpuDeviceGetLostFuture');

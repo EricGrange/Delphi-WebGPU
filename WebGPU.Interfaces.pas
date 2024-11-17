@@ -178,6 +178,7 @@ type
       procedure ForceLoss(const aType: TWGPUDeviceLostReason; const aMessage: TWGPUStringView);
       function GetAHardwareBufferProperties(const aHandle: Pointer; const aProperties: PWGPUAHardwareBufferProperties): TWGPUStatus;
       function GetAdapter: IWGPUAdapter;
+      function GetAdapterInfo(const aAdapterInfo: PWGPUAdapterInfo): TWGPUStatus;
       procedure GetFeatures(const aFeatures: PWGPUSupportedFeatures);
       function GetLimits(const aLimits: PWGPUSupportedLimits): TWGPUStatus;
       function GetLostFuture: TWGPUFuture;
@@ -552,6 +553,7 @@ type
       procedure ForceLoss(const aType: TWGPUDeviceLostReason; const aMessage: TWGPUStringView);
       function GetAHardwareBufferProperties(const aHandle: Pointer; const aProperties: PWGPUAHardwareBufferProperties): TWGPUStatus;
       function GetAdapter: IWGPUAdapter;
+      function GetAdapterInfo(const aAdapterInfo: PWGPUAdapterInfo): TWGPUStatus;
       procedure GetFeatures(const aFeatures: PWGPUSupportedFeatures);
       function GetLimits(const aLimits: PWGPUSupportedLimits): TWGPUStatus;
       function GetLostFuture: TWGPUFuture;
@@ -1402,6 +1404,11 @@ end;
 function TiwgpuDevice.GetAdapter: IWGPUAdapter;
 begin
    Result := TiwgpuAdapter.Create(wgpuDeviceGetAdapter(FHandle));
+end;
+
+function TiwgpuDevice.GetAdapterInfo(const aAdapterInfo: PWGPUAdapterInfo): TWGPUStatus;
+begin
+   Result := wgpuDeviceGetAdapterInfo(FHandle, aAdapterInfo);
 end;
 
 procedure TiwgpuDevice.GetFeatures(const aFeatures: PWGPUSupportedFeatures);
