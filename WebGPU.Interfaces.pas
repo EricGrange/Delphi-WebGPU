@@ -55,8 +55,6 @@ type
       ['{EF23B10E-8B6E-2044-D3F0-0FC89A2141C9}']
       function GetHandle: TWGPUAdapter;
       function CreateDevice(const aDescriptor: TWGPUDeviceDescriptor): IWGPUDevice;
-      function EnumerateFeatures : TWGPUFeatureNameArray; overload;
-      function EnumerateFeatures(const aFeatures: PWGPUFeatureName): NativeUInt; overload;
       procedure GetFeatures(const aFeatures: PWGPUSupportedFeatures);
       function GetFormatCapabilities(const aFormat: TWGPUTextureFormat; const aCapabilities: PWGPUFormatCapabilities): TWGPUStatus;
       function GetInfo(const aInfo: PWGPUAdapterInfo): TWGPUStatus;
@@ -173,8 +171,6 @@ type
       function CreateSampler(const aDescriptor: TWGPUSamplerDescriptor): IWGPUSampler;
       function CreateShaderModule(const aDescriptor: TWGPUShaderModuleDescriptor): IWGPUShaderModule;
       function CreateTexture(const aDescriptor: TWGPUTextureDescriptor): IWGPUTexture;
-      function EnumerateFeatures : TWGPUFeatureNameArray; overload;
-      function EnumerateFeatures(const aFeatures: PWGPUFeatureName): NativeUInt; overload;
       procedure ForceLoss(const aType: TWGPUDeviceLostReason; const aMessage: TWGPUStringView);
       function GetAHardwareBufferProperties(const aHandle: Pointer; const aProperties: PWGPUAHardwareBufferProperties): TWGPUStatus;
       function GetAdapter: IWGPUAdapter;
@@ -414,8 +410,6 @@ type
       destructor Destroy; override;
       function GetHandle: TWGPUAdapter;
       function CreateDevice(const aDescriptor: TWGPUDeviceDescriptor): IWGPUDevice;
-      function EnumerateFeatures : TWGPUFeatureNameArray; overload;
-      function EnumerateFeatures(const aFeatures: PWGPUFeatureName): NativeUInt; overload;
       procedure GetFeatures(const aFeatures: PWGPUSupportedFeatures);
       function GetFormatCapabilities(const aFormat: TWGPUTextureFormat; const aCapabilities: PWGPUFormatCapabilities): TWGPUStatus;
       function GetInfo(const aInfo: PWGPUAdapterInfo): TWGPUStatus;
@@ -548,8 +542,6 @@ type
       function CreateSampler(const aDescriptor: TWGPUSamplerDescriptor): IWGPUSampler;
       function CreateShaderModule(const aDescriptor: TWGPUShaderModuleDescriptor): IWGPUShaderModule;
       function CreateTexture(const aDescriptor: TWGPUTextureDescriptor): IWGPUTexture;
-      function EnumerateFeatures : TWGPUFeatureNameArray; overload;
-      function EnumerateFeatures(const aFeatures: PWGPUFeatureName): NativeUInt; overload;
       procedure ForceLoss(const aType: TWGPUDeviceLostReason; const aMessage: TWGPUStringView);
       function GetAHardwareBufferProperties(const aHandle: Pointer; const aProperties: PWGPUAHardwareBufferProperties): TWGPUStatus;
       function GetAdapter: IWGPUAdapter;
@@ -821,18 +813,6 @@ end;
 function TiwgpuAdapter.CreateDevice(const aDescriptor: TWGPUDeviceDescriptor): IWGPUDevice;
 begin
    Result := TiwgpuDevice.Create(wgpuAdapterCreateDevice(FHandle, @aDescriptor));
-end;
-
-function TIwgpuAdapter.EnumerateFeatures : TWGPUFeatureNameArray;
-begin
-   var n := wgpuAdapterEnumerateFeatures(FHandle, nil);
-   SetLength(Result, n);
-   wgpuAdapterEnumerateFeatures(FHandle, Pointer(Result));
-end;
-
-function TiwgpuAdapter.EnumerateFeatures(const aFeatures: PWGPUFeatureName): NativeUInt;
-begin
-   Result := wgpuAdapterEnumerateFeatures(FHandle, aFeatures);
 end;
 
 procedure TiwgpuAdapter.GetFeatures(const aFeatures: PWGPUSupportedFeatures);
@@ -1377,18 +1357,6 @@ end;
 function TiwgpuDevice.CreateTexture(const aDescriptor: TWGPUTextureDescriptor): IWGPUTexture;
 begin
    Result := TiwgpuTexture.Create(wgpuDeviceCreateTexture(FHandle, @aDescriptor), aDescriptor.&label);
-end;
-
-function TIwgpuDevice.EnumerateFeatures : TWGPUFeatureNameArray;
-begin
-   var n := wgpuDeviceEnumerateFeatures(FHandle, nil);
-   SetLength(Result, n);
-   wgpuDeviceEnumerateFeatures(FHandle, Pointer(Result));
-end;
-
-function TiwgpuDevice.EnumerateFeatures(const aFeatures: PWGPUFeatureName): NativeUInt;
-begin
-   Result := wgpuDeviceEnumerateFeatures(FHandle, aFeatures);
 end;
 
 procedure TiwgpuDevice.ForceLoss(const aType: TWGPUDeviceLostReason; const aMessage: TWGPUStringView);

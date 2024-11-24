@@ -170,6 +170,7 @@ type
    PWGPUUncapturedErrorCallbackInfo2 = ^TWGPUUncapturedErrorCallbackInfo2;
    PWGPUINTERNAL__HAVE_EMDAWNWEBGPU_HEADER = ^TWGPUINTERNAL__HAVE_EMDAWNWEBGPU_HEADER;
    PWGPUAdapterPropertiesD3D = ^TWGPUAdapterPropertiesD3D;
+   PWGPUAdapterPropertiesSubgroups = ^TWGPUAdapterPropertiesSubgroups;
    PWGPUAdapterPropertiesVk = ^TWGPUAdapterPropertiesVk;
    PWGPUBindGroupEntry = ^TWGPUBindGroupEntry;
    PWGPUBlendComponent = ^TWGPUBlendComponent;
@@ -186,7 +187,6 @@ type
    PWGPUDawnWGSLBlocklist = ^TWGPUDawnWGSLBlocklist;
    PWGPUDawnAdapterPropertiesPowerPreference = ^TWGPUDawnAdapterPropertiesPowerPreference;
    PWGPUDawnBufferDescriptorErrorInfoFromWireClient = ^TWGPUDawnBufferDescriptorErrorInfoFromWireClient;
-   PWGPUDawnComputePipelineFullSubgroups = ^TWGPUDawnComputePipelineFullSubgroups;
    PWGPUDawnEncoderInternalUsageDescriptor = ^TWGPUDawnEncoderInternalUsageDescriptor;
    PWGPUDawnExperimentalImmediateDataLimits = ^TWGPUDawnExperimentalImmediateDataLimits;
    PWGPUDawnExperimentalSubgroupLimits = ^TWGPUDawnExperimentalSubgroupLimits;
@@ -501,7 +501,7 @@ type
    PWGPUBlendOperation = ^TWGPUBlendOperation;
 
    TWGPUBufferBindingType = (
-      WGPUBufferBindingType_Undefined = 0,
+      WGPUBufferBindingType_BindingNotUsed = 0,
       WGPUBufferBindingType_Uniform = 1,
       WGPUBufferBindingType_Storage = 2,
       WGPUBufferBindingType_ReadOnlyStorage = 3,
@@ -652,52 +652,51 @@ type
       WGPUFeatureName_DualSourceBlending = 327688,
       WGPUFeatureName_D3D11MultithreadProtected = 327689,
       WGPUFeatureName_ANGLETextureSharing = 327690,
-      WGPUFeatureName_ChromiumExperimentalSubgroups = 327691,
-      WGPUFeatureName_ChromiumExperimentalSubgroupUniformControlFlow = 327692,
-      WGPUFeatureName_PixelLocalStorageCoherent = 327693,
-      WGPUFeatureName_PixelLocalStorageNonCoherent = 327694,
-      WGPUFeatureName_Unorm16TextureFormats = 327695,
-      WGPUFeatureName_Snorm16TextureFormats = 327696,
-      WGPUFeatureName_MultiPlanarFormatExtendedUsages = 327697,
-      WGPUFeatureName_MultiPlanarFormatP010 = 327698,
-      WGPUFeatureName_HostMappedPointer = 327699,
-      WGPUFeatureName_MultiPlanarRenderTargets = 327700,
-      WGPUFeatureName_MultiPlanarFormatNv12a = 327701,
-      WGPUFeatureName_FramebufferFetch = 327702,
-      WGPUFeatureName_BufferMapExtendedUsages = 327703,
-      WGPUFeatureName_AdapterPropertiesMemoryHeaps = 327704,
-      WGPUFeatureName_AdapterPropertiesD3D = 327705,
-      WGPUFeatureName_AdapterPropertiesVk = 327706,
-      WGPUFeatureName_R8UnormStorage = 327707,
-      WGPUFeatureName_FormatCapabilities = 327708,
-      WGPUFeatureName_DrmFormatCapabilities = 327709,
-      WGPUFeatureName_Norm16TextureFormats = 327710,
-      WGPUFeatureName_MultiPlanarFormatNv16 = 327711,
-      WGPUFeatureName_MultiPlanarFormatNv24 = 327712,
-      WGPUFeatureName_MultiPlanarFormatP210 = 327713,
-      WGPUFeatureName_MultiPlanarFormatP410 = 327714,
-      WGPUFeatureName_SharedTextureMemoryVkDedicatedAllocation = 327715,
-      WGPUFeatureName_SharedTextureMemoryAHardwareBuffer = 327716,
-      WGPUFeatureName_SharedTextureMemoryDmaBuf = 327717,
-      WGPUFeatureName_SharedTextureMemoryOpaqueFD = 327718,
-      WGPUFeatureName_SharedTextureMemoryZirconHandle = 327719,
-      WGPUFeatureName_SharedTextureMemoryDXGISharedHandle = 327720,
-      WGPUFeatureName_SharedTextureMemoryD3D11Texture2D = 327721,
-      WGPUFeatureName_SharedTextureMemoryIOSurface = 327722,
-      WGPUFeatureName_SharedTextureMemoryEGLImage = 327723,
-      WGPUFeatureName_SharedFenceVkSemaphoreOpaqueFD = 327724,
-      WGPUFeatureName_SharedFenceSyncFD = 327725,
-      WGPUFeatureName_SharedFenceVkSemaphoreZirconHandle = 327726,
-      WGPUFeatureName_SharedFenceDXGISharedHandle = 327727,
-      WGPUFeatureName_SharedFenceMTLSharedEvent = 327728,
-      WGPUFeatureName_SharedBufferMemoryD3D12Resource = 327729,
-      WGPUFeatureName_StaticSamplers = 327730,
-      WGPUFeatureName_YCbCrVulkanSamplers = 327731,
-      WGPUFeatureName_ShaderModuleCompilationOptions = 327732,
-      WGPUFeatureName_DawnLoadResolveTexture = 327733,
-      WGPUFeatureName_DawnPartialLoadResolveTexture = 327734,
-      WGPUFeatureName_MultiDrawIndirect = 327735,
-      WGPUFeatureName_ClipDistances = 327736,
+      WGPUFeatureName_ChromiumExperimentalSubgroupUniformControlFlow = 327691,
+      WGPUFeatureName_PixelLocalStorageCoherent = 327692,
+      WGPUFeatureName_PixelLocalStorageNonCoherent = 327693,
+      WGPUFeatureName_Unorm16TextureFormats = 327694,
+      WGPUFeatureName_Snorm16TextureFormats = 327695,
+      WGPUFeatureName_MultiPlanarFormatExtendedUsages = 327696,
+      WGPUFeatureName_MultiPlanarFormatP010 = 327697,
+      WGPUFeatureName_HostMappedPointer = 327698,
+      WGPUFeatureName_MultiPlanarRenderTargets = 327699,
+      WGPUFeatureName_MultiPlanarFormatNv12a = 327700,
+      WGPUFeatureName_FramebufferFetch = 327701,
+      WGPUFeatureName_BufferMapExtendedUsages = 327702,
+      WGPUFeatureName_AdapterPropertiesMemoryHeaps = 327703,
+      WGPUFeatureName_AdapterPropertiesD3D = 327704,
+      WGPUFeatureName_AdapterPropertiesVk = 327705,
+      WGPUFeatureName_R8UnormStorage = 327706,
+      WGPUFeatureName_FormatCapabilities = 327707,
+      WGPUFeatureName_DrmFormatCapabilities = 327708,
+      WGPUFeatureName_Norm16TextureFormats = 327709,
+      WGPUFeatureName_MultiPlanarFormatNv16 = 327710,
+      WGPUFeatureName_MultiPlanarFormatNv24 = 327711,
+      WGPUFeatureName_MultiPlanarFormatP210 = 327712,
+      WGPUFeatureName_MultiPlanarFormatP410 = 327713,
+      WGPUFeatureName_SharedTextureMemoryVkDedicatedAllocation = 327714,
+      WGPUFeatureName_SharedTextureMemoryAHardwareBuffer = 327715,
+      WGPUFeatureName_SharedTextureMemoryDmaBuf = 327716,
+      WGPUFeatureName_SharedTextureMemoryOpaqueFD = 327717,
+      WGPUFeatureName_SharedTextureMemoryZirconHandle = 327718,
+      WGPUFeatureName_SharedTextureMemoryDXGISharedHandle = 327719,
+      WGPUFeatureName_SharedTextureMemoryD3D11Texture2D = 327720,
+      WGPUFeatureName_SharedTextureMemoryIOSurface = 327721,
+      WGPUFeatureName_SharedTextureMemoryEGLImage = 327722,
+      WGPUFeatureName_SharedFenceVkSemaphoreOpaqueFD = 327723,
+      WGPUFeatureName_SharedFenceSyncFD = 327724,
+      WGPUFeatureName_SharedFenceVkSemaphoreZirconHandle = 327725,
+      WGPUFeatureName_SharedFenceDXGISharedHandle = 327726,
+      WGPUFeatureName_SharedFenceMTLSharedEvent = 327727,
+      WGPUFeatureName_SharedBufferMemoryD3D12Resource = 327728,
+      WGPUFeatureName_StaticSamplers = 327729,
+      WGPUFeatureName_YCbCrVulkanSamplers = 327730,
+      WGPUFeatureName_ShaderModuleCompilationOptions = 327731,
+      WGPUFeatureName_DawnLoadResolveTexture = 327732,
+      WGPUFeatureName_DawnPartialLoadResolveTexture = 327733,
+      WGPUFeatureName_MultiDrawIndirect = 327734,
+      WGPUFeatureName_ClipDistances = 327735,
       WGPUFeatureName_Force32 = 2147483647);
    PWGPUFeatureName = ^TWGPUFeatureName;
 
@@ -834,6 +833,7 @@ type
       WGPUSType_SurfaceSourceWaylandSurface = 7,
       WGPUSType_SurfaceSourceAndroidNativeWindow = 8,
       WGPUSType_SurfaceSourceXCBWindow = 9,
+      WGPUSType_AdapterPropertiesSubgroups = 10,
       WGPUSType_TextureBindingViewDimensionDescriptor = 131072,
       WGPUSType_SurfaceSourceCanvasHTMLSelector_Emscripten = 262144,
       WGPUSType_SurfaceDescriptorFromWindowsCoreWindow = 327680,
@@ -859,48 +859,47 @@ type
       WGPUSType_AdapterPropertiesMemoryHeaps = 327700,
       WGPUSType_AdapterPropertiesD3D = 327701,
       WGPUSType_AdapterPropertiesVk = 327702,
-      WGPUSType_DawnComputePipelineFullSubgroups = 327703,
-      WGPUSType_DawnWireWGSLControl = 327704,
-      WGPUSType_DawnWGSLBlocklist = 327705,
-      WGPUSType_DrmFormatCapabilities = 327706,
-      WGPUSType_ShaderModuleCompilationOptions = 327707,
-      WGPUSType_ColorTargetStateExpandResolveTextureDawn = 327708,
-      WGPUSType_RenderPassDescriptorExpandResolveRect = 327709,
-      WGPUSType_SharedTextureMemoryVkDedicatedAllocationDescriptor = 327710,
-      WGPUSType_SharedTextureMemoryAHardwareBufferDescriptor = 327711,
-      WGPUSType_SharedTextureMemoryDmaBufDescriptor = 327712,
-      WGPUSType_SharedTextureMemoryOpaqueFDDescriptor = 327713,
-      WGPUSType_SharedTextureMemoryZirconHandleDescriptor = 327714,
-      WGPUSType_SharedTextureMemoryDXGISharedHandleDescriptor = 327715,
-      WGPUSType_SharedTextureMemoryD3D11Texture2DDescriptor = 327716,
-      WGPUSType_SharedTextureMemoryIOSurfaceDescriptor = 327717,
-      WGPUSType_SharedTextureMemoryEGLImageDescriptor = 327718,
-      WGPUSType_SharedTextureMemoryInitializedBeginState = 327719,
-      WGPUSType_SharedTextureMemoryInitializedEndState = 327720,
-      WGPUSType_SharedTextureMemoryVkImageLayoutBeginState = 327721,
-      WGPUSType_SharedTextureMemoryVkImageLayoutEndState = 327722,
-      WGPUSType_SharedTextureMemoryD3DSwapchainBeginState = 327723,
-      WGPUSType_SharedFenceVkSemaphoreOpaqueFDDescriptor = 327724,
-      WGPUSType_SharedFenceVkSemaphoreOpaqueFDExportInfo = 327725,
-      WGPUSType_SharedFenceSyncFDDescriptor = 327726,
-      WGPUSType_SharedFenceSyncFDExportInfo = 327727,
-      WGPUSType_SharedFenceVkSemaphoreZirconHandleDescriptor = 327728,
-      WGPUSType_SharedFenceVkSemaphoreZirconHandleExportInfo = 327729,
-      WGPUSType_SharedFenceDXGISharedHandleDescriptor = 327730,
-      WGPUSType_SharedFenceDXGISharedHandleExportInfo = 327731,
-      WGPUSType_SharedFenceMTLSharedEventDescriptor = 327732,
-      WGPUSType_SharedFenceMTLSharedEventExportInfo = 327733,
-      WGPUSType_SharedBufferMemoryD3D12ResourceDescriptor = 327734,
-      WGPUSType_StaticSamplerBindingLayout = 327735,
-      WGPUSType_YCbCrVkDescriptor = 327736,
-      WGPUSType_SharedTextureMemoryAHardwareBufferProperties = 327737,
-      WGPUSType_AHardwareBufferProperties = 327738,
-      WGPUSType_DawnExperimentalImmediateDataLimits = 327739,
+      WGPUSType_DawnWireWGSLControl = 327703,
+      WGPUSType_DawnWGSLBlocklist = 327704,
+      WGPUSType_DrmFormatCapabilities = 327705,
+      WGPUSType_ShaderModuleCompilationOptions = 327706,
+      WGPUSType_ColorTargetStateExpandResolveTextureDawn = 327707,
+      WGPUSType_RenderPassDescriptorExpandResolveRect = 327708,
+      WGPUSType_SharedTextureMemoryVkDedicatedAllocationDescriptor = 327709,
+      WGPUSType_SharedTextureMemoryAHardwareBufferDescriptor = 327710,
+      WGPUSType_SharedTextureMemoryDmaBufDescriptor = 327711,
+      WGPUSType_SharedTextureMemoryOpaqueFDDescriptor = 327712,
+      WGPUSType_SharedTextureMemoryZirconHandleDescriptor = 327713,
+      WGPUSType_SharedTextureMemoryDXGISharedHandleDescriptor = 327714,
+      WGPUSType_SharedTextureMemoryD3D11Texture2DDescriptor = 327715,
+      WGPUSType_SharedTextureMemoryIOSurfaceDescriptor = 327716,
+      WGPUSType_SharedTextureMemoryEGLImageDescriptor = 327717,
+      WGPUSType_SharedTextureMemoryInitializedBeginState = 327718,
+      WGPUSType_SharedTextureMemoryInitializedEndState = 327719,
+      WGPUSType_SharedTextureMemoryVkImageLayoutBeginState = 327720,
+      WGPUSType_SharedTextureMemoryVkImageLayoutEndState = 327721,
+      WGPUSType_SharedTextureMemoryD3DSwapchainBeginState = 327722,
+      WGPUSType_SharedFenceVkSemaphoreOpaqueFDDescriptor = 327723,
+      WGPUSType_SharedFenceVkSemaphoreOpaqueFDExportInfo = 327724,
+      WGPUSType_SharedFenceSyncFDDescriptor = 327725,
+      WGPUSType_SharedFenceSyncFDExportInfo = 327726,
+      WGPUSType_SharedFenceVkSemaphoreZirconHandleDescriptor = 327727,
+      WGPUSType_SharedFenceVkSemaphoreZirconHandleExportInfo = 327728,
+      WGPUSType_SharedFenceDXGISharedHandleDescriptor = 327729,
+      WGPUSType_SharedFenceDXGISharedHandleExportInfo = 327730,
+      WGPUSType_SharedFenceMTLSharedEventDescriptor = 327731,
+      WGPUSType_SharedFenceMTLSharedEventExportInfo = 327732,
+      WGPUSType_SharedBufferMemoryD3D12ResourceDescriptor = 327733,
+      WGPUSType_StaticSamplerBindingLayout = 327734,
+      WGPUSType_YCbCrVkDescriptor = 327735,
+      WGPUSType_SharedTextureMemoryAHardwareBufferProperties = 327736,
+      WGPUSType_AHardwareBufferProperties = 327737,
+      WGPUSType_DawnExperimentalImmediateDataLimits = 327738,
       WGPUSType_Force32 = 2147483647);
    PWGPUSType = ^TWGPUSType;
 
    TWGPUSamplerBindingType = (
-      WGPUSamplerBindingType_Undefined = 0,
+      WGPUSamplerBindingType_BindingNotUsed = 0,
       WGPUSamplerBindingType_Filtering = 1,
       WGPUSamplerBindingType_NonFiltering = 2,
       WGPUSamplerBindingType_Comparison = 3,
@@ -936,7 +935,7 @@ type
    PWGPUStencilOperation = ^TWGPUStencilOperation;
 
    TWGPUStorageTextureAccess = (
-      WGPUStorageTextureAccess_Undefined = 0,
+      WGPUStorageTextureAccess_BindingNotUsed = 0,
       WGPUStorageTextureAccess_WriteOnly = 1,
       WGPUStorageTextureAccess_ReadOnly = 2,
       WGPUStorageTextureAccess_ReadWrite = 3,
@@ -1095,7 +1094,7 @@ type
    PWGPUTextureFormat = ^TWGPUTextureFormat;
 
    TWGPUTextureSampleType = (
-      WGPUTextureSampleType_Undefined = 0,
+      WGPUTextureSampleType_BindingNotUsed = 0,
       WGPUTextureSampleType_Float = 1,
       WGPUTextureSampleType_UnfilterableFloat = 2,
       WGPUTextureSampleType_Depth = 3,
@@ -1161,8 +1160,8 @@ type
    PWGPUVertexFormat = ^TWGPUVertexFormat;
 
    TWGPUVertexStepMode = (
-      WGPUVertexStepMode_Undefined = 0,
-      WGPUVertexStepMode_VertexBufferNotUsed = 1,
+      WGPUVertexStepMode_VertexBufferNotUsed = 0,
+      WGPUVertexStepMode_Undefined = 1,
       WGPUVertexStepMode_Vertex = 2,
       WGPUVertexStepMode_Instance = 3,
       WGPUVertexStepMode_Force32 = 2147483647);
@@ -1315,6 +1314,12 @@ type
       shaderModel: UInt32;
    end;
 
+   TWGPUAdapterPropertiesSubgroups = record
+      chain: TWGPUChainedStructOut;
+      minSubgroupSize: UInt32;
+      maxSubgroupSize: UInt32;
+   end;
+
    TWGPUAdapterPropertiesVk = record
       chain: TWGPUChainedStructOut;
       driverVersion: UInt32;
@@ -1422,11 +1427,6 @@ type
    TWGPUDawnBufferDescriptorErrorInfoFromWireClient = record
       chain: TWGPUChainedStruct;
       outOfMemory: TWGPUBool;
-   end;
-
-   TWGPUDawnComputePipelineFullSubgroups = record
-      chain: TWGPUChainedStruct;
-      requiresFullSubgroups: TWGPUBool;
    end;
 
    TWGPUDawnEncoderInternalUsageDescriptor = record
@@ -2445,7 +2445,6 @@ type
    TWGPUProcSupportedFeaturesFreeMembers = procedure(value: TWGPUSupportedFeatures); cdecl;
    TWGPUProcSurfaceCapabilitiesFreeMembers = procedure(value: TWGPUSurfaceCapabilities); cdecl;
    TWGPUProcAdapterCreateDevice = function(adapter: TWGPUAdapter; const descriptor: PWGPUDeviceDescriptor): TWGPUDevice; cdecl;
-   TWGPUProcAdapterEnumerateFeatures = function(adapter: TWGPUAdapter; features: PWGPUFeatureName): NativeUInt; cdecl;
    TWGPUProcAdapterGetFeatures = procedure(adapter: TWGPUAdapter; features: PWGPUSupportedFeatures); cdecl;
    TWGPUProcAdapterGetFormatCapabilities = function(adapter: TWGPUAdapter; format: TWGPUTextureFormat; capabilities: PWGPUFormatCapabilities): TWGPUStatus; cdecl;
    TWGPUProcAdapterGetInfo = function(adapter: TWGPUAdapter; info: PWGPUAdapterInfo): TWGPUStatus; cdecl;
@@ -2537,7 +2536,6 @@ type
    TWGPUProcDeviceCreateShaderModule = function(device: TWGPUDevice; const descriptor: PWGPUShaderModuleDescriptor): TWGPUShaderModule; cdecl;
    TWGPUProcDeviceCreateTexture = function(device: TWGPUDevice; const descriptor: PWGPUTextureDescriptor): TWGPUTexture; cdecl;
    TWGPUProcDeviceDestroy = procedure(device: TWGPUDevice); cdecl;
-   TWGPUProcDeviceEnumerateFeatures = function(device: TWGPUDevice; features: PWGPUFeatureName): NativeUInt; cdecl;
    TWGPUProcDeviceForceLoss = procedure(device: TWGPUDevice; &type: TWGPUDeviceLostReason; const &message: TWGPUStringView); cdecl;
    TWGPUProcDeviceGetAHardwareBufferProperties = function(device: TWGPUDevice; handle: Pointer; properties: PWGPUAHardwareBufferProperties): TWGPUStatus; cdecl;
    TWGPUProcDeviceGetAdapter = function(device: TWGPUDevice): TWGPUAdapter; cdecl;
@@ -2751,7 +2749,6 @@ var
    wgpuSupportedFeaturesFreeMembers : procedure(value: TWGPUSupportedFeatures); cdecl;
    wgpuSurfaceCapabilitiesFreeMembers : procedure(value: TWGPUSurfaceCapabilities); cdecl;
    wgpuAdapterCreateDevice : function(adapter: TWGPUAdapter; const descriptor: PWGPUDeviceDescriptor): TWGPUDevice; cdecl;
-   wgpuAdapterEnumerateFeatures : function(adapter: TWGPUAdapter; features: PWGPUFeatureName): NativeUInt; cdecl;
    wgpuAdapterGetFeatures : procedure(adapter: TWGPUAdapter; features: PWGPUSupportedFeatures); cdecl;
    wgpuAdapterGetFormatCapabilities : function(adapter: TWGPUAdapter; format: TWGPUTextureFormat; capabilities: PWGPUFormatCapabilities): TWGPUStatus; cdecl;
    wgpuAdapterGetInfo : function(adapter: TWGPUAdapter; info: PWGPUAdapterInfo): TWGPUStatus; cdecl;
@@ -2843,7 +2840,6 @@ var
    wgpuDeviceCreateShaderModule : function(device: TWGPUDevice; const descriptor: PWGPUShaderModuleDescriptor): TWGPUShaderModule; cdecl;
    wgpuDeviceCreateTexture : function(device: TWGPUDevice; const descriptor: PWGPUTextureDescriptor): TWGPUTexture; cdecl;
    wgpuDeviceDestroy : procedure(device: TWGPUDevice); cdecl;
-   wgpuDeviceEnumerateFeatures : function(device: TWGPUDevice; features: PWGPUFeatureName): NativeUInt; cdecl;
    wgpuDeviceForceLoss : procedure(device: TWGPUDevice; &type: TWGPUDeviceLostReason; const &message: TWGPUStringView); cdecl;
    wgpuDeviceGetAHardwareBufferProperties : function(device: TWGPUDevice; handle: Pointer; properties: PWGPUAHardwareBufferProperties): TWGPUStatus; cdecl;
    wgpuDeviceGetAdapter : function(device: TWGPUDevice): TWGPUAdapter; cdecl;
@@ -3030,7 +3026,6 @@ begin
    wgpuSupportedFeaturesFreeMembers := GetProcAddress(vLib, 'wgpuSupportedFeaturesFreeMembers');
    wgpuSurfaceCapabilitiesFreeMembers := GetProcAddress(vLib, 'wgpuSurfaceCapabilitiesFreeMembers');
    wgpuAdapterCreateDevice := GetProcAddress(vLib, 'wgpuAdapterCreateDevice');
-   wgpuAdapterEnumerateFeatures := GetProcAddress(vLib, 'wgpuAdapterEnumerateFeatures');
    wgpuAdapterGetFeatures := GetProcAddress(vLib, 'wgpuAdapterGetFeatures');
    wgpuAdapterGetFormatCapabilities := GetProcAddress(vLib, 'wgpuAdapterGetFormatCapabilities');
    wgpuAdapterGetInfo := GetProcAddress(vLib, 'wgpuAdapterGetInfo');
@@ -3122,7 +3117,6 @@ begin
    wgpuDeviceCreateShaderModule := GetProcAddress(vLib, 'wgpuDeviceCreateShaderModule');
    wgpuDeviceCreateTexture := GetProcAddress(vLib, 'wgpuDeviceCreateTexture');
    wgpuDeviceDestroy := GetProcAddress(vLib, 'wgpuDeviceDestroy');
-   wgpuDeviceEnumerateFeatures := GetProcAddress(vLib, 'wgpuDeviceEnumerateFeatures');
    wgpuDeviceForceLoss := GetProcAddress(vLib, 'wgpuDeviceForceLoss');
    wgpuDeviceGetAHardwareBufferProperties := GetProcAddress(vLib, 'wgpuDeviceGetAHardwareBufferProperties');
    wgpuDeviceGetAdapter := GetProcAddress(vLib, 'wgpuDeviceGetAdapter');
