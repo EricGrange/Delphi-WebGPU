@@ -501,7 +501,7 @@ type
    PWGPUBlendOperation = ^TWGPUBlendOperation;
 
    TWGPUBufferBindingType = (
-      WGPUBufferBindingType_BindingNotUsed = 0,
+      WGPUBufferBindingType_Undefined = 0,
       WGPUBufferBindingType_Uniform = 1,
       WGPUBufferBindingType_Storage = 2,
       WGPUBufferBindingType_ReadOnlyStorage = 3,
@@ -652,51 +652,50 @@ type
       WGPUFeatureName_DualSourceBlending = 327688,
       WGPUFeatureName_D3D11MultithreadProtected = 327689,
       WGPUFeatureName_ANGLETextureSharing = 327690,
-      WGPUFeatureName_ChromiumExperimentalSubgroupUniformControlFlow = 327691,
-      WGPUFeatureName_PixelLocalStorageCoherent = 327692,
-      WGPUFeatureName_PixelLocalStorageNonCoherent = 327693,
-      WGPUFeatureName_Unorm16TextureFormats = 327694,
-      WGPUFeatureName_Snorm16TextureFormats = 327695,
-      WGPUFeatureName_MultiPlanarFormatExtendedUsages = 327696,
-      WGPUFeatureName_MultiPlanarFormatP010 = 327697,
-      WGPUFeatureName_HostMappedPointer = 327698,
-      WGPUFeatureName_MultiPlanarRenderTargets = 327699,
-      WGPUFeatureName_MultiPlanarFormatNv12a = 327700,
-      WGPUFeatureName_FramebufferFetch = 327701,
-      WGPUFeatureName_BufferMapExtendedUsages = 327702,
-      WGPUFeatureName_AdapterPropertiesMemoryHeaps = 327703,
-      WGPUFeatureName_AdapterPropertiesD3D = 327704,
-      WGPUFeatureName_AdapterPropertiesVk = 327705,
-      WGPUFeatureName_R8UnormStorage = 327706,
-      WGPUFeatureName_FormatCapabilities = 327707,
-      WGPUFeatureName_DrmFormatCapabilities = 327708,
-      WGPUFeatureName_Norm16TextureFormats = 327709,
-      WGPUFeatureName_MultiPlanarFormatNv16 = 327710,
-      WGPUFeatureName_MultiPlanarFormatNv24 = 327711,
-      WGPUFeatureName_MultiPlanarFormatP210 = 327712,
-      WGPUFeatureName_MultiPlanarFormatP410 = 327713,
-      WGPUFeatureName_SharedTextureMemoryVkDedicatedAllocation = 327714,
-      WGPUFeatureName_SharedTextureMemoryAHardwareBuffer = 327715,
-      WGPUFeatureName_SharedTextureMemoryDmaBuf = 327716,
-      WGPUFeatureName_SharedTextureMemoryOpaqueFD = 327717,
-      WGPUFeatureName_SharedTextureMemoryZirconHandle = 327718,
-      WGPUFeatureName_SharedTextureMemoryDXGISharedHandle = 327719,
-      WGPUFeatureName_SharedTextureMemoryD3D11Texture2D = 327720,
-      WGPUFeatureName_SharedTextureMemoryIOSurface = 327721,
-      WGPUFeatureName_SharedTextureMemoryEGLImage = 327722,
-      WGPUFeatureName_SharedFenceVkSemaphoreOpaqueFD = 327723,
-      WGPUFeatureName_SharedFenceSyncFD = 327724,
-      WGPUFeatureName_SharedFenceVkSemaphoreZirconHandle = 327725,
-      WGPUFeatureName_SharedFenceDXGISharedHandle = 327726,
-      WGPUFeatureName_SharedFenceMTLSharedEvent = 327727,
-      WGPUFeatureName_SharedBufferMemoryD3D12Resource = 327728,
-      WGPUFeatureName_StaticSamplers = 327729,
-      WGPUFeatureName_YCbCrVulkanSamplers = 327730,
-      WGPUFeatureName_ShaderModuleCompilationOptions = 327731,
-      WGPUFeatureName_DawnLoadResolveTexture = 327732,
-      WGPUFeatureName_DawnPartialLoadResolveTexture = 327733,
-      WGPUFeatureName_MultiDrawIndirect = 327734,
-      WGPUFeatureName_ClipDistances = 327735,
+      WGPUFeatureName_PixelLocalStorageCoherent = 327691,
+      WGPUFeatureName_PixelLocalStorageNonCoherent = 327692,
+      WGPUFeatureName_Unorm16TextureFormats = 327693,
+      WGPUFeatureName_Snorm16TextureFormats = 327694,
+      WGPUFeatureName_MultiPlanarFormatExtendedUsages = 327695,
+      WGPUFeatureName_MultiPlanarFormatP010 = 327696,
+      WGPUFeatureName_HostMappedPointer = 327697,
+      WGPUFeatureName_MultiPlanarRenderTargets = 327698,
+      WGPUFeatureName_MultiPlanarFormatNv12a = 327699,
+      WGPUFeatureName_FramebufferFetch = 327700,
+      WGPUFeatureName_BufferMapExtendedUsages = 327701,
+      WGPUFeatureName_AdapterPropertiesMemoryHeaps = 327702,
+      WGPUFeatureName_AdapterPropertiesD3D = 327703,
+      WGPUFeatureName_AdapterPropertiesVk = 327704,
+      WGPUFeatureName_R8UnormStorage = 327705,
+      WGPUFeatureName_FormatCapabilities = 327706,
+      WGPUFeatureName_DrmFormatCapabilities = 327707,
+      WGPUFeatureName_Norm16TextureFormats = 327708,
+      WGPUFeatureName_MultiPlanarFormatNv16 = 327709,
+      WGPUFeatureName_MultiPlanarFormatNv24 = 327710,
+      WGPUFeatureName_MultiPlanarFormatP210 = 327711,
+      WGPUFeatureName_MultiPlanarFormatP410 = 327712,
+      WGPUFeatureName_SharedTextureMemoryVkDedicatedAllocation = 327713,
+      WGPUFeatureName_SharedTextureMemoryAHardwareBuffer = 327714,
+      WGPUFeatureName_SharedTextureMemoryDmaBuf = 327715,
+      WGPUFeatureName_SharedTextureMemoryOpaqueFD = 327716,
+      WGPUFeatureName_SharedTextureMemoryZirconHandle = 327717,
+      WGPUFeatureName_SharedTextureMemoryDXGISharedHandle = 327718,
+      WGPUFeatureName_SharedTextureMemoryD3D11Texture2D = 327719,
+      WGPUFeatureName_SharedTextureMemoryIOSurface = 327720,
+      WGPUFeatureName_SharedTextureMemoryEGLImage = 327721,
+      WGPUFeatureName_SharedFenceVkSemaphoreOpaqueFD = 327722,
+      WGPUFeatureName_SharedFenceSyncFD = 327723,
+      WGPUFeatureName_SharedFenceVkSemaphoreZirconHandle = 327724,
+      WGPUFeatureName_SharedFenceDXGISharedHandle = 327725,
+      WGPUFeatureName_SharedFenceMTLSharedEvent = 327726,
+      WGPUFeatureName_SharedBufferMemoryD3D12Resource = 327727,
+      WGPUFeatureName_StaticSamplers = 327728,
+      WGPUFeatureName_YCbCrVulkanSamplers = 327729,
+      WGPUFeatureName_ShaderModuleCompilationOptions = 327730,
+      WGPUFeatureName_DawnLoadResolveTexture = 327731,
+      WGPUFeatureName_DawnPartialLoadResolveTexture = 327732,
+      WGPUFeatureName_MultiDrawIndirect = 327733,
+      WGPUFeatureName_ClipDistances = 327734,
       WGPUFeatureName_Force32 = 2147483647);
    PWGPUFeatureName = ^TWGPUFeatureName;
 
@@ -899,7 +898,7 @@ type
    PWGPUSType = ^TWGPUSType;
 
    TWGPUSamplerBindingType = (
-      WGPUSamplerBindingType_BindingNotUsed = 0,
+      WGPUSamplerBindingType_Undefined = 0,
       WGPUSamplerBindingType_Filtering = 1,
       WGPUSamplerBindingType_NonFiltering = 2,
       WGPUSamplerBindingType_Comparison = 3,
@@ -935,7 +934,7 @@ type
    PWGPUStencilOperation = ^TWGPUStencilOperation;
 
    TWGPUStorageTextureAccess = (
-      WGPUStorageTextureAccess_BindingNotUsed = 0,
+      WGPUStorageTextureAccess_Undefined = 0,
       WGPUStorageTextureAccess_WriteOnly = 1,
       WGPUStorageTextureAccess_ReadOnly = 2,
       WGPUStorageTextureAccess_ReadWrite = 3,
@@ -1094,7 +1093,7 @@ type
    PWGPUTextureFormat = ^TWGPUTextureFormat;
 
    TWGPUTextureSampleType = (
-      WGPUTextureSampleType_BindingNotUsed = 0,
+      WGPUTextureSampleType_Undefined = 0,
       WGPUTextureSampleType_Float = 1,
       WGPUTextureSampleType_UnfilterableFloat = 2,
       WGPUTextureSampleType_Depth = 3,
@@ -2106,8 +2105,6 @@ type
       &label: TWGPUStringView;
       plane0: TWGPUTextureView;
       plane1: TWGPUTextureView;
-      visibleOrigin: TWGPUOrigin2D;
-      visibleSize: TWGPUExtent2D;
       cropOrigin: TWGPUOrigin2D;
       cropSize: TWGPUExtent2D;
       apparentSize: TWGPUExtent2D;
@@ -2352,10 +2349,6 @@ type
       requiredFeatures: PWGPUFeatureName;
       requiredLimits: PWGPURequiredLimits;
       defaultQueue: TWGPUQueueDescriptor;
-      deviceLostCallback: TWGPUDeviceLostCallback;
-      deviceLostUserdata: Pointer;
-      deviceLostCallbackInfo: TWGPUDeviceLostCallbackInfo;
-      uncapturedErrorCallbackInfo: TWGPUUncapturedErrorCallbackInfo;
       deviceLostCallbackInfo2: TWGPUDeviceLostCallbackInfo2;
       uncapturedErrorCallbackInfo2: TWGPUUncapturedErrorCallbackInfo2;
    end;
@@ -2553,10 +2546,8 @@ type
    TWGPUProcDevicePopErrorScope2 = function(device: TWGPUDevice; callbackInfo: TWGPUPopErrorScopeCallbackInfo2): TWGPUFuture; cdecl;
    TWGPUProcDevicePopErrorScopeF = function(device: TWGPUDevice; callbackInfo: TWGPUPopErrorScopeCallbackInfo): TWGPUFuture; cdecl;
    TWGPUProcDevicePushErrorScope = procedure(device: TWGPUDevice; filter: TWGPUErrorFilter); cdecl;
-   TWGPUProcDeviceSetDeviceLostCallback = procedure(device: TWGPUDevice; callback: TWGPUDeviceLostCallback; userdata: Pointer); cdecl;
    TWGPUProcDeviceSetLabel = procedure(device: TWGPUDevice; &label: TWGPUStringView); cdecl;
    TWGPUProcDeviceSetLoggingCallback = procedure(device: TWGPUDevice; callback: TWGPULoggingCallback; userdata: Pointer); cdecl;
-   TWGPUProcDeviceSetUncapturedErrorCallback = procedure(device: TWGPUDevice; callback: TWGPUErrorCallback; userdata: Pointer); cdecl;
    TWGPUProcDeviceTick = procedure(device: TWGPUDevice); cdecl;
    TWGPUProcDeviceValidateTextureDescriptor = procedure(device: TWGPUDevice; const descriptor: PWGPUTextureDescriptor); cdecl;
    TWGPUProcDeviceAddRef = procedure(device: TWGPUDevice); cdecl;
@@ -2857,10 +2848,8 @@ var
    wgpuDevicePopErrorScope2 : function(device: TWGPUDevice; callbackInfo: TWGPUPopErrorScopeCallbackInfo2): TWGPUFuture; cdecl;
    wgpuDevicePopErrorScopeF : function(device: TWGPUDevice; callbackInfo: TWGPUPopErrorScopeCallbackInfo): TWGPUFuture; cdecl;
    wgpuDevicePushErrorScope : procedure(device: TWGPUDevice; filter: TWGPUErrorFilter); cdecl;
-   wgpuDeviceSetDeviceLostCallback : procedure(device: TWGPUDevice; callback: TWGPUDeviceLostCallback; userdata: Pointer); cdecl;
    wgpuDeviceSetLabel : procedure(device: TWGPUDevice; &label: TWGPUStringView); cdecl;
    wgpuDeviceSetLoggingCallback : procedure(device: TWGPUDevice; callback: TWGPULoggingCallback; userdata: Pointer); cdecl;
-   wgpuDeviceSetUncapturedErrorCallback : procedure(device: TWGPUDevice; callback: TWGPUErrorCallback; userdata: Pointer); cdecl;
    wgpuDeviceTick : procedure(device: TWGPUDevice); cdecl;
    wgpuDeviceValidateTextureDescriptor : procedure(device: TWGPUDevice; const descriptor: PWGPUTextureDescriptor); cdecl;
    wgpuDeviceAddRef : procedure(device: TWGPUDevice); cdecl;
@@ -3134,10 +3123,8 @@ begin
    wgpuDevicePopErrorScope2 := GetProcAddress(vLib, 'wgpuDevicePopErrorScope2');
    wgpuDevicePopErrorScopeF := GetProcAddress(vLib, 'wgpuDevicePopErrorScopeF');
    wgpuDevicePushErrorScope := GetProcAddress(vLib, 'wgpuDevicePushErrorScope');
-   wgpuDeviceSetDeviceLostCallback := GetProcAddress(vLib, 'wgpuDeviceSetDeviceLostCallback');
    wgpuDeviceSetLabel := GetProcAddress(vLib, 'wgpuDeviceSetLabel');
    wgpuDeviceSetLoggingCallback := GetProcAddress(vLib, 'wgpuDeviceSetLoggingCallback');
-   wgpuDeviceSetUncapturedErrorCallback := GetProcAddress(vLib, 'wgpuDeviceSetUncapturedErrorCallback');
    wgpuDeviceTick := GetProcAddress(vLib, 'wgpuDeviceTick');
    wgpuDeviceValidateTextureDescriptor := GetProcAddress(vLib, 'wgpuDeviceValidateTextureDescriptor');
    wgpuDeviceAddRef := GetProcAddress(vLib, 'wgpuDeviceAddRef');

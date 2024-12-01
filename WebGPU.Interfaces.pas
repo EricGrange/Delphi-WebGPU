@@ -188,10 +188,8 @@ type
       function PopErrorScope2(const aCallbackInfo: TWGPUPopErrorScopeCallbackInfo2): TWGPUFuture;
       function PopErrorScopeF(const aCallbackInfo: TWGPUPopErrorScopeCallbackInfo): TWGPUFuture;
       procedure PushErrorScope(const aFilter: TWGPUErrorFilter);
-      procedure SetDeviceLostCallback(const aCallback: TWGPUDeviceLostCallback; const aUserdata: Pointer);
       procedure SetLabel(const aLabel: TWGPUStringView);
       procedure SetLoggingCallback(const aCallback: TWGPULoggingCallback; const aUserdata: Pointer);
-      procedure SetUncapturedErrorCallback(const aCallback: TWGPUErrorCallback; const aUserdata: Pointer);
       procedure Tick;
       procedure ValidateTextureDescriptor(const aDescriptor: TWGPUTextureDescriptor);
    end;
@@ -559,10 +557,8 @@ type
       function PopErrorScope2(const aCallbackInfo: TWGPUPopErrorScopeCallbackInfo2): TWGPUFuture;
       function PopErrorScopeF(const aCallbackInfo: TWGPUPopErrorScopeCallbackInfo): TWGPUFuture;
       procedure PushErrorScope(const aFilter: TWGPUErrorFilter);
-      procedure SetDeviceLostCallback(const aCallback: TWGPUDeviceLostCallback; const aUserdata: Pointer);
       procedure SetLabel(const aLabel: TWGPUStringView);
       procedure SetLoggingCallback(const aCallback: TWGPULoggingCallback; const aUserdata: Pointer);
-      procedure SetUncapturedErrorCallback(const aCallback: TWGPUErrorCallback; const aUserdata: Pointer);
       procedure Tick;
       procedure ValidateTextureDescriptor(const aDescriptor: TWGPUTextureDescriptor);
    end;
@@ -1444,11 +1440,6 @@ begin
    wgpuDevicePushErrorScope(FHandle, aFilter);
 end;
 
-procedure TiwgpuDevice.SetDeviceLostCallback(const aCallback: TWGPUDeviceLostCallback; const aUserdata: Pointer);
-begin
-   wgpuDeviceSetDeviceLostCallback(FHandle, aCallback, aUserdata);
-end;
-
 procedure TiwgpuDevice.SetLabel(const aLabel: TWGPUStringView);
 begin
    wgpuDeviceSetLabel(FHandle, aLabel);
@@ -1457,11 +1448,6 @@ end;
 procedure TiwgpuDevice.SetLoggingCallback(const aCallback: TWGPULoggingCallback; const aUserdata: Pointer);
 begin
    wgpuDeviceSetLoggingCallback(FHandle, aCallback, aUserdata);
-end;
-
-procedure TiwgpuDevice.SetUncapturedErrorCallback(const aCallback: TWGPUErrorCallback; const aUserdata: Pointer);
-begin
-   wgpuDeviceSetUncapturedErrorCallback(FHandle, aCallback, aUserdata);
 end;
 
 procedure TiwgpuDevice.Tick;
