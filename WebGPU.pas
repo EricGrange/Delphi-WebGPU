@@ -192,6 +192,7 @@ type
    PWGPUDawnExperimentalSubgroupLimits = ^TWGPUDawnExperimentalSubgroupLimits;
    PWGPUDawnRenderPassColorAttachmentRenderToSingleSampled = ^TWGPUDawnRenderPassColorAttachmentRenderToSingleSampled;
    PWGPUDawnShaderModuleSPIRVOptionsDescriptor = ^TWGPUDawnShaderModuleSPIRVOptionsDescriptor;
+   PWGPUDawnTexelCopyBufferRowAlignmentLimits = ^TWGPUDawnTexelCopyBufferRowAlignmentLimits;
    PWGPUDawnTextureInternalUsageDescriptor = ^TWGPUDawnTextureInternalUsageDescriptor;
    PWGPUDawnTogglesDescriptor = ^TWGPUDawnTogglesDescriptor;
    PWGPUDawnWireWGSLControl = ^TWGPUDawnWireWGSLControl;
@@ -320,8 +321,8 @@ type
    PWGPUBindGroupLayoutDescriptor = ^TWGPUBindGroupLayoutDescriptor;
    PWGPUColorTargetState = ^TWGPUColorTargetState;
    PWGPUCompilationInfo = ^TWGPUCompilationInfo;
+   PWGPUComputeState = ^TWGPUComputeState;
    PWGPUDeviceDescriptor = ^TWGPUDeviceDescriptor;
-   PWGPUProgrammableStageDescriptor = ^TWGPUProgrammableStageDescriptor;
    PWGPURenderPassDescriptor = ^TWGPURenderPassDescriptor;
    PWGPURenderPassPixelLocalStorage = ^TWGPURenderPassPixelLocalStorage;
    PWGPUVertexState = ^TWGPUVertexState;
@@ -501,7 +502,7 @@ type
    PWGPUBlendOperation = ^TWGPUBlendOperation;
 
    TWGPUBufferBindingType = (
-      WGPUBufferBindingType_Undefined = 0,
+      WGPUBufferBindingType_BindingNotUsed = 0,
       WGPUBufferBindingType_Uniform = 1,
       WGPUBufferBindingType_Storage = 2,
       WGPUBufferBindingType_ReadOnlyStorage = 3,
@@ -696,6 +697,7 @@ type
       WGPUFeatureName_DawnPartialLoadResolveTexture = 327732,
       WGPUFeatureName_MultiDrawIndirect = 327733,
       WGPUFeatureName_ClipDistances = 327734,
+      WGPUFeatureName_DawnTexelCopyBufferRowAlignment = 327735,
       WGPUFeatureName_Force32 = 2147483647);
    PWGPUFeatureName = ^TWGPUFeatureName;
 
@@ -894,11 +896,12 @@ type
       WGPUSType_SharedTextureMemoryAHardwareBufferProperties = 327736,
       WGPUSType_AHardwareBufferProperties = 327737,
       WGPUSType_DawnExperimentalImmediateDataLimits = 327738,
+      WGPUSType_DawnTexelCopyBufferRowAlignmentLimits = 327739,
       WGPUSType_Force32 = 2147483647);
    PWGPUSType = ^TWGPUSType;
 
    TWGPUSamplerBindingType = (
-      WGPUSamplerBindingType_Undefined = 0,
+      WGPUSamplerBindingType_BindingNotUsed = 0,
       WGPUSamplerBindingType_Filtering = 1,
       WGPUSamplerBindingType_NonFiltering = 2,
       WGPUSamplerBindingType_Comparison = 3,
@@ -934,7 +937,7 @@ type
    PWGPUStencilOperation = ^TWGPUStencilOperation;
 
    TWGPUStorageTextureAccess = (
-      WGPUStorageTextureAccess_Undefined = 0,
+      WGPUStorageTextureAccess_BindingNotUsed = 0,
       WGPUStorageTextureAccess_WriteOnly = 1,
       WGPUStorageTextureAccess_ReadOnly = 2,
       WGPUStorageTextureAccess_ReadWrite = 3,
@@ -1093,7 +1096,7 @@ type
    PWGPUTextureFormat = ^TWGPUTextureFormat;
 
    TWGPUTextureSampleType = (
-      WGPUTextureSampleType_Undefined = 0,
+      WGPUTextureSampleType_BindingNotUsed = 0,
       WGPUTextureSampleType_Float = 1,
       WGPUTextureSampleType_UnfilterableFloat = 2,
       WGPUTextureSampleType_Depth = 3,
@@ -1315,8 +1318,8 @@ type
 
    TWGPUAdapterPropertiesSubgroups = record
       chain: TWGPUChainedStructOut;
-      minSubgroupSize: UInt32;
-      maxSubgroupSize: UInt32;
+      subgroupMinSize: UInt32;
+      subgroupMaxSize: UInt32;
    end;
 
    TWGPUAdapterPropertiesVk = record
@@ -1452,6 +1455,11 @@ type
    TWGPUDawnShaderModuleSPIRVOptionsDescriptor = record
       chain: TWGPUChainedStruct;
       allowNonUniformDerivatives: TWGPUBool;
+   end;
+
+   TWGPUDawnTexelCopyBufferRowAlignmentLimits = record
+      chain: TWGPUChainedStructOut;
+      minTexelCopyBufferRowAlignment: UInt32;
    end;
 
    TWGPUDawnTextureInternalUsageDescriptor = record
@@ -2342,6 +2350,14 @@ type
       messages: PWGPUCompilationMessage;
    end;
 
+   TWGPUComputeState = record
+      nextInChain: PWGPUChainedStruct;
+      module: TWGPUShaderModule;
+      entryPoint: TWGPUStringView;
+      constantCount: NativeUInt;
+      constants: PWGPUConstantEntry;
+   end;
+
    TWGPUDeviceDescriptor = record
       nextInChain: PWGPUChainedStruct;
       &label: TWGPUStringView;
@@ -2351,14 +2367,6 @@ type
       defaultQueue: TWGPUQueueDescriptor;
       deviceLostCallbackInfo2: TWGPUDeviceLostCallbackInfo2;
       uncapturedErrorCallbackInfo2: TWGPUUncapturedErrorCallbackInfo2;
-   end;
-
-   TWGPUProgrammableStageDescriptor = record
-      nextInChain: PWGPUChainedStruct;
-      module: TWGPUShaderModule;
-      entryPoint: TWGPUStringView;
-      constantCount: NativeUInt;
-      constants: PWGPUConstantEntry;
    end;
 
    TWGPURenderPassDescriptor = record
@@ -2392,7 +2400,7 @@ type
       nextInChain: PWGPUChainedStruct;
       &label: TWGPUStringView;
       layout: TWGPUPipelineLayout;
-      compute: TWGPUProgrammableStageDescriptor;
+      compute: TWGPUComputeState;
    end;
 
    TWGPUFragmentState = record
@@ -2416,6 +2424,7 @@ type
       fragment: PWGPUFragmentState;
    end;
 
+   WGPUProgrammableStageDescriptor = TWGPUComputeState;
    WGPURenderPassDescriptorMaxDrawCount = TWGPURenderPassMaxDrawCount;
    WGPUShaderModuleSPIRVDescriptor = TWGPUShaderSourceSPIRV;
    WGPUShaderModuleWGSLDescriptor = TWGPUShaderSourceWGSL;
