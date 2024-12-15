@@ -627,6 +627,13 @@ type
       WGPUExternalTextureRotation_Force32 = 2147483647);
    PWGPUExternalTextureRotation = ^TWGPUExternalTextureRotation;
 
+   TWGPUFeatureLevel = (
+      WGPUFeatureLevel_Undefined = 0,
+      WGPUFeatureLevel_Compatibility = 1,
+      WGPUFeatureLevel_Core = 2,
+      WGPUFeatureLevel_Force32 = 2147483647);
+   PWGPUFeatureLevel = ^TWGPUFeatureLevel;
+
    TWGPUFeatureName = (
       WGPUFeatureName_DepthClipControl = 1,
       WGPUFeatureName_Depth32FloatStencil8 = 2,
@@ -1587,7 +1594,6 @@ type
    end;
 
    TWGPUPipelineLayoutStorageAttachment = record
-      nextInChain: PWGPUChainedStruct;
       offset: UInt64;
       format: TWGPUTextureFormat;
    end;
@@ -1657,6 +1663,7 @@ type
    TWGPURequestAdapterOptions = record
       nextInChain: PWGPUChainedStruct;
       compatibleSurface: TWGPUSurface;
+      featureLevel: TWGPUFeatureLevel;
       powerPreference: TWGPUPowerPreference;
       backendType: TWGPUBackendType;
       forceFallbackAdapter: TWGPUBool;
