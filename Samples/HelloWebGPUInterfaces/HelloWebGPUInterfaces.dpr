@@ -248,11 +248,11 @@ begin
    var vertexModule := vDevice.CreateShaderModule(shaderModuleDescriptor);
    Assert(vertexModule <> nil);
 
-   var compilationInfoCallbackInfo2 := Default(TWGPUCompilationInfoCallbackInfo2);
-   compilationInfoCallbackInfo2.mode := WGPUCallbackMode_AllowSpontaneous;
-   compilationInfoCallbackInfo2.callback := @CompilationCallback;
-   compilationInfoCallbackInfo2.userdata1 := PChar('Vertex Shader');
-   vertexModule.GetCompilationInfo2(compilationInfoCallbackInfo2);
+   var compilationInfoCallbackInfo := Default(TWGPUCompilationInfoCallbackInfo);
+   compilationInfoCallbackInfo.mode := WGPUCallbackMode_AllowSpontaneous;
+   compilationInfoCallbackInfo.callback := @CompilationCallback;
+   compilationInfoCallbackInfo.userdata1 := PChar('Vertex Shader');
+   vertexModule.GetCompilationInfo(compilationInfoCallbackInfo);
 
    var fragmentSource := Default(TWGPUShaderSourceWGSL);
    fragmentSource.chain.sType := WGPUSType_ShaderSourceWGSL;
@@ -265,8 +265,8 @@ begin
    var fragmentModule := vDevice.CreateShaderModule(shaderModuleDescriptor);
    Assert(fragmentModule <> nil);
 
-   compilationInfoCallbackInfo2.userdata1 := PChar('Fragment Shader');
-   fragmentModule.GetCompilationInfo2(compilationInfoCallbackInfo2);
+   compilationInfoCallbackInfo.userdata1 := PChar('Fragment Shader');
+   fragmentModule.GetCompilationInfo(compilationInfoCallbackInfo);
 
    // Create a sampler for the texture
    var samplerDescriptor := Default(TWGPUSamplerDescriptor);

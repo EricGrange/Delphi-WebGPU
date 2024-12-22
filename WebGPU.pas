@@ -158,13 +158,13 @@ type
    PPWGPUTextureViewImpl = ^PWGPUTextureViewImpl;
    PWGPUChainedStruct = ^TWGPUChainedStruct;
    PWGPUChainedStructOut = ^TWGPUChainedStructOut;
-   PWGPUBufferMapCallbackInfo2 = ^TWGPUBufferMapCallbackInfo2;
-   PWGPUCompilationInfoCallbackInfo2 = ^TWGPUCompilationInfoCallbackInfo2;
-   PWGPUCreateComputePipelineAsyncCallbackInfo2 = ^TWGPUCreateComputePipelineAsyncCallbackInfo2;
-   PWGPUCreateRenderPipelineAsyncCallbackInfo2 = ^TWGPUCreateRenderPipelineAsyncCallbackInfo2;
+   PWGPUBufferMapCallbackInfo = ^TWGPUBufferMapCallbackInfo;
+   PWGPUCompilationInfoCallbackInfo = ^TWGPUCompilationInfoCallbackInfo;
+   PWGPUCreateComputePipelineAsyncCallbackInfo = ^TWGPUCreateComputePipelineAsyncCallbackInfo;
+   PWGPUCreateRenderPipelineAsyncCallbackInfo = ^TWGPUCreateRenderPipelineAsyncCallbackInfo;
    PWGPUDeviceLostCallbackInfo2 = ^TWGPUDeviceLostCallbackInfo2;
-   PWGPUPopErrorScopeCallbackInfo2 = ^TWGPUPopErrorScopeCallbackInfo2;
-   PWGPUQueueWorkDoneCallbackInfo2 = ^TWGPUQueueWorkDoneCallbackInfo2;
+   PWGPUPopErrorScopeCallbackInfo = ^TWGPUPopErrorScopeCallbackInfo;
+   PWGPUQueueWorkDoneCallbackInfo = ^TWGPUQueueWorkDoneCallbackInfo;
    PWGPURequestAdapterCallbackInfo2 = ^TWGPURequestAdapterCallbackInfo2;
    PWGPURequestDeviceCallbackInfo2 = ^TWGPURequestDeviceCallbackInfo2;
    PWGPUUncapturedErrorCallbackInfo2 = ^TWGPUUncapturedErrorCallbackInfo2;
@@ -176,14 +176,10 @@ type
    PWGPUBlendComponent = ^TWGPUBlendComponent;
    PWGPUBufferBindingLayout = ^TWGPUBufferBindingLayout;
    PWGPUBufferHostMappedPointer = ^TWGPUBufferHostMappedPointer;
-   PWGPUBufferMapCallbackInfo = ^TWGPUBufferMapCallbackInfo;
    PWGPUColor = ^TWGPUColor;
    PWGPUColorTargetStateExpandResolveTextureDawn = ^TWGPUColorTargetStateExpandResolveTextureDawn;
-   PWGPUCompilationInfoCallbackInfo = ^TWGPUCompilationInfoCallbackInfo;
    PWGPUComputePassTimestampWrites = ^TWGPUComputePassTimestampWrites;
    PWGPUCopyTextureForBrowserOptions = ^TWGPUCopyTextureForBrowserOptions;
-   PWGPUCreateComputePipelineAsyncCallbackInfo = ^TWGPUCreateComputePipelineAsyncCallbackInfo;
-   PWGPUCreateRenderPipelineAsyncCallbackInfo = ^TWGPUCreateRenderPipelineAsyncCallbackInfo;
    PWGPUDawnWGSLBlocklist = ^TWGPUDawnWGSLBlocklist;
    PWGPUDawnAdapterPropertiesPowerPreference = ^TWGPUDawnAdapterPropertiesPowerPreference;
    PWGPUDawnBufferDescriptorErrorInfoFromWireClient = ^TWGPUDawnBufferDescriptorErrorInfoFromWireClient;
@@ -211,9 +207,7 @@ type
    PWGPUOrigin2D = ^TWGPUOrigin2D;
    PWGPUOrigin3D = ^TWGPUOrigin3D;
    PWGPUPipelineLayoutStorageAttachment = ^TWGPUPipelineLayoutStorageAttachment;
-   PWGPUPopErrorScopeCallbackInfo = ^TWGPUPopErrorScopeCallbackInfo;
    PWGPUPrimitiveState = ^TWGPUPrimitiveState;
-   PWGPUQueueWorkDoneCallbackInfo = ^TWGPUQueueWorkDoneCallbackInfo;
    PWGPURenderPassDepthStencilAttachment = ^TWGPURenderPassDepthStencilAttachment;
    PWGPURenderPassDescriptorExpandResolveRect = ^TWGPURenderPassDescriptorExpandResolveRect;
    PWGPURenderPassMaxDrawCount = ^TWGPURenderPassMaxDrawCount;
@@ -509,20 +503,6 @@ type
       WGPUBufferBindingType_Force32 = 2147483647);
    PWGPUBufferBindingType = ^TWGPUBufferBindingType;
 
-   TWGPUBufferMapAsyncStatus = (
-      WGPUBufferMapAsyncStatus_Success = 1,
-      WGPUBufferMapAsyncStatus_InstanceDropped = 2,
-      WGPUBufferMapAsyncStatus_ValidationError = 3,
-      WGPUBufferMapAsyncStatus_Unknown = 4,
-      WGPUBufferMapAsyncStatus_DeviceLost = 5,
-      WGPUBufferMapAsyncStatus_DestroyedBeforeCallback = 6,
-      WGPUBufferMapAsyncStatus_UnmappedBeforeCallback = 7,
-      WGPUBufferMapAsyncStatus_MappingAlreadyPending = 8,
-      WGPUBufferMapAsyncStatus_OffsetOutOfRange = 9,
-      WGPUBufferMapAsyncStatus_SizeOutOfRange = 10,
-      WGPUBufferMapAsyncStatus_Force32 = 2147483647);
-   PWGPUBufferMapAsyncStatus = ^TWGPUBufferMapAsyncStatus;
-
    TWGPUBufferMapState = (
       WGPUBufferMapState_Unmapped = 1,
       WGPUBufferMapState_Pending = 2,
@@ -705,6 +685,7 @@ type
       WGPUFeatureName_MultiDrawIndirect = 327733,
       WGPUFeatureName_ClipDistances = 327734,
       WGPUFeatureName_DawnTexelCopyBufferRowAlignment = 327735,
+      WGPUFeatureName_FlexibleTextureViews = 327736,
       WGPUFeatureName_Force32 = 2147483647);
    PWGPUFeatureName = ^TWGPUFeatureName;
 
@@ -810,7 +791,6 @@ type
       WGPUQueueWorkDoneStatus_InstanceDropped = 2,
       WGPUQueueWorkDoneStatus_Error = 3,
       WGPUQueueWorkDoneStatus_Unknown = 4,
-      WGPUQueueWorkDoneStatus_DeviceLost = 5,
       WGPUQueueWorkDoneStatus_Force32 = 2147483647);
    PWGPUQueueWorkDoneStatus = ^TWGPUQueueWorkDoneStatus;
 
@@ -1199,29 +1179,23 @@ type
       class operator Implicit(const view : TWGPUStringView) : UTF8String;
    end;
 
-   TWGPUBufferMapCallback = procedure(status: TWGPUBufferMapAsyncStatus; userdata: Pointer); cdecl;
    TWGPUCallback = procedure(userdata: Pointer); cdecl;
-   TWGPUCompilationInfoCallback = procedure(status: TWGPUCompilationInfoRequestStatus; const compilationInfo: PWGPUCompilationInfo; userdata: Pointer); cdecl;
-   TWGPUCreateComputePipelineAsyncCallback = procedure(status: TWGPUCreatePipelineAsyncStatus; pipeline: TWGPUComputePipeline; const &message: TWGPUStringView; userdata: Pointer); cdecl;
-   TWGPUCreateRenderPipelineAsyncCallback = procedure(status: TWGPUCreatePipelineAsyncStatus; pipeline: TWGPURenderPipeline; const &message: TWGPUStringView; userdata: Pointer); cdecl;
    TWGPUDawnLoadCacheDataFunction = function(const key: Pointer; keySize: NativeUInt; value: Pointer; valueSize: NativeUInt; userdata: Pointer): NativeUInt; cdecl;
    TWGPUDawnStoreCacheDataFunction = procedure(const key: Pointer; keySize: NativeUInt; const value: Pointer; valueSize: NativeUInt; userdata: Pointer); cdecl;
    TWGPUDeviceLostCallback = procedure(reason: TWGPUDeviceLostReason; const &message: TWGPUStringView; userdata: Pointer); cdecl;
    TWGPUDeviceLostCallbackNew = procedure(const device: PWGPUDevice; reason: TWGPUDeviceLostReason; const &message: TWGPUStringView; userdata: Pointer); cdecl;
    TWGPUErrorCallback = procedure(&type: TWGPUErrorType; const &message: TWGPUStringView; userdata: Pointer); cdecl;
    TWGPULoggingCallback = procedure(&type: TWGPULoggingType; const &message: TWGPUStringView; userdata: Pointer); cdecl;
-   TWGPUPopErrorScopeCallback = procedure(status: TWGPUPopErrorScopeStatus; &type: TWGPUErrorType; const &message: TWGPUStringView; userdata: Pointer); cdecl;
    TWGPUProc = procedure(); cdecl;
-   TWGPUQueueWorkDoneCallback = procedure(status: TWGPUQueueWorkDoneStatus; userdata: Pointer); cdecl;
    TWGPURequestAdapterCallback = procedure(status: TWGPURequestAdapterStatus; adapter: TWGPUAdapter; const &message: TWGPUStringView; userdata: Pointer); cdecl;
    TWGPURequestDeviceCallback = procedure(status: TWGPURequestDeviceStatus; device: TWGPUDevice; const &message: TWGPUStringView; userdata: Pointer); cdecl;
-   TWGPUBufferMapCallback2 = procedure(status: TWGPUMapAsyncStatus; const &message: TWGPUStringView; userdata1: Pointer; userdata2: Pointer); cdecl;
-   TWGPUCompilationInfoCallback2 = procedure(status: TWGPUCompilationInfoRequestStatus; const compilationInfo: PWGPUCompilationInfo; userdata1: Pointer; userdata2: Pointer); cdecl;
-   TWGPUCreateComputePipelineAsyncCallback2 = procedure(status: TWGPUCreatePipelineAsyncStatus; pipeline: TWGPUComputePipeline; const &message: TWGPUStringView; userdata1: Pointer; userdata2: Pointer); cdecl;
-   TWGPUCreateRenderPipelineAsyncCallback2 = procedure(status: TWGPUCreatePipelineAsyncStatus; pipeline: TWGPURenderPipeline; const &message: TWGPUStringView; userdata1: Pointer; userdata2: Pointer); cdecl;
+   TWGPUBufferMapCallback = procedure(status: TWGPUMapAsyncStatus; const &message: TWGPUStringView; userdata1: Pointer; userdata2: Pointer); cdecl;
+   TWGPUCompilationInfoCallback = procedure(status: TWGPUCompilationInfoRequestStatus; const compilationInfo: PWGPUCompilationInfo; userdata1: Pointer; userdata2: Pointer); cdecl;
+   TWGPUCreateComputePipelineAsyncCallback = procedure(status: TWGPUCreatePipelineAsyncStatus; pipeline: TWGPUComputePipeline; const &message: TWGPUStringView; userdata1: Pointer; userdata2: Pointer); cdecl;
+   TWGPUCreateRenderPipelineAsyncCallback = procedure(status: TWGPUCreatePipelineAsyncStatus; pipeline: TWGPURenderPipeline; const &message: TWGPUStringView; userdata1: Pointer; userdata2: Pointer); cdecl;
    TWGPUDeviceLostCallback2 = procedure(const device: PWGPUDevice; reason: TWGPUDeviceLostReason; const &message: TWGPUStringView; userdata1: Pointer; userdata2: Pointer); cdecl;
-   TWGPUPopErrorScopeCallback2 = procedure(status: TWGPUPopErrorScopeStatus; &type: TWGPUErrorType; const &message: TWGPUStringView; userdata1: Pointer; userdata2: Pointer); cdecl;
-   TWGPUQueueWorkDoneCallback2 = procedure(status: TWGPUQueueWorkDoneStatus; userdata1: Pointer; userdata2: Pointer); cdecl;
+   TWGPUPopErrorScopeCallback = procedure(status: TWGPUPopErrorScopeStatus; &type: TWGPUErrorType; const &message: TWGPUStringView; userdata1: Pointer; userdata2: Pointer); cdecl;
+   TWGPUQueueWorkDoneCallback = procedure(status: TWGPUQueueWorkDoneStatus; userdata1: Pointer; userdata2: Pointer); cdecl;
    TWGPURequestAdapterCallback2 = procedure(status: TWGPURequestAdapterStatus; adapter: TWGPUAdapter; const &message: TWGPUStringView; userdata1: Pointer; userdata2: Pointer); cdecl;
    TWGPURequestDeviceCallback2 = procedure(status: TWGPURequestDeviceStatus; device: TWGPUDevice; const &message: TWGPUStringView; userdata1: Pointer; userdata2: Pointer); cdecl;
    TWGPUUncapturedErrorCallback = procedure(const device: PWGPUDevice; &type: TWGPUErrorType; const &message: TWGPUStringView; userdata1: Pointer; userdata2: Pointer); cdecl;
@@ -1235,34 +1209,34 @@ type
       sType: TWGPUSType;
    end;
 
-   TWGPUBufferMapCallbackInfo2 = record
+   TWGPUBufferMapCallbackInfo = record
       nextInChain: PWGPUChainedStruct;
       mode: TWGPUCallbackMode;
-      callback: TWGPUBufferMapCallback2;
+      callback: TWGPUBufferMapCallback;
       userdata1: Pointer;
       userdata2: Pointer;
    end;
 
-   TWGPUCompilationInfoCallbackInfo2 = record
+   TWGPUCompilationInfoCallbackInfo = record
       nextInChain: PWGPUChainedStruct;
       mode: TWGPUCallbackMode;
-      callback: TWGPUCompilationInfoCallback2;
+      callback: TWGPUCompilationInfoCallback;
       userdata1: Pointer;
       userdata2: Pointer;
    end;
 
-   TWGPUCreateComputePipelineAsyncCallbackInfo2 = record
+   TWGPUCreateComputePipelineAsyncCallbackInfo = record
       nextInChain: PWGPUChainedStruct;
       mode: TWGPUCallbackMode;
-      callback: TWGPUCreateComputePipelineAsyncCallback2;
+      callback: TWGPUCreateComputePipelineAsyncCallback;
       userdata1: Pointer;
       userdata2: Pointer;
    end;
 
-   TWGPUCreateRenderPipelineAsyncCallbackInfo2 = record
+   TWGPUCreateRenderPipelineAsyncCallbackInfo = record
       nextInChain: PWGPUChainedStruct;
       mode: TWGPUCallbackMode;
-      callback: TWGPUCreateRenderPipelineAsyncCallback2;
+      callback: TWGPUCreateRenderPipelineAsyncCallback;
       userdata1: Pointer;
       userdata2: Pointer;
    end;
@@ -1275,18 +1249,18 @@ type
       userdata2: Pointer;
    end;
 
-   TWGPUPopErrorScopeCallbackInfo2 = record
+   TWGPUPopErrorScopeCallbackInfo = record
       nextInChain: PWGPUChainedStruct;
       mode: TWGPUCallbackMode;
-      callback: TWGPUPopErrorScopeCallback2;
+      callback: TWGPUPopErrorScopeCallback;
       userdata1: Pointer;
       userdata2: Pointer;
    end;
 
-   TWGPUQueueWorkDoneCallbackInfo2 = record
+   TWGPUQueueWorkDoneCallbackInfo = record
       nextInChain: PWGPUChainedStruct;
       mode: TWGPUCallbackMode;
-      callback: TWGPUQueueWorkDoneCallback2;
+      callback: TWGPUQueueWorkDoneCallback;
       userdata1: Pointer;
       userdata2: Pointer;
    end;
@@ -1364,13 +1338,6 @@ type
       userdata: Pointer;
    end;
 
-   TWGPUBufferMapCallbackInfo = record
-      nextInChain: PWGPUChainedStruct;
-      mode: TWGPUCallbackMode;
-      callback: TWGPUBufferMapCallback;
-      userdata: Pointer;
-   end;
-
    TWGPUColor = record
       r: Double;
       g: Double;
@@ -1381,13 +1348,6 @@ type
    TWGPUColorTargetStateExpandResolveTextureDawn = record
       chain: TWGPUChainedStruct;
       enabled: TWGPUBool;
-   end;
-
-   TWGPUCompilationInfoCallbackInfo = record
-      nextInChain: PWGPUChainedStruct;
-      mode: TWGPUCallbackMode;
-      callback: TWGPUCompilationInfoCallback;
-      userdata: Pointer;
    end;
 
    TWGPUComputePassTimestampWrites = record
@@ -1406,20 +1366,6 @@ type
       dstTransferFunctionParameters: PSingle;
       dstAlphaMode: TWGPUAlphaMode;
       internalUsage: TWGPUBool;
-   end;
-
-   TWGPUCreateComputePipelineAsyncCallbackInfo = record
-      nextInChain: PWGPUChainedStruct;
-      mode: TWGPUCallbackMode;
-      callback: TWGPUCreateComputePipelineAsyncCallback;
-      userdata: Pointer;
-   end;
-
-   TWGPUCreateRenderPipelineAsyncCallbackInfo = record
-      nextInChain: PWGPUChainedStruct;
-      mode: TWGPUCallbackMode;
-      callback: TWGPUCreateRenderPipelineAsyncCallback;
-      userdata: Pointer;
    end;
 
    TWGPUDawnWGSLBlocklist = record
@@ -1568,6 +1514,10 @@ type
       maxComputeWorkgroupSizeY: UInt32;
       maxComputeWorkgroupSizeZ: UInt32;
       maxComputeWorkgroupsPerDimension: UInt32;
+      maxStorageBuffersInVertexStage: UInt32;
+      maxStorageTexturesInVertexStage: UInt32;
+      maxStorageBuffersInFragmentStage: UInt32;
+      maxStorageTexturesInFragmentStage: UInt32;
    end;
 
    TWGPUMemoryHeapInfo = record
@@ -1598,14 +1548,6 @@ type
       format: TWGPUTextureFormat;
    end;
 
-   TWGPUPopErrorScopeCallbackInfo = record
-      nextInChain: PWGPUChainedStruct;
-      mode: TWGPUCallbackMode;
-      callback: TWGPUPopErrorScopeCallback;
-      oldCallback: TWGPUErrorCallback;
-      userdata: Pointer;
-   end;
-
    TWGPUPrimitiveState = record
       nextInChain: PWGPUChainedStruct;
       topology: TWGPUPrimitiveTopology;
@@ -1613,13 +1555,6 @@ type
       frontFace: TWGPUFrontFace;
       cullMode: TWGPUCullMode;
       unclippedDepth: TWGPUBool;
-   end;
-
-   TWGPUQueueWorkDoneCallbackInfo = record
-      nextInChain: PWGPUChainedStruct;
-      mode: TWGPUCallbackMode;
-      callback: TWGPUQueueWorkDoneCallback;
-      userdata: Pointer;
    end;
 
    TWGPURenderPassDepthStencilAttachment = record
@@ -2431,7 +2366,6 @@ type
       fragment: PWGPUFragmentState;
    end;
 
-   WGPUProgrammableStageDescriptor = TWGPUComputeState;
    WGPURenderPassDescriptorMaxDrawCount = TWGPURenderPassMaxDrawCount;
    WGPUShaderModuleSPIRVDescriptor = TWGPUShaderSourceSPIRV;
    WGPUShaderModuleWGSLDescriptor = TWGPUShaderSourceWGSL;
@@ -2477,9 +2411,7 @@ type
    TWGPUProcBufferGetMappedRange = function(buffer: TWGPUBuffer; offset: NativeUInt; size: NativeUInt): Pointer; cdecl;
    TWGPUProcBufferGetSize = function(buffer: TWGPUBuffer): UInt64; cdecl;
    TWGPUProcBufferGetUsage = function(buffer: TWGPUBuffer): TWGPUBufferUsage; cdecl;
-   TWGPUProcBufferMapAsync = procedure(buffer: TWGPUBuffer; mode: TWGPUMapMode; offset: NativeUInt; size: NativeUInt; callback: TWGPUBufferMapCallback; userdata: Pointer); cdecl;
-   TWGPUProcBufferMapAsync2 = function(buffer: TWGPUBuffer; mode: TWGPUMapMode; offset: NativeUInt; size: NativeUInt; callbackInfo: TWGPUBufferMapCallbackInfo2): TWGPUFuture; cdecl;
-   TWGPUProcBufferMapAsyncF = function(buffer: TWGPUBuffer; mode: TWGPUMapMode; offset: NativeUInt; size: NativeUInt; callbackInfo: TWGPUBufferMapCallbackInfo): TWGPUFuture; cdecl;
+   TWGPUProcBufferMapAsync = function(buffer: TWGPUBuffer; mode: TWGPUMapMode; offset: NativeUInt; size: NativeUInt; callbackInfo: TWGPUBufferMapCallbackInfo): TWGPUFuture; cdecl;
    TWGPUProcBufferSetLabel = procedure(buffer: TWGPUBuffer; &label: TWGPUStringView); cdecl;
    TWGPUProcBufferUnmap = procedure(buffer: TWGPUBuffer); cdecl;
    TWGPUProcBufferAddRef = procedure(buffer: TWGPUBuffer); cdecl;
@@ -2526,9 +2458,7 @@ type
    TWGPUProcDeviceCreateBuffer = function(device: TWGPUDevice; const descriptor: PWGPUBufferDescriptor): TWGPUBuffer; cdecl;
    TWGPUProcDeviceCreateCommandEncoder = function(device: TWGPUDevice; const descriptor: PWGPUCommandEncoderDescriptor): TWGPUCommandEncoder; cdecl;
    TWGPUProcDeviceCreateComputePipeline = function(device: TWGPUDevice; const descriptor: PWGPUComputePipelineDescriptor): TWGPUComputePipeline; cdecl;
-   TWGPUProcDeviceCreateComputePipelineAsync = procedure(device: TWGPUDevice; const descriptor: PWGPUComputePipelineDescriptor; callback: TWGPUCreateComputePipelineAsyncCallback; userdata: Pointer); cdecl;
-   TWGPUProcDeviceCreateComputePipelineAsync2 = function(device: TWGPUDevice; const descriptor: PWGPUComputePipelineDescriptor; callbackInfo: TWGPUCreateComputePipelineAsyncCallbackInfo2): TWGPUFuture; cdecl;
-   TWGPUProcDeviceCreateComputePipelineAsyncF = function(device: TWGPUDevice; const descriptor: PWGPUComputePipelineDescriptor; callbackInfo: TWGPUCreateComputePipelineAsyncCallbackInfo): TWGPUFuture; cdecl;
+   TWGPUProcDeviceCreateComputePipelineAsync = function(device: TWGPUDevice; const descriptor: PWGPUComputePipelineDescriptor; callbackInfo: TWGPUCreateComputePipelineAsyncCallbackInfo): TWGPUFuture; cdecl;
    TWGPUProcDeviceCreateErrorBuffer = function(device: TWGPUDevice; const descriptor: PWGPUBufferDescriptor): TWGPUBuffer; cdecl;
    TWGPUProcDeviceCreateErrorExternalTexture = function(device: TWGPUDevice): TWGPUExternalTexture; cdecl;
    TWGPUProcDeviceCreateErrorShaderModule = function(device: TWGPUDevice; const descriptor: PWGPUShaderModuleDescriptor; errorMessage: TWGPUStringView): TWGPUShaderModule; cdecl;
@@ -2538,9 +2468,7 @@ type
    TWGPUProcDeviceCreateQuerySet = function(device: TWGPUDevice; const descriptor: PWGPUQuerySetDescriptor): TWGPUQuerySet; cdecl;
    TWGPUProcDeviceCreateRenderBundleEncoder = function(device: TWGPUDevice; const descriptor: PWGPURenderBundleEncoderDescriptor): TWGPURenderBundleEncoder; cdecl;
    TWGPUProcDeviceCreateRenderPipeline = function(device: TWGPUDevice; const descriptor: PWGPURenderPipelineDescriptor): TWGPURenderPipeline; cdecl;
-   TWGPUProcDeviceCreateRenderPipelineAsync = procedure(device: TWGPUDevice; const descriptor: PWGPURenderPipelineDescriptor; callback: TWGPUCreateRenderPipelineAsyncCallback; userdata: Pointer); cdecl;
-   TWGPUProcDeviceCreateRenderPipelineAsync2 = function(device: TWGPUDevice; const descriptor: PWGPURenderPipelineDescriptor; callbackInfo: TWGPUCreateRenderPipelineAsyncCallbackInfo2): TWGPUFuture; cdecl;
-   TWGPUProcDeviceCreateRenderPipelineAsyncF = function(device: TWGPUDevice; const descriptor: PWGPURenderPipelineDescriptor; callbackInfo: TWGPUCreateRenderPipelineAsyncCallbackInfo): TWGPUFuture; cdecl;
+   TWGPUProcDeviceCreateRenderPipelineAsync = function(device: TWGPUDevice; const descriptor: PWGPURenderPipelineDescriptor; callbackInfo: TWGPUCreateRenderPipelineAsyncCallbackInfo): TWGPUFuture; cdecl;
    TWGPUProcDeviceCreateSampler = function(device: TWGPUDevice; const descriptor: PWGPUSamplerDescriptor): TWGPUSampler; cdecl;
    TWGPUProcDeviceCreateShaderModule = function(device: TWGPUDevice; const descriptor: PWGPUShaderModuleDescriptor): TWGPUShaderModule; cdecl;
    TWGPUProcDeviceCreateTexture = function(device: TWGPUDevice; const descriptor: PWGPUTextureDescriptor): TWGPUTexture; cdecl;
@@ -2558,9 +2486,7 @@ type
    TWGPUProcDeviceImportSharedFence = function(device: TWGPUDevice; const descriptor: PWGPUSharedFenceDescriptor): TWGPUSharedFence; cdecl;
    TWGPUProcDeviceImportSharedTextureMemory = function(device: TWGPUDevice; const descriptor: PWGPUSharedTextureMemoryDescriptor): TWGPUSharedTextureMemory; cdecl;
    TWGPUProcDeviceInjectError = procedure(device: TWGPUDevice; &type: TWGPUErrorType; const &message: TWGPUStringView); cdecl;
-   TWGPUProcDevicePopErrorScope = procedure(device: TWGPUDevice; oldCallback: TWGPUErrorCallback; userdata: Pointer); cdecl;
-   TWGPUProcDevicePopErrorScope2 = function(device: TWGPUDevice; callbackInfo: TWGPUPopErrorScopeCallbackInfo2): TWGPUFuture; cdecl;
-   TWGPUProcDevicePopErrorScopeF = function(device: TWGPUDevice; callbackInfo: TWGPUPopErrorScopeCallbackInfo): TWGPUFuture; cdecl;
+   TWGPUProcDevicePopErrorScope = function(device: TWGPUDevice; callbackInfo: TWGPUPopErrorScopeCallbackInfo): TWGPUFuture; cdecl;
    TWGPUProcDevicePushErrorScope = procedure(device: TWGPUDevice; filter: TWGPUErrorFilter); cdecl;
    TWGPUProcDeviceSetLabel = procedure(device: TWGPUDevice; &label: TWGPUStringView); cdecl;
    TWGPUProcDeviceSetLoggingCallback = procedure(device: TWGPUDevice; callback: TWGPULoggingCallback; userdata: Pointer); cdecl;
@@ -2595,9 +2521,7 @@ type
    TWGPUProcQuerySetRelease = procedure(querySet: TWGPUQuerySet); cdecl;
    TWGPUProcQueueCopyExternalTextureForBrowser = procedure(queue: TWGPUQueue; const source: PWGPUImageCopyExternalTexture; const destination: PWGPUImageCopyTexture; const copySize: PWGPUExtent3D; const options: PWGPUCopyTextureForBrowserOptions); cdecl;
    TWGPUProcQueueCopyTextureForBrowser = procedure(queue: TWGPUQueue; const source: PWGPUImageCopyTexture; const destination: PWGPUImageCopyTexture; const copySize: PWGPUExtent3D; const options: PWGPUCopyTextureForBrowserOptions); cdecl;
-   TWGPUProcQueueOnSubmittedWorkDone = procedure(queue: TWGPUQueue; callback: TWGPUQueueWorkDoneCallback; userdata: Pointer); cdecl;
-   TWGPUProcQueueOnSubmittedWorkDone2 = function(queue: TWGPUQueue; callbackInfo: TWGPUQueueWorkDoneCallbackInfo2): TWGPUFuture; cdecl;
-   TWGPUProcQueueOnSubmittedWorkDoneF = function(queue: TWGPUQueue; callbackInfo: TWGPUQueueWorkDoneCallbackInfo): TWGPUFuture; cdecl;
+   TWGPUProcQueueOnSubmittedWorkDone = function(queue: TWGPUQueue; callbackInfo: TWGPUQueueWorkDoneCallbackInfo): TWGPUFuture; cdecl;
    TWGPUProcQueueSetLabel = procedure(queue: TWGPUQueue; &label: TWGPUStringView); cdecl;
    TWGPUProcQueueSubmit = procedure(queue: TWGPUQueue; commandCount: NativeUInt; const commands: PWGPUCommandBuffer); cdecl;
    TWGPUProcQueueWriteBuffer = procedure(queue: TWGPUQueue; buffer: TWGPUBuffer; bufferOffset: UInt64; const data: Pointer; size: NativeUInt); cdecl;
@@ -2655,9 +2579,7 @@ type
    TWGPUProcSamplerSetLabel = procedure(sampler: TWGPUSampler; &label: TWGPUStringView); cdecl;
    TWGPUProcSamplerAddRef = procedure(sampler: TWGPUSampler); cdecl;
    TWGPUProcSamplerRelease = procedure(sampler: TWGPUSampler); cdecl;
-   TWGPUProcShaderModuleGetCompilationInfo = procedure(shaderModule: TWGPUShaderModule; callback: TWGPUCompilationInfoCallback; userdata: Pointer); cdecl;
-   TWGPUProcShaderModuleGetCompilationInfo2 = function(shaderModule: TWGPUShaderModule; callbackInfo: TWGPUCompilationInfoCallbackInfo2): TWGPUFuture; cdecl;
-   TWGPUProcShaderModuleGetCompilationInfoF = function(shaderModule: TWGPUShaderModule; callbackInfo: TWGPUCompilationInfoCallbackInfo): TWGPUFuture; cdecl;
+   TWGPUProcShaderModuleGetCompilationInfo = function(shaderModule: TWGPUShaderModule; callbackInfo: TWGPUCompilationInfoCallbackInfo): TWGPUFuture; cdecl;
    TWGPUProcShaderModuleSetLabel = procedure(shaderModule: TWGPUShaderModule; &label: TWGPUStringView); cdecl;
    TWGPUProcShaderModuleAddRef = procedure(shaderModule: TWGPUShaderModule); cdecl;
    TWGPUProcShaderModuleRelease = procedure(shaderModule: TWGPUShaderModule); cdecl;
@@ -2779,9 +2701,7 @@ var
    wgpuBufferGetMappedRange : function(buffer: TWGPUBuffer; offset: NativeUInt; size: NativeUInt): Pointer; cdecl;
    wgpuBufferGetSize : function(buffer: TWGPUBuffer): UInt64; cdecl;
    wgpuBufferGetUsage : function(buffer: TWGPUBuffer): TWGPUBufferUsage; cdecl;
-   wgpuBufferMapAsync : procedure(buffer: TWGPUBuffer; mode: TWGPUMapMode; offset: NativeUInt; size: NativeUInt; callback: TWGPUBufferMapCallback; userdata: Pointer); cdecl;
-   wgpuBufferMapAsync2 : function(buffer: TWGPUBuffer; mode: TWGPUMapMode; offset: NativeUInt; size: NativeUInt; callbackInfo: TWGPUBufferMapCallbackInfo2): TWGPUFuture; cdecl;
-   wgpuBufferMapAsyncF : function(buffer: TWGPUBuffer; mode: TWGPUMapMode; offset: NativeUInt; size: NativeUInt; callbackInfo: TWGPUBufferMapCallbackInfo): TWGPUFuture; cdecl;
+   wgpuBufferMapAsync : function(buffer: TWGPUBuffer; mode: TWGPUMapMode; offset: NativeUInt; size: NativeUInt; callbackInfo: TWGPUBufferMapCallbackInfo): TWGPUFuture; cdecl;
    wgpuBufferSetLabel : procedure(buffer: TWGPUBuffer; &label: TWGPUStringView); cdecl;
    wgpuBufferUnmap : procedure(buffer: TWGPUBuffer); cdecl;
    wgpuBufferAddRef : procedure(buffer: TWGPUBuffer); cdecl;
@@ -2828,9 +2748,7 @@ var
    wgpuDeviceCreateBuffer : function(device: TWGPUDevice; const descriptor: PWGPUBufferDescriptor): TWGPUBuffer; cdecl;
    wgpuDeviceCreateCommandEncoder : function(device: TWGPUDevice; const descriptor: PWGPUCommandEncoderDescriptor): TWGPUCommandEncoder; cdecl;
    wgpuDeviceCreateComputePipeline : function(device: TWGPUDevice; const descriptor: PWGPUComputePipelineDescriptor): TWGPUComputePipeline; cdecl;
-   wgpuDeviceCreateComputePipelineAsync : procedure(device: TWGPUDevice; const descriptor: PWGPUComputePipelineDescriptor; callback: TWGPUCreateComputePipelineAsyncCallback; userdata: Pointer); cdecl;
-   wgpuDeviceCreateComputePipelineAsync2 : function(device: TWGPUDevice; const descriptor: PWGPUComputePipelineDescriptor; callbackInfo: TWGPUCreateComputePipelineAsyncCallbackInfo2): TWGPUFuture; cdecl;
-   wgpuDeviceCreateComputePipelineAsyncF : function(device: TWGPUDevice; const descriptor: PWGPUComputePipelineDescriptor; callbackInfo: TWGPUCreateComputePipelineAsyncCallbackInfo): TWGPUFuture; cdecl;
+   wgpuDeviceCreateComputePipelineAsync : function(device: TWGPUDevice; const descriptor: PWGPUComputePipelineDescriptor; callbackInfo: TWGPUCreateComputePipelineAsyncCallbackInfo): TWGPUFuture; cdecl;
    wgpuDeviceCreateErrorBuffer : function(device: TWGPUDevice; const descriptor: PWGPUBufferDescriptor): TWGPUBuffer; cdecl;
    wgpuDeviceCreateErrorExternalTexture : function(device: TWGPUDevice): TWGPUExternalTexture; cdecl;
    wgpuDeviceCreateErrorShaderModule : function(device: TWGPUDevice; const descriptor: PWGPUShaderModuleDescriptor; errorMessage: TWGPUStringView): TWGPUShaderModule; cdecl;
@@ -2840,9 +2758,7 @@ var
    wgpuDeviceCreateQuerySet : function(device: TWGPUDevice; const descriptor: PWGPUQuerySetDescriptor): TWGPUQuerySet; cdecl;
    wgpuDeviceCreateRenderBundleEncoder : function(device: TWGPUDevice; const descriptor: PWGPURenderBundleEncoderDescriptor): TWGPURenderBundleEncoder; cdecl;
    wgpuDeviceCreateRenderPipeline : function(device: TWGPUDevice; const descriptor: PWGPURenderPipelineDescriptor): TWGPURenderPipeline; cdecl;
-   wgpuDeviceCreateRenderPipelineAsync : procedure(device: TWGPUDevice; const descriptor: PWGPURenderPipelineDescriptor; callback: TWGPUCreateRenderPipelineAsyncCallback; userdata: Pointer); cdecl;
-   wgpuDeviceCreateRenderPipelineAsync2 : function(device: TWGPUDevice; const descriptor: PWGPURenderPipelineDescriptor; callbackInfo: TWGPUCreateRenderPipelineAsyncCallbackInfo2): TWGPUFuture; cdecl;
-   wgpuDeviceCreateRenderPipelineAsyncF : function(device: TWGPUDevice; const descriptor: PWGPURenderPipelineDescriptor; callbackInfo: TWGPUCreateRenderPipelineAsyncCallbackInfo): TWGPUFuture; cdecl;
+   wgpuDeviceCreateRenderPipelineAsync : function(device: TWGPUDevice; const descriptor: PWGPURenderPipelineDescriptor; callbackInfo: TWGPUCreateRenderPipelineAsyncCallbackInfo): TWGPUFuture; cdecl;
    wgpuDeviceCreateSampler : function(device: TWGPUDevice; const descriptor: PWGPUSamplerDescriptor): TWGPUSampler; cdecl;
    wgpuDeviceCreateShaderModule : function(device: TWGPUDevice; const descriptor: PWGPUShaderModuleDescriptor): TWGPUShaderModule; cdecl;
    wgpuDeviceCreateTexture : function(device: TWGPUDevice; const descriptor: PWGPUTextureDescriptor): TWGPUTexture; cdecl;
@@ -2860,9 +2776,7 @@ var
    wgpuDeviceImportSharedFence : function(device: TWGPUDevice; const descriptor: PWGPUSharedFenceDescriptor): TWGPUSharedFence; cdecl;
    wgpuDeviceImportSharedTextureMemory : function(device: TWGPUDevice; const descriptor: PWGPUSharedTextureMemoryDescriptor): TWGPUSharedTextureMemory; cdecl;
    wgpuDeviceInjectError : procedure(device: TWGPUDevice; &type: TWGPUErrorType; const &message: TWGPUStringView); cdecl;
-   wgpuDevicePopErrorScope : procedure(device: TWGPUDevice; oldCallback: TWGPUErrorCallback; userdata: Pointer); cdecl;
-   wgpuDevicePopErrorScope2 : function(device: TWGPUDevice; callbackInfo: TWGPUPopErrorScopeCallbackInfo2): TWGPUFuture; cdecl;
-   wgpuDevicePopErrorScopeF : function(device: TWGPUDevice; callbackInfo: TWGPUPopErrorScopeCallbackInfo): TWGPUFuture; cdecl;
+   wgpuDevicePopErrorScope : function(device: TWGPUDevice; callbackInfo: TWGPUPopErrorScopeCallbackInfo): TWGPUFuture; cdecl;
    wgpuDevicePushErrorScope : procedure(device: TWGPUDevice; filter: TWGPUErrorFilter); cdecl;
    wgpuDeviceSetLabel : procedure(device: TWGPUDevice; &label: TWGPUStringView); cdecl;
    wgpuDeviceSetLoggingCallback : procedure(device: TWGPUDevice; callback: TWGPULoggingCallback; userdata: Pointer); cdecl;
@@ -2897,9 +2811,7 @@ var
    wgpuQuerySetRelease : procedure(querySet: TWGPUQuerySet); cdecl;
    wgpuQueueCopyExternalTextureForBrowser : procedure(queue: TWGPUQueue; const source: PWGPUImageCopyExternalTexture; const destination: PWGPUImageCopyTexture; const copySize: PWGPUExtent3D; const options: PWGPUCopyTextureForBrowserOptions); cdecl;
    wgpuQueueCopyTextureForBrowser : procedure(queue: TWGPUQueue; const source: PWGPUImageCopyTexture; const destination: PWGPUImageCopyTexture; const copySize: PWGPUExtent3D; const options: PWGPUCopyTextureForBrowserOptions); cdecl;
-   wgpuQueueOnSubmittedWorkDone : procedure(queue: TWGPUQueue; callback: TWGPUQueueWorkDoneCallback; userdata: Pointer); cdecl;
-   wgpuQueueOnSubmittedWorkDone2 : function(queue: TWGPUQueue; callbackInfo: TWGPUQueueWorkDoneCallbackInfo2): TWGPUFuture; cdecl;
-   wgpuQueueOnSubmittedWorkDoneF : function(queue: TWGPUQueue; callbackInfo: TWGPUQueueWorkDoneCallbackInfo): TWGPUFuture; cdecl;
+   wgpuQueueOnSubmittedWorkDone : function(queue: TWGPUQueue; callbackInfo: TWGPUQueueWorkDoneCallbackInfo): TWGPUFuture; cdecl;
    wgpuQueueSetLabel : procedure(queue: TWGPUQueue; &label: TWGPUStringView); cdecl;
    wgpuQueueSubmit : procedure(queue: TWGPUQueue; commandCount: NativeUInt; const commands: PWGPUCommandBuffer); cdecl;
    wgpuQueueWriteBuffer : procedure(queue: TWGPUQueue; buffer: TWGPUBuffer; bufferOffset: UInt64; const data: Pointer; size: NativeUInt); cdecl;
@@ -2957,9 +2869,7 @@ var
    wgpuSamplerSetLabel : procedure(sampler: TWGPUSampler; &label: TWGPUStringView); cdecl;
    wgpuSamplerAddRef : procedure(sampler: TWGPUSampler); cdecl;
    wgpuSamplerRelease : procedure(sampler: TWGPUSampler); cdecl;
-   wgpuShaderModuleGetCompilationInfo : procedure(shaderModule: TWGPUShaderModule; callback: TWGPUCompilationInfoCallback; userdata: Pointer); cdecl;
-   wgpuShaderModuleGetCompilationInfo2 : function(shaderModule: TWGPUShaderModule; callbackInfo: TWGPUCompilationInfoCallbackInfo2): TWGPUFuture; cdecl;
-   wgpuShaderModuleGetCompilationInfoF : function(shaderModule: TWGPUShaderModule; callbackInfo: TWGPUCompilationInfoCallbackInfo): TWGPUFuture; cdecl;
+   wgpuShaderModuleGetCompilationInfo : function(shaderModule: TWGPUShaderModule; callbackInfo: TWGPUCompilationInfoCallbackInfo): TWGPUFuture; cdecl;
    wgpuShaderModuleSetLabel : procedure(shaderModule: TWGPUShaderModule; &label: TWGPUStringView); cdecl;
    wgpuShaderModuleAddRef : procedure(shaderModule: TWGPUShaderModule); cdecl;
    wgpuShaderModuleRelease : procedure(shaderModule: TWGPUShaderModule); cdecl;
@@ -3055,8 +2965,6 @@ begin
    wgpuBufferGetSize := GetProcAddress(vLib, 'wgpuBufferGetSize');
    wgpuBufferGetUsage := GetProcAddress(vLib, 'wgpuBufferGetUsage');
    wgpuBufferMapAsync := GetProcAddress(vLib, 'wgpuBufferMapAsync');
-   wgpuBufferMapAsync2 := GetProcAddress(vLib, 'wgpuBufferMapAsync2');
-   wgpuBufferMapAsyncF := GetProcAddress(vLib, 'wgpuBufferMapAsyncF');
    wgpuBufferSetLabel := GetProcAddress(vLib, 'wgpuBufferSetLabel');
    wgpuBufferUnmap := GetProcAddress(vLib, 'wgpuBufferUnmap');
    wgpuBufferAddRef := GetProcAddress(vLib, 'wgpuBufferAddRef');
@@ -3104,8 +3012,6 @@ begin
    wgpuDeviceCreateCommandEncoder := GetProcAddress(vLib, 'wgpuDeviceCreateCommandEncoder');
    wgpuDeviceCreateComputePipeline := GetProcAddress(vLib, 'wgpuDeviceCreateComputePipeline');
    wgpuDeviceCreateComputePipelineAsync := GetProcAddress(vLib, 'wgpuDeviceCreateComputePipelineAsync');
-   wgpuDeviceCreateComputePipelineAsync2 := GetProcAddress(vLib, 'wgpuDeviceCreateComputePipelineAsync2');
-   wgpuDeviceCreateComputePipelineAsyncF := GetProcAddress(vLib, 'wgpuDeviceCreateComputePipelineAsyncF');
    wgpuDeviceCreateErrorBuffer := GetProcAddress(vLib, 'wgpuDeviceCreateErrorBuffer');
    wgpuDeviceCreateErrorExternalTexture := GetProcAddress(vLib, 'wgpuDeviceCreateErrorExternalTexture');
    wgpuDeviceCreateErrorShaderModule := GetProcAddress(vLib, 'wgpuDeviceCreateErrorShaderModule');
@@ -3116,8 +3022,6 @@ begin
    wgpuDeviceCreateRenderBundleEncoder := GetProcAddress(vLib, 'wgpuDeviceCreateRenderBundleEncoder');
    wgpuDeviceCreateRenderPipeline := GetProcAddress(vLib, 'wgpuDeviceCreateRenderPipeline');
    wgpuDeviceCreateRenderPipelineAsync := GetProcAddress(vLib, 'wgpuDeviceCreateRenderPipelineAsync');
-   wgpuDeviceCreateRenderPipelineAsync2 := GetProcAddress(vLib, 'wgpuDeviceCreateRenderPipelineAsync2');
-   wgpuDeviceCreateRenderPipelineAsyncF := GetProcAddress(vLib, 'wgpuDeviceCreateRenderPipelineAsyncF');
    wgpuDeviceCreateSampler := GetProcAddress(vLib, 'wgpuDeviceCreateSampler');
    wgpuDeviceCreateShaderModule := GetProcAddress(vLib, 'wgpuDeviceCreateShaderModule');
    wgpuDeviceCreateTexture := GetProcAddress(vLib, 'wgpuDeviceCreateTexture');
@@ -3136,8 +3040,6 @@ begin
    wgpuDeviceImportSharedTextureMemory := GetProcAddress(vLib, 'wgpuDeviceImportSharedTextureMemory');
    wgpuDeviceInjectError := GetProcAddress(vLib, 'wgpuDeviceInjectError');
    wgpuDevicePopErrorScope := GetProcAddress(vLib, 'wgpuDevicePopErrorScope');
-   wgpuDevicePopErrorScope2 := GetProcAddress(vLib, 'wgpuDevicePopErrorScope2');
-   wgpuDevicePopErrorScopeF := GetProcAddress(vLib, 'wgpuDevicePopErrorScopeF');
    wgpuDevicePushErrorScope := GetProcAddress(vLib, 'wgpuDevicePushErrorScope');
    wgpuDeviceSetLabel := GetProcAddress(vLib, 'wgpuDeviceSetLabel');
    wgpuDeviceSetLoggingCallback := GetProcAddress(vLib, 'wgpuDeviceSetLoggingCallback');
@@ -3173,8 +3075,6 @@ begin
    wgpuQueueCopyExternalTextureForBrowser := GetProcAddress(vLib, 'wgpuQueueCopyExternalTextureForBrowser');
    wgpuQueueCopyTextureForBrowser := GetProcAddress(vLib, 'wgpuQueueCopyTextureForBrowser');
    wgpuQueueOnSubmittedWorkDone := GetProcAddress(vLib, 'wgpuQueueOnSubmittedWorkDone');
-   wgpuQueueOnSubmittedWorkDone2 := GetProcAddress(vLib, 'wgpuQueueOnSubmittedWorkDone2');
-   wgpuQueueOnSubmittedWorkDoneF := GetProcAddress(vLib, 'wgpuQueueOnSubmittedWorkDoneF');
    wgpuQueueSetLabel := GetProcAddress(vLib, 'wgpuQueueSetLabel');
    wgpuQueueSubmit := GetProcAddress(vLib, 'wgpuQueueSubmit');
    wgpuQueueWriteBuffer := GetProcAddress(vLib, 'wgpuQueueWriteBuffer');
@@ -3233,8 +3133,6 @@ begin
    wgpuSamplerAddRef := GetProcAddress(vLib, 'wgpuSamplerAddRef');
    wgpuSamplerRelease := GetProcAddress(vLib, 'wgpuSamplerRelease');
    wgpuShaderModuleGetCompilationInfo := GetProcAddress(vLib, 'wgpuShaderModuleGetCompilationInfo');
-   wgpuShaderModuleGetCompilationInfo2 := GetProcAddress(vLib, 'wgpuShaderModuleGetCompilationInfo2');
-   wgpuShaderModuleGetCompilationInfoF := GetProcAddress(vLib, 'wgpuShaderModuleGetCompilationInfoF');
    wgpuShaderModuleSetLabel := GetProcAddress(vLib, 'wgpuShaderModuleSetLabel');
    wgpuShaderModuleAddRef := GetProcAddress(vLib, 'wgpuShaderModuleAddRef');
    wgpuShaderModuleRelease := GetProcAddress(vLib, 'wgpuShaderModuleRelease');
