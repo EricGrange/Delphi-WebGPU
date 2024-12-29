@@ -6,8 +6,8 @@ WebGPU headers are maintained at https://github.com/webgpu-native/webgpu-headers
 
 **The header is NOT STABLE yet, breaking changes can happen on a weekly basis!**
 
-Precompliled Dawn builds can be found at https://github.com/mmozeiko/build-dawn
-(one is included in the "dawn-x64" folder)
+The WebGPU implementation maintained by Google (for Chromium) is Dawn and can be found at https://dawn.googlesource.com/dawn/.
+Precompliled Dawn builds are regularly updated at https://github.com/mmozeiko/build-dawn (one is included in the "dawn-x64" folder)
 
 Note that while precompiled wgpu-native builds can be found at at https://github.com/gfx-rs/wgpu-native they are not compatible at the moment (different enum values in their webpgu.h)
 
