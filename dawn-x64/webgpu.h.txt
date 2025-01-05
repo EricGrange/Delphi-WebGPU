@@ -140,10 +140,14 @@ struct WGPUBindGroupEntry;
 struct WGPUBlendComponent;
 struct WGPUBufferBindingLayout;
 struct WGPUBufferHostMappedPointer;
+struct WGPUBufferMapCallbackInfo;
 struct WGPUColor;
 struct WGPUColorTargetStateExpandResolveTextureDawn;
+struct WGPUCompilationInfoCallbackInfo;
 struct WGPUComputePassTimestampWrites;
 struct WGPUCopyTextureForBrowserOptions;
+struct WGPUCreateComputePipelineAsyncCallbackInfo;
+struct WGPUCreateRenderPipelineAsyncCallbackInfo;
 struct WGPUDawnWGSLBlocklist;
 struct WGPUDawnAdapterPropertiesPowerPreference;
 struct WGPUDawnBufferDescriptorErrorInfoFromWireClient;
@@ -171,7 +175,9 @@ struct WGPUMultisampleState;
 struct WGPUOrigin2D;
 struct WGPUOrigin3D;
 struct WGPUPipelineLayoutStorageAttachment;
+struct WGPUPopErrorScopeCallbackInfo;
 struct WGPUPrimitiveState;
+struct WGPUQueueWorkDoneCallbackInfo;
 struct WGPURenderPassDepthStencilAttachment;
 struct WGPURenderPassDescriptorExpandResolveRect;
 struct WGPURenderPassMaxDrawCount;
@@ -369,6 +375,19 @@ typedef enum WGPUBufferBindingType {
     WGPUBufferBindingType_ReadOnlyStorage = 0x00000003,
     WGPUBufferBindingType_Force32 = 0x7FFFFFFF
 } WGPUBufferBindingType WGPU_ENUM_ATTRIBUTE;
+typedef enum WGPUBufferMapAsyncStatus {
+    WGPUBufferMapAsyncStatus_Success = 0x00000001,
+    WGPUBufferMapAsyncStatus_InstanceDropped = 0x00000002,
+    WGPUBufferMapAsyncStatus_ValidationError = 0x00000003,
+    WGPUBufferMapAsyncStatus_Unknown = 0x00000004,
+    WGPUBufferMapAsyncStatus_DeviceLost = 0x00000005,
+    WGPUBufferMapAsyncStatus_DestroyedBeforeCallback = 0x00000006,
+    WGPUBufferMapAsyncStatus_UnmappedBeforeCallback = 0x00000007,
+    WGPUBufferMapAsyncStatus_MappingAlreadyPending = 0x00000008,
+    WGPUBufferMapAsyncStatus_OffsetOutOfRange = 0x00000009,
+    WGPUBufferMapAsyncStatus_SizeOutOfRange = 0x0000000A,
+    WGPUBufferMapAsyncStatus_Force32 = 0x7FFFFFFF
+} WGPUBufferMapAsyncStatus WGPU_ENUM_ATTRIBUTE;
 typedef enum WGPUBufferMapState {
     WGPUBufferMapState_Unmapped = 0x00000001,
     WGPUBufferMapState_Pending = 0x00000002,
@@ -630,6 +649,7 @@ typedef enum WGPUQueueWorkDoneStatus {
     WGPUQueueWorkDoneStatus_InstanceDropped = 0x00000002,
     WGPUQueueWorkDoneStatus_Error = 0x00000003,
     WGPUQueueWorkDoneStatus_Unknown = 0x00000004,
+    WGPUQueueWorkDoneStatus_DeviceLost = 0x00000005,
     WGPUQueueWorkDoneStatus_Force32 = 0x7FFFFFFF
 } WGPUQueueWorkDoneStatus WGPU_ENUM_ATTRIBUTE;
 typedef enum WGPURequestAdapterStatus {
@@ -971,10 +991,9 @@ typedef enum WGPUVertexFormat {
     WGPUVertexFormat_Force32 = 0x7FFFFFFF
 } WGPUVertexFormat WGPU_ENUM_ATTRIBUTE;
 typedef enum WGPUVertexStepMode {
-    WGPUVertexStepMode_VertexBufferNotUsed = 0x00000000,
-    WGPUVertexStepMode_Undefined = 0x00000001,
-    WGPUVertexStepMode_Vertex = 0x00000002,
-    WGPUVertexStepMode_Instance = 0x00000003,
+    WGPUVertexStepMode_Undefined = 0x00000000,
+    WGPUVertexStepMode_Vertex = 0x00000001,
+    WGPUVertexStepMode_Instance = 0x00000002,
     WGPUVertexStepMode_Force32 = 0x7FFFFFFF
 } WGPUVertexStepMode WGPU_ENUM_ATTRIBUTE;
 typedef enum WGPUWaitStatus {
@@ -1030,25 +1049,31 @@ static const WGPUTextureUsage WGPUTextureUsage_StorageBinding = 0x00000000000000
 static const WGPUTextureUsage WGPUTextureUsage_RenderAttachment = 0x0000000000000010;
 static const WGPUTextureUsage WGPUTextureUsage_TransientAttachment = 0x0000000000000020;
 static const WGPUTextureUsage WGPUTextureUsage_StorageAttachment = 0x0000000000000040;
+typedef void (*WGPUBufferMapCallback)(WGPUBufferMapAsyncStatus status, void * userdata) WGPU_FUNCTION_ATTRIBUTE;
 typedef void (*WGPUCallback)(void * userdata) WGPU_FUNCTION_ATTRIBUTE;
+typedef void (*WGPUCompilationInfoCallback)(WGPUCompilationInfoRequestStatus status, struct WGPUCompilationInfo const * compilationInfo, void * userdata) WGPU_FUNCTION_ATTRIBUTE;
+typedef void (*WGPUCreateComputePipelineAsyncCallback)(WGPUCreatePipelineAsyncStatus status, WGPUComputePipeline pipeline, struct WGPUStringView message, void * userdata) WGPU_FUNCTION_ATTRIBUTE;
+typedef void (*WGPUCreateRenderPipelineAsyncCallback)(WGPUCreatePipelineAsyncStatus status, WGPURenderPipeline pipeline, struct WGPUStringView message, void * userdata) WGPU_FUNCTION_ATTRIBUTE;
 typedef size_t (*WGPUDawnLoadCacheDataFunction)(void const * key, size_t keySize, void * value, size_t valueSize, void * userdata) WGPU_FUNCTION_ATTRIBUTE;
 typedef void (*WGPUDawnStoreCacheDataFunction)(void const * key, size_t keySize, void const * value, size_t valueSize, void * userdata) WGPU_FUNCTION_ATTRIBUTE;
 typedef void (*WGPUDeviceLostCallback)(WGPUDeviceLostReason reason, struct WGPUStringView message, void * userdata) WGPU_FUNCTION_ATTRIBUTE;
 typedef void (*WGPUDeviceLostCallbackNew)(WGPUDevice const * device, WGPUDeviceLostReason reason, struct WGPUStringView message, void * userdata) WGPU_FUNCTION_ATTRIBUTE;
 typedef void (*WGPUErrorCallback)(WGPUErrorType type, struct WGPUStringView message, void * userdata) WGPU_FUNCTION_ATTRIBUTE;
 typedef void (*WGPULoggingCallback)(WGPULoggingType type, struct WGPUStringView message, void * userdata) WGPU_FUNCTION_ATTRIBUTE;
+typedef void (*WGPUPopErrorScopeCallback)(WGPUPopErrorScopeStatus status, WGPUErrorType type, struct WGPUStringView message, void * userdata) WGPU_FUNCTION_ATTRIBUTE;
 typedef void (*WGPUProc)(void) WGPU_FUNCTION_ATTRIBUTE;
+typedef void (*WGPUQueueWorkDoneCallback)(WGPUQueueWorkDoneStatus status, void * userdata) WGPU_FUNCTION_ATTRIBUTE;
 typedef void (*WGPURequestAdapterCallback)(WGPURequestAdapterStatus status, WGPUAdapter adapter, struct WGPUStringView message, void * userdata) WGPU_FUNCTION_ATTRIBUTE;
 typedef void (*WGPURequestDeviceCallback)(WGPURequestDeviceStatus status, WGPUDevice device, struct WGPUStringView message, void * userdata) WGPU_FUNCTION_ATTRIBUTE;
 
 // Callback function pointers
-typedef void (*WGPUBufferMapCallback)(WGPUMapAsyncStatus status, struct WGPUStringView message, void* userdata1, void* userdata2) WGPU_FUNCTION_ATTRIBUTE;
-typedef void (*WGPUCompilationInfoCallback)(WGPUCompilationInfoRequestStatus status, struct WGPUCompilationInfo const * compilationInfo, void* userdata1, void* userdata2) WGPU_FUNCTION_ATTRIBUTE;
-typedef void (*WGPUCreateComputePipelineAsyncCallback)(WGPUCreatePipelineAsyncStatus status, WGPUComputePipeline pipeline, struct WGPUStringView message, void* userdata1, void* userdata2) WGPU_FUNCTION_ATTRIBUTE;
-typedef void (*WGPUCreateRenderPipelineAsyncCallback)(WGPUCreatePipelineAsyncStatus status, WGPURenderPipeline pipeline, struct WGPUStringView message, void* userdata1, void* userdata2) WGPU_FUNCTION_ATTRIBUTE;
+typedef void (*WGPUBufferMapCallback2)(WGPUMapAsyncStatus status, struct WGPUStringView message, void* userdata1, void* userdata2) WGPU_FUNCTION_ATTRIBUTE;
+typedef void (*WGPUCompilationInfoCallback2)(WGPUCompilationInfoRequestStatus status, struct WGPUCompilationInfo const * compilationInfo, void* userdata1, void* userdata2) WGPU_FUNCTION_ATTRIBUTE;
+typedef void (*WGPUCreateComputePipelineAsyncCallback2)(WGPUCreatePipelineAsyncStatus status, WGPUComputePipeline pipeline, struct WGPUStringView message, void* userdata1, void* userdata2) WGPU_FUNCTION_ATTRIBUTE;
+typedef void (*WGPUCreateRenderPipelineAsyncCallback2)(WGPUCreatePipelineAsyncStatus status, WGPURenderPipeline pipeline, struct WGPUStringView message, void* userdata1, void* userdata2) WGPU_FUNCTION_ATTRIBUTE;
 typedef void (*WGPUDeviceLostCallback2)(WGPUDevice const * device, WGPUDeviceLostReason reason, struct WGPUStringView message, void* userdata1, void* userdata2) WGPU_FUNCTION_ATTRIBUTE;
-typedef void (*WGPUPopErrorScopeCallback)(WGPUPopErrorScopeStatus status, WGPUErrorType type, struct WGPUStringView message, void* userdata1, void* userdata2) WGPU_FUNCTION_ATTRIBUTE;
-typedef void (*WGPUQueueWorkDoneCallback)(WGPUQueueWorkDoneStatus status, void* userdata1, void* userdata2) WGPU_FUNCTION_ATTRIBUTE;
+typedef void (*WGPUPopErrorScopeCallback2)(WGPUPopErrorScopeStatus status, WGPUErrorType type, struct WGPUStringView message, void* userdata1, void* userdata2) WGPU_FUNCTION_ATTRIBUTE;
+typedef void (*WGPUQueueWorkDoneCallback2)(WGPUQueueWorkDoneStatus status, void* userdata1, void* userdata2) WGPU_FUNCTION_ATTRIBUTE;
 typedef void (*WGPURequestAdapterCallback2)(WGPURequestAdapterStatus status, WGPUAdapter adapter, struct WGPUStringView message, void* userdata1, void* userdata2) WGPU_FUNCTION_ATTRIBUTE;
 typedef void (*WGPURequestDeviceCallback2)(WGPURequestDeviceStatus status, WGPUDevice device, struct WGPUStringView message, void* userdata1, void* userdata2) WGPU_FUNCTION_ATTRIBUTE;
 typedef void (*WGPUUncapturedErrorCallback)(WGPUDevice const * device, WGPUErrorType type, struct WGPUStringView message, void* userdata1, void* userdata2) WGPU_FUNCTION_ATTRIBUTE;
@@ -1066,15 +1091,15 @@ typedef struct WGPUChainedStructOut {
 
 #define WGPU_COMMA ,
 
-typedef struct WGPUBufferMapCallbackInfo {
+typedef struct WGPUBufferMapCallbackInfo2 {
     WGPUChainedStruct const* nextInChain;
     WGPUCallbackMode mode;
-    WGPUBufferMapCallback callback;
+    WGPUBufferMapCallback2 callback;
     void* userdata1;
     void* userdata2;
-} WGPUBufferMapCallbackInfo WGPU_STRUCTURE_ATTRIBUTE;
+} WGPUBufferMapCallbackInfo2 WGPU_STRUCTURE_ATTRIBUTE;
 
-#define WGPU_BUFFER_MAP_CALLBACK_INFO_INIT WGPU_MAKE_INIT_STRUCT(WGPUBufferMapCallbackInfo, { \
+#define WGPU_BUFFER_MAP_CALLBACK_INFO_2_INIT WGPU_MAKE_INIT_STRUCT(WGPUBufferMapCallbackInfo2, { \
     /*.nextInChain=*/nullptr WGPU_COMMA \
     /*.mode=*/{} WGPU_COMMA \
     /*.callback=*/nullptr WGPU_COMMA \
@@ -1082,15 +1107,15 @@ typedef struct WGPUBufferMapCallbackInfo {
     /*.userdata2=*/nullptr WGPU_COMMA \
 })
 
-typedef struct WGPUCompilationInfoCallbackInfo {
+typedef struct WGPUCompilationInfoCallbackInfo2 {
     WGPUChainedStruct const* nextInChain;
     WGPUCallbackMode mode;
-    WGPUCompilationInfoCallback callback;
+    WGPUCompilationInfoCallback2 callback;
     void* userdata1;
     void* userdata2;
-} WGPUCompilationInfoCallbackInfo WGPU_STRUCTURE_ATTRIBUTE;
+} WGPUCompilationInfoCallbackInfo2 WGPU_STRUCTURE_ATTRIBUTE;
 
-#define WGPU_COMPILATION_INFO_CALLBACK_INFO_INIT WGPU_MAKE_INIT_STRUCT(WGPUCompilationInfoCallbackInfo, { \
+#define WGPU_COMPILATION_INFO_CALLBACK_INFO_2_INIT WGPU_MAKE_INIT_STRUCT(WGPUCompilationInfoCallbackInfo2, { \
     /*.nextInChain=*/nullptr WGPU_COMMA \
     /*.mode=*/{} WGPU_COMMA \
     /*.callback=*/nullptr WGPU_COMMA \
@@ -1098,15 +1123,15 @@ typedef struct WGPUCompilationInfoCallbackInfo {
     /*.userdata2=*/nullptr WGPU_COMMA \
 })
 
-typedef struct WGPUCreateComputePipelineAsyncCallbackInfo {
+typedef struct WGPUCreateComputePipelineAsyncCallbackInfo2 {
     WGPUChainedStruct const* nextInChain;
     WGPUCallbackMode mode;
-    WGPUCreateComputePipelineAsyncCallback callback;
+    WGPUCreateComputePipelineAsyncCallback2 callback;
     void* userdata1;
     void* userdata2;
-} WGPUCreateComputePipelineAsyncCallbackInfo WGPU_STRUCTURE_ATTRIBUTE;
+} WGPUCreateComputePipelineAsyncCallbackInfo2 WGPU_STRUCTURE_ATTRIBUTE;
 
-#define WGPU_CREATE_COMPUTE_PIPELINE_ASYNC_CALLBACK_INFO_INIT WGPU_MAKE_INIT_STRUCT(WGPUCreateComputePipelineAsyncCallbackInfo, { \
+#define WGPU_CREATE_COMPUTE_PIPELINE_ASYNC_CALLBACK_INFO_2_INIT WGPU_MAKE_INIT_STRUCT(WGPUCreateComputePipelineAsyncCallbackInfo2, { \
     /*.nextInChain=*/nullptr WGPU_COMMA \
     /*.mode=*/{} WGPU_COMMA \
     /*.callback=*/nullptr WGPU_COMMA \
@@ -1114,15 +1139,15 @@ typedef struct WGPUCreateComputePipelineAsyncCallbackInfo {
     /*.userdata2=*/nullptr WGPU_COMMA \
 })
 
-typedef struct WGPUCreateRenderPipelineAsyncCallbackInfo {
+typedef struct WGPUCreateRenderPipelineAsyncCallbackInfo2 {
     WGPUChainedStruct const* nextInChain;
     WGPUCallbackMode mode;
-    WGPUCreateRenderPipelineAsyncCallback callback;
+    WGPUCreateRenderPipelineAsyncCallback2 callback;
     void* userdata1;
     void* userdata2;
-} WGPUCreateRenderPipelineAsyncCallbackInfo WGPU_STRUCTURE_ATTRIBUTE;
+} WGPUCreateRenderPipelineAsyncCallbackInfo2 WGPU_STRUCTURE_ATTRIBUTE;
 
-#define WGPU_CREATE_RENDER_PIPELINE_ASYNC_CALLBACK_INFO_INIT WGPU_MAKE_INIT_STRUCT(WGPUCreateRenderPipelineAsyncCallbackInfo, { \
+#define WGPU_CREATE_RENDER_PIPELINE_ASYNC_CALLBACK_INFO_2_INIT WGPU_MAKE_INIT_STRUCT(WGPUCreateRenderPipelineAsyncCallbackInfo2, { \
     /*.nextInChain=*/nullptr WGPU_COMMA \
     /*.mode=*/{} WGPU_COMMA \
     /*.callback=*/nullptr WGPU_COMMA \
@@ -1146,15 +1171,15 @@ typedef struct WGPUDeviceLostCallbackInfo2 {
     /*.userdata2=*/nullptr WGPU_COMMA \
 })
 
-typedef struct WGPUPopErrorScopeCallbackInfo {
+typedef struct WGPUPopErrorScopeCallbackInfo2 {
     WGPUChainedStruct const* nextInChain;
     WGPUCallbackMode mode;
-    WGPUPopErrorScopeCallback callback;
+    WGPUPopErrorScopeCallback2 callback;
     void* userdata1;
     void* userdata2;
-} WGPUPopErrorScopeCallbackInfo WGPU_STRUCTURE_ATTRIBUTE;
+} WGPUPopErrorScopeCallbackInfo2 WGPU_STRUCTURE_ATTRIBUTE;
 
-#define WGPU_POP_ERROR_SCOPE_CALLBACK_INFO_INIT WGPU_MAKE_INIT_STRUCT(WGPUPopErrorScopeCallbackInfo, { \
+#define WGPU_POP_ERROR_SCOPE_CALLBACK_INFO_2_INIT WGPU_MAKE_INIT_STRUCT(WGPUPopErrorScopeCallbackInfo2, { \
     /*.nextInChain=*/nullptr WGPU_COMMA \
     /*.mode=*/{} WGPU_COMMA \
     /*.callback=*/nullptr WGPU_COMMA \
@@ -1162,15 +1187,15 @@ typedef struct WGPUPopErrorScopeCallbackInfo {
     /*.userdata2=*/nullptr WGPU_COMMA \
 })
 
-typedef struct WGPUQueueWorkDoneCallbackInfo {
+typedef struct WGPUQueueWorkDoneCallbackInfo2 {
     WGPUChainedStruct const* nextInChain;
     WGPUCallbackMode mode;
-    WGPUQueueWorkDoneCallback callback;
+    WGPUQueueWorkDoneCallback2 callback;
     void* userdata1;
     void* userdata2;
-} WGPUQueueWorkDoneCallbackInfo WGPU_STRUCTURE_ATTRIBUTE;
+} WGPUQueueWorkDoneCallbackInfo2 WGPU_STRUCTURE_ATTRIBUTE;
 
-#define WGPU_QUEUE_WORK_DONE_CALLBACK_INFO_INIT WGPU_MAKE_INIT_STRUCT(WGPUQueueWorkDoneCallbackInfo, { \
+#define WGPU_QUEUE_WORK_DONE_CALLBACK_INFO_2_INIT WGPU_MAKE_INIT_STRUCT(WGPUQueueWorkDoneCallbackInfo2, { \
     /*.nextInChain=*/nullptr WGPU_COMMA \
     /*.mode=*/{} WGPU_COMMA \
     /*.callback=*/nullptr WGPU_COMMA \
@@ -1329,6 +1354,20 @@ typedef struct WGPUBufferHostMappedPointer {
     /*.userdata=*/{} WGPU_COMMA \
 })
 
+typedef struct WGPUBufferMapCallbackInfo {
+    WGPUChainedStruct const * nextInChain;
+    WGPUCallbackMode mode;
+    WGPUBufferMapCallback callback;
+    void * userdata;
+} WGPUBufferMapCallbackInfo WGPU_STRUCTURE_ATTRIBUTE;
+
+#define WGPU_BUFFER_MAP_CALLBACK_INFO_INIT WGPU_MAKE_INIT_STRUCT(WGPUBufferMapCallbackInfo, { \
+    /*.nextInChain=*/nullptr WGPU_COMMA \
+    /*.mode=*/{} WGPU_COMMA \
+    /*.callback=*/{} WGPU_COMMA \
+    /*.userdata=*/{} WGPU_COMMA \
+})
+
 typedef struct WGPUColor {
     double r;
     double g;
@@ -1352,6 +1391,20 @@ typedef struct WGPUColorTargetStateExpandResolveTextureDawn {
 #define WGPU_COLOR_TARGET_STATE_EXPAND_RESOLVE_TEXTURE_DAWN_INIT WGPU_MAKE_INIT_STRUCT(WGPUColorTargetStateExpandResolveTextureDawn, { \
     /*.chain=*/{/*.nextInChain*/nullptr WGPU_COMMA /*.sType*/WGPUSType_ColorTargetStateExpandResolveTextureDawn} WGPU_COMMA \
     /*.enabled=*/false WGPU_COMMA \
+})
+
+typedef struct WGPUCompilationInfoCallbackInfo {
+    WGPUChainedStruct const * nextInChain;
+    WGPUCallbackMode mode;
+    WGPUCompilationInfoCallback callback;
+    void * userdata;
+} WGPUCompilationInfoCallbackInfo WGPU_STRUCTURE_ATTRIBUTE;
+
+#define WGPU_COMPILATION_INFO_CALLBACK_INFO_INIT WGPU_MAKE_INIT_STRUCT(WGPUCompilationInfoCallbackInfo, { \
+    /*.nextInChain=*/nullptr WGPU_COMMA \
+    /*.mode=*/{} WGPU_COMMA \
+    /*.callback=*/{} WGPU_COMMA \
+    /*.userdata=*/nullptr WGPU_COMMA \
 })
 
 typedef struct WGPUComputePassTimestampWrites {
@@ -1388,6 +1441,34 @@ typedef struct WGPUCopyTextureForBrowserOptions {
     /*.dstTransferFunctionParameters=*/nullptr WGPU_COMMA \
     /*.dstAlphaMode=*/WGPUAlphaMode_Unpremultiplied WGPU_COMMA \
     /*.internalUsage=*/false WGPU_COMMA \
+})
+
+typedef struct WGPUCreateComputePipelineAsyncCallbackInfo {
+    WGPUChainedStruct const * nextInChain;
+    WGPUCallbackMode mode;
+    WGPUCreateComputePipelineAsyncCallback callback;
+    void * userdata;
+} WGPUCreateComputePipelineAsyncCallbackInfo WGPU_STRUCTURE_ATTRIBUTE;
+
+#define WGPU_CREATE_COMPUTE_PIPELINE_ASYNC_CALLBACK_INFO_INIT WGPU_MAKE_INIT_STRUCT(WGPUCreateComputePipelineAsyncCallbackInfo, { \
+    /*.nextInChain=*/nullptr WGPU_COMMA \
+    /*.mode=*/{} WGPU_COMMA \
+    /*.callback=*/{} WGPU_COMMA \
+    /*.userdata=*/{} WGPU_COMMA \
+})
+
+typedef struct WGPUCreateRenderPipelineAsyncCallbackInfo {
+    WGPUChainedStruct const * nextInChain;
+    WGPUCallbackMode mode;
+    WGPUCreateRenderPipelineAsyncCallback callback;
+    void * userdata;
+} WGPUCreateRenderPipelineAsyncCallbackInfo WGPU_STRUCTURE_ATTRIBUTE;
+
+#define WGPU_CREATE_RENDER_PIPELINE_ASYNC_CALLBACK_INFO_INIT WGPU_MAKE_INIT_STRUCT(WGPUCreateRenderPipelineAsyncCallbackInfo, { \
+    /*.nextInChain=*/nullptr WGPU_COMMA \
+    /*.mode=*/{} WGPU_COMMA \
+    /*.callback=*/{} WGPU_COMMA \
+    /*.userdata=*/{} WGPU_COMMA \
 })
 
 // Can be chained in WGPUInstanceDescriptor
@@ -1766,6 +1847,22 @@ typedef struct WGPUPipelineLayoutStorageAttachment {
     /*.format=*/{} WGPU_COMMA \
 })
 
+typedef struct WGPUPopErrorScopeCallbackInfo {
+    WGPUChainedStruct const * nextInChain;
+    WGPUCallbackMode mode;
+    WGPUPopErrorScopeCallback callback;
+    WGPUErrorCallback oldCallback;
+    void * userdata;
+} WGPUPopErrorScopeCallbackInfo WGPU_STRUCTURE_ATTRIBUTE;
+
+#define WGPU_POP_ERROR_SCOPE_CALLBACK_INFO_INIT WGPU_MAKE_INIT_STRUCT(WGPUPopErrorScopeCallbackInfo, { \
+    /*.nextInChain=*/nullptr WGPU_COMMA \
+    /*.mode=*/WGPUCallbackMode_WaitAnyOnly WGPU_COMMA \
+    /*.callback=*/{} WGPU_COMMA \
+    /*.oldCallback=*/{} WGPU_COMMA \
+    /*.userdata=*/nullptr WGPU_COMMA \
+})
+
 typedef struct WGPUPrimitiveState {
     WGPUChainedStruct const * nextInChain;
     WGPUPrimitiveTopology topology;
@@ -1782,6 +1879,20 @@ typedef struct WGPUPrimitiveState {
     /*.frontFace=*/WGPUFrontFace_CCW WGPU_COMMA \
     /*.cullMode=*/WGPUCullMode_None WGPU_COMMA \
     /*.unclippedDepth=*/false WGPU_COMMA \
+})
+
+typedef struct WGPUQueueWorkDoneCallbackInfo {
+    WGPUChainedStruct const * nextInChain;
+    WGPUCallbackMode mode;
+    WGPUQueueWorkDoneCallback callback;
+    void * userdata;
+} WGPUQueueWorkDoneCallbackInfo WGPU_STRUCTURE_ATTRIBUTE;
+
+#define WGPU_QUEUE_WORK_DONE_CALLBACK_INFO_INIT WGPU_MAKE_INIT_STRUCT(WGPUQueueWorkDoneCallbackInfo, { \
+    /*.nextInChain=*/nullptr WGPU_COMMA \
+    /*.mode=*/{} WGPU_COMMA \
+    /*.callback=*/{} WGPU_COMMA \
+    /*.userdata=*/{} WGPU_COMMA \
 })
 
 typedef struct WGPURenderPassDepthStencilAttachment {
@@ -3551,7 +3662,9 @@ typedef WGPUBufferMapState (*WGPUProcBufferGetMapState)(WGPUBuffer buffer) WGPU_
 typedef void * (*WGPUProcBufferGetMappedRange)(WGPUBuffer buffer, size_t offset, size_t size) WGPU_FUNCTION_ATTRIBUTE;
 typedef uint64_t (*WGPUProcBufferGetSize)(WGPUBuffer buffer) WGPU_FUNCTION_ATTRIBUTE;
 typedef WGPUBufferUsage (*WGPUProcBufferGetUsage)(WGPUBuffer buffer) WGPU_FUNCTION_ATTRIBUTE;
-typedef WGPUFuture (*WGPUProcBufferMapAsync)(WGPUBuffer buffer, WGPUMapMode mode, size_t offset, size_t size, WGPUBufferMapCallbackInfo callbackInfo) WGPU_FUNCTION_ATTRIBUTE;
+typedef void (*WGPUProcBufferMapAsync)(WGPUBuffer buffer, WGPUMapMode mode, size_t offset, size_t size, WGPUBufferMapCallback callback, void * userdata) WGPU_FUNCTION_ATTRIBUTE;
+typedef WGPUFuture (*WGPUProcBufferMapAsync2)(WGPUBuffer buffer, WGPUMapMode mode, size_t offset, size_t size, WGPUBufferMapCallbackInfo2 callbackInfo) WGPU_FUNCTION_ATTRIBUTE;
+typedef WGPUFuture (*WGPUProcBufferMapAsyncF)(WGPUBuffer buffer, WGPUMapMode mode, size_t offset, size_t size, WGPUBufferMapCallbackInfo callbackInfo) WGPU_FUNCTION_ATTRIBUTE;
 typedef void (*WGPUProcBufferSetLabel)(WGPUBuffer buffer, WGPUStringView label) WGPU_FUNCTION_ATTRIBUTE;
 typedef void (*WGPUProcBufferUnmap)(WGPUBuffer buffer) WGPU_FUNCTION_ATTRIBUTE;
 typedef void (*WGPUProcBufferAddRef)(WGPUBuffer buffer) WGPU_FUNCTION_ATTRIBUTE;
@@ -3608,7 +3721,9 @@ typedef WGPUBindGroupLayout (*WGPUProcDeviceCreateBindGroupLayout)(WGPUDevice de
 typedef WGPUBuffer (*WGPUProcDeviceCreateBuffer)(WGPUDevice device, WGPUBufferDescriptor const * descriptor) WGPU_FUNCTION_ATTRIBUTE;
 typedef WGPUCommandEncoder (*WGPUProcDeviceCreateCommandEncoder)(WGPUDevice device, WGPU_NULLABLE WGPUCommandEncoderDescriptor const * descriptor) WGPU_FUNCTION_ATTRIBUTE;
 typedef WGPUComputePipeline (*WGPUProcDeviceCreateComputePipeline)(WGPUDevice device, WGPUComputePipelineDescriptor const * descriptor) WGPU_FUNCTION_ATTRIBUTE;
-typedef WGPUFuture (*WGPUProcDeviceCreateComputePipelineAsync)(WGPUDevice device, WGPUComputePipelineDescriptor const * descriptor, WGPUCreateComputePipelineAsyncCallbackInfo callbackInfo) WGPU_FUNCTION_ATTRIBUTE;
+typedef void (*WGPUProcDeviceCreateComputePipelineAsync)(WGPUDevice device, WGPUComputePipelineDescriptor const * descriptor, WGPUCreateComputePipelineAsyncCallback callback, void * userdata) WGPU_FUNCTION_ATTRIBUTE;
+typedef WGPUFuture (*WGPUProcDeviceCreateComputePipelineAsync2)(WGPUDevice device, WGPUComputePipelineDescriptor const * descriptor, WGPUCreateComputePipelineAsyncCallbackInfo2 callbackInfo) WGPU_FUNCTION_ATTRIBUTE;
+typedef WGPUFuture (*WGPUProcDeviceCreateComputePipelineAsyncF)(WGPUDevice device, WGPUComputePipelineDescriptor const * descriptor, WGPUCreateComputePipelineAsyncCallbackInfo callbackInfo) WGPU_FUNCTION_ATTRIBUTE;
 typedef WGPUBuffer (*WGPUProcDeviceCreateErrorBuffer)(WGPUDevice device, WGPUBufferDescriptor const * descriptor) WGPU_FUNCTION_ATTRIBUTE;
 typedef WGPUExternalTexture (*WGPUProcDeviceCreateErrorExternalTexture)(WGPUDevice device) WGPU_FUNCTION_ATTRIBUTE;
 typedef WGPUShaderModule (*WGPUProcDeviceCreateErrorShaderModule)(WGPUDevice device, WGPUShaderModuleDescriptor const * descriptor, WGPUStringView errorMessage) WGPU_FUNCTION_ATTRIBUTE;
@@ -3618,7 +3733,9 @@ typedef WGPUPipelineLayout (*WGPUProcDeviceCreatePipelineLayout)(WGPUDevice devi
 typedef WGPUQuerySet (*WGPUProcDeviceCreateQuerySet)(WGPUDevice device, WGPUQuerySetDescriptor const * descriptor) WGPU_FUNCTION_ATTRIBUTE;
 typedef WGPURenderBundleEncoder (*WGPUProcDeviceCreateRenderBundleEncoder)(WGPUDevice device, WGPURenderBundleEncoderDescriptor const * descriptor) WGPU_FUNCTION_ATTRIBUTE;
 typedef WGPURenderPipeline (*WGPUProcDeviceCreateRenderPipeline)(WGPUDevice device, WGPURenderPipelineDescriptor const * descriptor) WGPU_FUNCTION_ATTRIBUTE;
-typedef WGPUFuture (*WGPUProcDeviceCreateRenderPipelineAsync)(WGPUDevice device, WGPURenderPipelineDescriptor const * descriptor, WGPUCreateRenderPipelineAsyncCallbackInfo callbackInfo) WGPU_FUNCTION_ATTRIBUTE;
+typedef void (*WGPUProcDeviceCreateRenderPipelineAsync)(WGPUDevice device, WGPURenderPipelineDescriptor const * descriptor, WGPUCreateRenderPipelineAsyncCallback callback, void * userdata) WGPU_FUNCTION_ATTRIBUTE;
+typedef WGPUFuture (*WGPUProcDeviceCreateRenderPipelineAsync2)(WGPUDevice device, WGPURenderPipelineDescriptor const * descriptor, WGPUCreateRenderPipelineAsyncCallbackInfo2 callbackInfo) WGPU_FUNCTION_ATTRIBUTE;
+typedef WGPUFuture (*WGPUProcDeviceCreateRenderPipelineAsyncF)(WGPUDevice device, WGPURenderPipelineDescriptor const * descriptor, WGPUCreateRenderPipelineAsyncCallbackInfo callbackInfo) WGPU_FUNCTION_ATTRIBUTE;
 typedef WGPUSampler (*WGPUProcDeviceCreateSampler)(WGPUDevice device, WGPU_NULLABLE WGPUSamplerDescriptor const * descriptor) WGPU_FUNCTION_ATTRIBUTE;
 typedef WGPUShaderModule (*WGPUProcDeviceCreateShaderModule)(WGPUDevice device, WGPUShaderModuleDescriptor const * descriptor) WGPU_FUNCTION_ATTRIBUTE;
 typedef WGPUTexture (*WGPUProcDeviceCreateTexture)(WGPUDevice device, WGPUTextureDescriptor const * descriptor) WGPU_FUNCTION_ATTRIBUTE;
@@ -3636,7 +3753,9 @@ typedef WGPUSharedBufferMemory (*WGPUProcDeviceImportSharedBufferMemory)(WGPUDev
 typedef WGPUSharedFence (*WGPUProcDeviceImportSharedFence)(WGPUDevice device, WGPUSharedFenceDescriptor const * descriptor) WGPU_FUNCTION_ATTRIBUTE;
 typedef WGPUSharedTextureMemory (*WGPUProcDeviceImportSharedTextureMemory)(WGPUDevice device, WGPUSharedTextureMemoryDescriptor const * descriptor) WGPU_FUNCTION_ATTRIBUTE;
 typedef void (*WGPUProcDeviceInjectError)(WGPUDevice device, WGPUErrorType type, WGPUStringView message) WGPU_FUNCTION_ATTRIBUTE;
-typedef WGPUFuture (*WGPUProcDevicePopErrorScope)(WGPUDevice device, WGPUPopErrorScopeCallbackInfo callbackInfo) WGPU_FUNCTION_ATTRIBUTE;
+typedef void (*WGPUProcDevicePopErrorScope)(WGPUDevice device, WGPUErrorCallback oldCallback, void * userdata) WGPU_FUNCTION_ATTRIBUTE;
+typedef WGPUFuture (*WGPUProcDevicePopErrorScope2)(WGPUDevice device, WGPUPopErrorScopeCallbackInfo2 callbackInfo) WGPU_FUNCTION_ATTRIBUTE;
+typedef WGPUFuture (*WGPUProcDevicePopErrorScopeF)(WGPUDevice device, WGPUPopErrorScopeCallbackInfo callbackInfo) WGPU_FUNCTION_ATTRIBUTE;
 typedef void (*WGPUProcDevicePushErrorScope)(WGPUDevice device, WGPUErrorFilter filter) WGPU_FUNCTION_ATTRIBUTE;
 typedef void (*WGPUProcDeviceSetLabel)(WGPUDevice device, WGPUStringView label) WGPU_FUNCTION_ATTRIBUTE;
 typedef void (*WGPUProcDeviceSetLoggingCallback)(WGPUDevice device, WGPULoggingCallback callback, void * userdata) WGPU_FUNCTION_ATTRIBUTE;
@@ -3681,7 +3800,9 @@ typedef void (*WGPUProcQuerySetRelease)(WGPUQuerySet querySet) WGPU_FUNCTION_ATT
 // Procs of Queue
 typedef void (*WGPUProcQueueCopyExternalTextureForBrowser)(WGPUQueue queue, WGPUImageCopyExternalTexture const * source, WGPUImageCopyTexture const * destination, WGPUExtent3D const * copySize, WGPUCopyTextureForBrowserOptions const * options) WGPU_FUNCTION_ATTRIBUTE;
 typedef void (*WGPUProcQueueCopyTextureForBrowser)(WGPUQueue queue, WGPUImageCopyTexture const * source, WGPUImageCopyTexture const * destination, WGPUExtent3D const * copySize, WGPUCopyTextureForBrowserOptions const * options) WGPU_FUNCTION_ATTRIBUTE;
-typedef WGPUFuture (*WGPUProcQueueOnSubmittedWorkDone)(WGPUQueue queue, WGPUQueueWorkDoneCallbackInfo callbackInfo) WGPU_FUNCTION_ATTRIBUTE;
+typedef void (*WGPUProcQueueOnSubmittedWorkDone)(WGPUQueue queue, WGPUQueueWorkDoneCallback callback, void * userdata) WGPU_FUNCTION_ATTRIBUTE;
+typedef WGPUFuture (*WGPUProcQueueOnSubmittedWorkDone2)(WGPUQueue queue, WGPUQueueWorkDoneCallbackInfo2 callbackInfo) WGPU_FUNCTION_ATTRIBUTE;
+typedef WGPUFuture (*WGPUProcQueueOnSubmittedWorkDoneF)(WGPUQueue queue, WGPUQueueWorkDoneCallbackInfo callbackInfo) WGPU_FUNCTION_ATTRIBUTE;
 typedef void (*WGPUProcQueueSetLabel)(WGPUQueue queue, WGPUStringView label) WGPU_FUNCTION_ATTRIBUTE;
 typedef void (*WGPUProcQueueSubmit)(WGPUQueue queue, size_t commandCount, WGPUCommandBuffer const * commands) WGPU_FUNCTION_ATTRIBUTE;
 typedef void (*WGPUProcQueueWriteBuffer)(WGPUQueue queue, WGPUBuffer buffer, uint64_t bufferOffset, void const * data, size_t size) WGPU_FUNCTION_ATTRIBUTE;
@@ -3751,7 +3872,9 @@ typedef void (*WGPUProcSamplerAddRef)(WGPUSampler sampler) WGPU_FUNCTION_ATTRIBU
 typedef void (*WGPUProcSamplerRelease)(WGPUSampler sampler) WGPU_FUNCTION_ATTRIBUTE;
 
 // Procs of ShaderModule
-typedef WGPUFuture (*WGPUProcShaderModuleGetCompilationInfo)(WGPUShaderModule shaderModule, WGPUCompilationInfoCallbackInfo callbackInfo) WGPU_FUNCTION_ATTRIBUTE;
+typedef void (*WGPUProcShaderModuleGetCompilationInfo)(WGPUShaderModule shaderModule, WGPUCompilationInfoCallback callback, void * userdata) WGPU_FUNCTION_ATTRIBUTE;
+typedef WGPUFuture (*WGPUProcShaderModuleGetCompilationInfo2)(WGPUShaderModule shaderModule, WGPUCompilationInfoCallbackInfo2 callbackInfo) WGPU_FUNCTION_ATTRIBUTE;
+typedef WGPUFuture (*WGPUProcShaderModuleGetCompilationInfoF)(WGPUShaderModule shaderModule, WGPUCompilationInfoCallbackInfo callbackInfo) WGPU_FUNCTION_ATTRIBUTE;
 typedef void (*WGPUProcShaderModuleSetLabel)(WGPUShaderModule shaderModule, WGPUStringView label) WGPU_FUNCTION_ATTRIBUTE;
 typedef void (*WGPUProcShaderModuleAddRef)(WGPUShaderModule shaderModule) WGPU_FUNCTION_ATTRIBUTE;
 typedef void (*WGPUProcShaderModuleRelease)(WGPUShaderModule shaderModule) WGPU_FUNCTION_ATTRIBUTE;
@@ -3859,7 +3982,9 @@ WGPU_EXPORT WGPUBufferMapState wgpuBufferGetMapState(WGPUBuffer buffer) WGPU_FUN
 WGPU_EXPORT void * wgpuBufferGetMappedRange(WGPUBuffer buffer, size_t offset, size_t size) WGPU_FUNCTION_ATTRIBUTE;
 WGPU_EXPORT uint64_t wgpuBufferGetSize(WGPUBuffer buffer) WGPU_FUNCTION_ATTRIBUTE;
 WGPU_EXPORT WGPUBufferUsage wgpuBufferGetUsage(WGPUBuffer buffer) WGPU_FUNCTION_ATTRIBUTE;
-WGPU_EXPORT WGPUFuture wgpuBufferMapAsync(WGPUBuffer buffer, WGPUMapMode mode, size_t offset, size_t size, WGPUBufferMapCallbackInfo callbackInfo) WGPU_FUNCTION_ATTRIBUTE;
+WGPU_EXPORT void wgpuBufferMapAsync(WGPUBuffer buffer, WGPUMapMode mode, size_t offset, size_t size, WGPUBufferMapCallback callback, void * userdata) WGPU_FUNCTION_ATTRIBUTE;
+WGPU_EXPORT WGPUFuture wgpuBufferMapAsync2(WGPUBuffer buffer, WGPUMapMode mode, size_t offset, size_t size, WGPUBufferMapCallbackInfo2 callbackInfo) WGPU_FUNCTION_ATTRIBUTE;
+WGPU_EXPORT WGPUFuture wgpuBufferMapAsyncF(WGPUBuffer buffer, WGPUMapMode mode, size_t offset, size_t size, WGPUBufferMapCallbackInfo callbackInfo) WGPU_FUNCTION_ATTRIBUTE;
 WGPU_EXPORT void wgpuBufferSetLabel(WGPUBuffer buffer, WGPUStringView label) WGPU_FUNCTION_ATTRIBUTE;
 WGPU_EXPORT void wgpuBufferUnmap(WGPUBuffer buffer) WGPU_FUNCTION_ATTRIBUTE;
 WGPU_EXPORT void wgpuBufferAddRef(WGPUBuffer buffer) WGPU_FUNCTION_ATTRIBUTE;
@@ -3916,7 +4041,9 @@ WGPU_EXPORT WGPUBindGroupLayout wgpuDeviceCreateBindGroupLayout(WGPUDevice devic
 WGPU_EXPORT WGPUBuffer wgpuDeviceCreateBuffer(WGPUDevice device, WGPUBufferDescriptor const * descriptor) WGPU_FUNCTION_ATTRIBUTE;
 WGPU_EXPORT WGPUCommandEncoder wgpuDeviceCreateCommandEncoder(WGPUDevice device, WGPU_NULLABLE WGPUCommandEncoderDescriptor const * descriptor) WGPU_FUNCTION_ATTRIBUTE;
 WGPU_EXPORT WGPUComputePipeline wgpuDeviceCreateComputePipeline(WGPUDevice device, WGPUComputePipelineDescriptor const * descriptor) WGPU_FUNCTION_ATTRIBUTE;
-WGPU_EXPORT WGPUFuture wgpuDeviceCreateComputePipelineAsync(WGPUDevice device, WGPUComputePipelineDescriptor const * descriptor, WGPUCreateComputePipelineAsyncCallbackInfo callbackInfo) WGPU_FUNCTION_ATTRIBUTE;
+WGPU_EXPORT void wgpuDeviceCreateComputePipelineAsync(WGPUDevice device, WGPUComputePipelineDescriptor const * descriptor, WGPUCreateComputePipelineAsyncCallback callback, void * userdata) WGPU_FUNCTION_ATTRIBUTE;
+WGPU_EXPORT WGPUFuture wgpuDeviceCreateComputePipelineAsync2(WGPUDevice device, WGPUComputePipelineDescriptor const * descriptor, WGPUCreateComputePipelineAsyncCallbackInfo2 callbackInfo) WGPU_FUNCTION_ATTRIBUTE;
+WGPU_EXPORT WGPUFuture wgpuDeviceCreateComputePipelineAsyncF(WGPUDevice device, WGPUComputePipelineDescriptor const * descriptor, WGPUCreateComputePipelineAsyncCallbackInfo callbackInfo) WGPU_FUNCTION_ATTRIBUTE;
 WGPU_EXPORT WGPUBuffer wgpuDeviceCreateErrorBuffer(WGPUDevice device, WGPUBufferDescriptor const * descriptor) WGPU_FUNCTION_ATTRIBUTE;
 WGPU_EXPORT WGPUExternalTexture wgpuDeviceCreateErrorExternalTexture(WGPUDevice device) WGPU_FUNCTION_ATTRIBUTE;
 WGPU_EXPORT WGPUShaderModule wgpuDeviceCreateErrorShaderModule(WGPUDevice device, WGPUShaderModuleDescriptor const * descriptor, WGPUStringView errorMessage) WGPU_FUNCTION_ATTRIBUTE;
@@ -3926,7 +4053,9 @@ WGPU_EXPORT WGPUPipelineLayout wgpuDeviceCreatePipelineLayout(WGPUDevice device,
 WGPU_EXPORT WGPUQuerySet wgpuDeviceCreateQuerySet(WGPUDevice device, WGPUQuerySetDescriptor const * descriptor) WGPU_FUNCTION_ATTRIBUTE;
 WGPU_EXPORT WGPURenderBundleEncoder wgpuDeviceCreateRenderBundleEncoder(WGPUDevice device, WGPURenderBundleEncoderDescriptor const * descriptor) WGPU_FUNCTION_ATTRIBUTE;
 WGPU_EXPORT WGPURenderPipeline wgpuDeviceCreateRenderPipeline(WGPUDevice device, WGPURenderPipelineDescriptor const * descriptor) WGPU_FUNCTION_ATTRIBUTE;
-WGPU_EXPORT WGPUFuture wgpuDeviceCreateRenderPipelineAsync(WGPUDevice device, WGPURenderPipelineDescriptor const * descriptor, WGPUCreateRenderPipelineAsyncCallbackInfo callbackInfo) WGPU_FUNCTION_ATTRIBUTE;
+WGPU_EXPORT void wgpuDeviceCreateRenderPipelineAsync(WGPUDevice device, WGPURenderPipelineDescriptor const * descriptor, WGPUCreateRenderPipelineAsyncCallback callback, void * userdata) WGPU_FUNCTION_ATTRIBUTE;
+WGPU_EXPORT WGPUFuture wgpuDeviceCreateRenderPipelineAsync2(WGPUDevice device, WGPURenderPipelineDescriptor const * descriptor, WGPUCreateRenderPipelineAsyncCallbackInfo2 callbackInfo) WGPU_FUNCTION_ATTRIBUTE;
+WGPU_EXPORT WGPUFuture wgpuDeviceCreateRenderPipelineAsyncF(WGPUDevice device, WGPURenderPipelineDescriptor const * descriptor, WGPUCreateRenderPipelineAsyncCallbackInfo callbackInfo) WGPU_FUNCTION_ATTRIBUTE;
 WGPU_EXPORT WGPUSampler wgpuDeviceCreateSampler(WGPUDevice device, WGPU_NULLABLE WGPUSamplerDescriptor const * descriptor) WGPU_FUNCTION_ATTRIBUTE;
 WGPU_EXPORT WGPUShaderModule wgpuDeviceCreateShaderModule(WGPUDevice device, WGPUShaderModuleDescriptor const * descriptor) WGPU_FUNCTION_ATTRIBUTE;
 WGPU_EXPORT WGPUTexture wgpuDeviceCreateTexture(WGPUDevice device, WGPUTextureDescriptor const * descriptor) WGPU_FUNCTION_ATTRIBUTE;
@@ -3944,7 +4073,9 @@ WGPU_EXPORT WGPUSharedBufferMemory wgpuDeviceImportSharedBufferMemory(WGPUDevice
 WGPU_EXPORT WGPUSharedFence wgpuDeviceImportSharedFence(WGPUDevice device, WGPUSharedFenceDescriptor const * descriptor) WGPU_FUNCTION_ATTRIBUTE;
 WGPU_EXPORT WGPUSharedTextureMemory wgpuDeviceImportSharedTextureMemory(WGPUDevice device, WGPUSharedTextureMemoryDescriptor const * descriptor) WGPU_FUNCTION_ATTRIBUTE;
 WGPU_EXPORT void wgpuDeviceInjectError(WGPUDevice device, WGPUErrorType type, WGPUStringView message) WGPU_FUNCTION_ATTRIBUTE;
-WGPU_EXPORT WGPUFuture wgpuDevicePopErrorScope(WGPUDevice device, WGPUPopErrorScopeCallbackInfo callbackInfo) WGPU_FUNCTION_ATTRIBUTE;
+WGPU_EXPORT void wgpuDevicePopErrorScope(WGPUDevice device, WGPUErrorCallback oldCallback, void * userdata) WGPU_FUNCTION_ATTRIBUTE;
+WGPU_EXPORT WGPUFuture wgpuDevicePopErrorScope2(WGPUDevice device, WGPUPopErrorScopeCallbackInfo2 callbackInfo) WGPU_FUNCTION_ATTRIBUTE;
+WGPU_EXPORT WGPUFuture wgpuDevicePopErrorScopeF(WGPUDevice device, WGPUPopErrorScopeCallbackInfo callbackInfo) WGPU_FUNCTION_ATTRIBUTE;
 WGPU_EXPORT void wgpuDevicePushErrorScope(WGPUDevice device, WGPUErrorFilter filter) WGPU_FUNCTION_ATTRIBUTE;
 WGPU_EXPORT void wgpuDeviceSetLabel(WGPUDevice device, WGPUStringView label) WGPU_FUNCTION_ATTRIBUTE;
 WGPU_EXPORT void wgpuDeviceSetLoggingCallback(WGPUDevice device, WGPULoggingCallback callback, void * userdata) WGPU_FUNCTION_ATTRIBUTE;
@@ -3989,7 +4120,9 @@ WGPU_EXPORT void wgpuQuerySetRelease(WGPUQuerySet querySet) WGPU_FUNCTION_ATTRIB
 // Methods of Queue
 WGPU_EXPORT void wgpuQueueCopyExternalTextureForBrowser(WGPUQueue queue, WGPUImageCopyExternalTexture const * source, WGPUImageCopyTexture const * destination, WGPUExtent3D const * copySize, WGPUCopyTextureForBrowserOptions const * options) WGPU_FUNCTION_ATTRIBUTE;
 WGPU_EXPORT void wgpuQueueCopyTextureForBrowser(WGPUQueue queue, WGPUImageCopyTexture const * source, WGPUImageCopyTexture const * destination, WGPUExtent3D const * copySize, WGPUCopyTextureForBrowserOptions const * options) WGPU_FUNCTION_ATTRIBUTE;
-WGPU_EXPORT WGPUFuture wgpuQueueOnSubmittedWorkDone(WGPUQueue queue, WGPUQueueWorkDoneCallbackInfo callbackInfo) WGPU_FUNCTION_ATTRIBUTE;
+WGPU_EXPORT void wgpuQueueOnSubmittedWorkDone(WGPUQueue queue, WGPUQueueWorkDoneCallback callback, void * userdata) WGPU_FUNCTION_ATTRIBUTE;
+WGPU_EXPORT WGPUFuture wgpuQueueOnSubmittedWorkDone2(WGPUQueue queue, WGPUQueueWorkDoneCallbackInfo2 callbackInfo) WGPU_FUNCTION_ATTRIBUTE;
+WGPU_EXPORT WGPUFuture wgpuQueueOnSubmittedWorkDoneF(WGPUQueue queue, WGPUQueueWorkDoneCallbackInfo callbackInfo) WGPU_FUNCTION_ATTRIBUTE;
 WGPU_EXPORT void wgpuQueueSetLabel(WGPUQueue queue, WGPUStringView label) WGPU_FUNCTION_ATTRIBUTE;
 WGPU_EXPORT void wgpuQueueSubmit(WGPUQueue queue, size_t commandCount, WGPUCommandBuffer const * commands) WGPU_FUNCTION_ATTRIBUTE;
 WGPU_EXPORT void wgpuQueueWriteBuffer(WGPUQueue queue, WGPUBuffer buffer, uint64_t bufferOffset, void const * data, size_t size) WGPU_FUNCTION_ATTRIBUTE;
@@ -4059,7 +4192,9 @@ WGPU_EXPORT void wgpuSamplerAddRef(WGPUSampler sampler) WGPU_FUNCTION_ATTRIBUTE;
 WGPU_EXPORT void wgpuSamplerRelease(WGPUSampler sampler) WGPU_FUNCTION_ATTRIBUTE;
 
 // Methods of ShaderModule
-WGPU_EXPORT WGPUFuture wgpuShaderModuleGetCompilationInfo(WGPUShaderModule shaderModule, WGPUCompilationInfoCallbackInfo callbackInfo) WGPU_FUNCTION_ATTRIBUTE;
+WGPU_EXPORT void wgpuShaderModuleGetCompilationInfo(WGPUShaderModule shaderModule, WGPUCompilationInfoCallback callback, void * userdata) WGPU_FUNCTION_ATTRIBUTE;
+WGPU_EXPORT WGPUFuture wgpuShaderModuleGetCompilationInfo2(WGPUShaderModule shaderModule, WGPUCompilationInfoCallbackInfo2 callbackInfo) WGPU_FUNCTION_ATTRIBUTE;
+WGPU_EXPORT WGPUFuture wgpuShaderModuleGetCompilationInfoF(WGPUShaderModule shaderModule, WGPUCompilationInfoCallbackInfo callbackInfo) WGPU_FUNCTION_ATTRIBUTE;
 WGPU_EXPORT void wgpuShaderModuleSetLabel(WGPUShaderModule shaderModule, WGPUStringView label) WGPU_FUNCTION_ATTRIBUTE;
 WGPU_EXPORT void wgpuShaderModuleAddRef(WGPUShaderModule shaderModule) WGPU_FUNCTION_ATTRIBUTE;
 WGPU_EXPORT void wgpuShaderModuleRelease(WGPUShaderModule shaderModule) WGPU_FUNCTION_ATTRIBUTE;

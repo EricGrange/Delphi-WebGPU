@@ -1170,10 +1170,9 @@ type
    PWGPUVertexFormat = ^TWGPUVertexFormat;
 
    TWGPUVertexStepMode = (
-      WGPUVertexStepMode_VertexBufferNotUsed = 0,
-      WGPUVertexStepMode_Undefined = 1,
-      WGPUVertexStepMode_Vertex = 2,
-      WGPUVertexStepMode_Instance = 3,
+      WGPUVertexStepMode_Undefined = 0,
+      WGPUVertexStepMode_Vertex = 1,
+      WGPUVertexStepMode_Instance = 2,
       WGPUVertexStepMode_Force32 = 2147483647);
    PWGPUVertexStepMode = ^TWGPUVertexStepMode;
 
