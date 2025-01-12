@@ -370,9 +370,10 @@ typedef enum WGPUBlendOperation {
 } WGPUBlendOperation WGPU_ENUM_ATTRIBUTE;
 typedef enum WGPUBufferBindingType {
     WGPUBufferBindingType_BindingNotUsed = 0x00000000,
-    WGPUBufferBindingType_Uniform = 0x00000001,
-    WGPUBufferBindingType_Storage = 0x00000002,
-    WGPUBufferBindingType_ReadOnlyStorage = 0x00000003,
+    WGPUBufferBindingType_Undefined = 0x00000001,
+    WGPUBufferBindingType_Uniform = 0x00000002,
+    WGPUBufferBindingType_Storage = 0x00000003,
+    WGPUBufferBindingType_ReadOnlyStorage = 0x00000004,
     WGPUBufferBindingType_Force32 = 0x7FFFFFFF
 } WGPUBufferBindingType WGPU_ENUM_ATTRIBUTE;
 typedef enum WGPUBufferMapAsyncStatus {
@@ -744,9 +745,10 @@ typedef enum WGPUSType {
 } WGPUSType WGPU_ENUM_ATTRIBUTE;
 typedef enum WGPUSamplerBindingType {
     WGPUSamplerBindingType_BindingNotUsed = 0x00000000,
-    WGPUSamplerBindingType_Filtering = 0x00000001,
-    WGPUSamplerBindingType_NonFiltering = 0x00000002,
-    WGPUSamplerBindingType_Comparison = 0x00000003,
+    WGPUSamplerBindingType_Undefined = 0x00000001,
+    WGPUSamplerBindingType_Filtering = 0x00000002,
+    WGPUSamplerBindingType_NonFiltering = 0x00000003,
+    WGPUSamplerBindingType_Comparison = 0x00000004,
     WGPUSamplerBindingType_Force32 = 0x7FFFFFFF
 } WGPUSamplerBindingType WGPU_ENUM_ATTRIBUTE;
 typedef enum WGPUSharedFenceType {
@@ -776,9 +778,10 @@ typedef enum WGPUStencilOperation {
 } WGPUStencilOperation WGPU_ENUM_ATTRIBUTE;
 typedef enum WGPUStorageTextureAccess {
     WGPUStorageTextureAccess_BindingNotUsed = 0x00000000,
-    WGPUStorageTextureAccess_WriteOnly = 0x00000001,
-    WGPUStorageTextureAccess_ReadOnly = 0x00000002,
-    WGPUStorageTextureAccess_ReadWrite = 0x00000003,
+    WGPUStorageTextureAccess_Undefined = 0x00000001,
+    WGPUStorageTextureAccess_WriteOnly = 0x00000002,
+    WGPUStorageTextureAccess_ReadOnly = 0x00000003,
+    WGPUStorageTextureAccess_ReadWrite = 0x00000004,
     WGPUStorageTextureAccess_Force32 = 0x7FFFFFFF
 } WGPUStorageTextureAccess WGPU_ENUM_ATTRIBUTE;
 typedef enum WGPUStoreOp {
@@ -929,11 +932,12 @@ typedef enum WGPUTextureFormat {
 } WGPUTextureFormat WGPU_ENUM_ATTRIBUTE;
 typedef enum WGPUTextureSampleType {
     WGPUTextureSampleType_BindingNotUsed = 0x00000000,
-    WGPUTextureSampleType_Float = 0x00000001,
-    WGPUTextureSampleType_UnfilterableFloat = 0x00000002,
-    WGPUTextureSampleType_Depth = 0x00000003,
-    WGPUTextureSampleType_Sint = 0x00000004,
-    WGPUTextureSampleType_Uint = 0x00000005,
+    WGPUTextureSampleType_Undefined = 0x00000001,
+    WGPUTextureSampleType_Float = 0x00000002,
+    WGPUTextureSampleType_UnfilterableFloat = 0x00000003,
+    WGPUTextureSampleType_Depth = 0x00000004,
+    WGPUTextureSampleType_Sint = 0x00000005,
+    WGPUTextureSampleType_Uint = 0x00000006,
     WGPUTextureSampleType_Force32 = 0x7FFFFFFF
 } WGPUTextureSampleType WGPU_ENUM_ATTRIBUTE;
 typedef enum WGPUTextureViewDimension {
@@ -1334,7 +1338,7 @@ typedef struct WGPUBufferBindingLayout {
 
 #define WGPU_BUFFER_BINDING_LAYOUT_INIT WGPU_MAKE_INIT_STRUCT(WGPUBufferBindingLayout, { \
     /*.nextInChain=*/nullptr WGPU_COMMA \
-    /*.type=*/WGPUBufferBindingType_BindingNotUsed WGPU_COMMA \
+    /*.type=*/WGPUBufferBindingType_Uniform WGPU_COMMA \
     /*.hasDynamicOffset=*/false WGPU_COMMA \
     /*.minBindingSize=*/0 WGPU_COMMA \
 })
@@ -1980,7 +1984,6 @@ typedef struct WGPURequestAdapterOptions {
     WGPUPowerPreference powerPreference;
     WGPUBackendType backendType;
     WGPUBool forceFallbackAdapter;
-    WGPUBool compatibilityMode;
 } WGPURequestAdapterOptions WGPU_STRUCTURE_ATTRIBUTE;
 
 #define WGPU_REQUEST_ADAPTER_OPTIONS_INIT WGPU_MAKE_INIT_STRUCT(WGPURequestAdapterOptions, { \
@@ -1990,7 +1993,6 @@ typedef struct WGPURequestAdapterOptions {
     /*.powerPreference=*/WGPUPowerPreference_Undefined WGPU_COMMA \
     /*.backendType=*/WGPUBackendType_Undefined WGPU_COMMA \
     /*.forceFallbackAdapter=*/false WGPU_COMMA \
-    /*.compatibilityMode=*/false WGPU_COMMA \
 })
 
 typedef struct WGPURequestDeviceCallbackInfo {
@@ -2014,7 +2016,7 @@ typedef struct WGPUSamplerBindingLayout {
 
 #define WGPU_SAMPLER_BINDING_LAYOUT_INIT WGPU_MAKE_INIT_STRUCT(WGPUSamplerBindingLayout, { \
     /*.nextInChain=*/nullptr WGPU_COMMA \
-    /*.type=*/WGPUSamplerBindingType_BindingNotUsed WGPU_COMMA \
+    /*.type=*/WGPUSamplerBindingType_Filtering WGPU_COMMA \
 })
 
 // Can be chained in WGPUShaderModuleDescriptor
@@ -2415,7 +2417,7 @@ typedef struct WGPUStorageTextureBindingLayout {
 
 #define WGPU_STORAGE_TEXTURE_BINDING_LAYOUT_INIT WGPU_MAKE_INIT_STRUCT(WGPUStorageTextureBindingLayout, { \
     /*.nextInChain=*/nullptr WGPU_COMMA \
-    /*.access=*/WGPUStorageTextureAccess_BindingNotUsed WGPU_COMMA \
+    /*.access=*/WGPUStorageTextureAccess_WriteOnly WGPU_COMMA \
     /*.format=*/WGPUTextureFormat_Undefined WGPU_COMMA \
     /*.viewDimension=*/WGPUTextureViewDimension_2D WGPU_COMMA \
 })
@@ -2605,7 +2607,7 @@ typedef struct WGPUTextureBindingLayout {
 
 #define WGPU_TEXTURE_BINDING_LAYOUT_INIT WGPU_MAKE_INIT_STRUCT(WGPUTextureBindingLayout, { \
     /*.nextInChain=*/nullptr WGPU_COMMA \
-    /*.sampleType=*/WGPUTextureSampleType_BindingNotUsed WGPU_COMMA \
+    /*.sampleType=*/WGPUTextureSampleType_Float WGPU_COMMA \
     /*.viewDimension=*/WGPUTextureViewDimension_2D WGPU_COMMA \
     /*.multisampled=*/false WGPU_COMMA \
 })

@@ -503,9 +503,10 @@ type
 
    TWGPUBufferBindingType = (
       WGPUBufferBindingType_BindingNotUsed = 0,
-      WGPUBufferBindingType_Uniform = 1,
-      WGPUBufferBindingType_Storage = 2,
-      WGPUBufferBindingType_ReadOnlyStorage = 3,
+      WGPUBufferBindingType_Undefined = 1,
+      WGPUBufferBindingType_Uniform = 2,
+      WGPUBufferBindingType_Storage = 3,
+      WGPUBufferBindingType_ReadOnlyStorage = 4,
       WGPUBufferBindingType_Force32 = 2147483647);
    PWGPUBufferBindingType = ^TWGPUBufferBindingType;
 
@@ -910,9 +911,10 @@ type
 
    TWGPUSamplerBindingType = (
       WGPUSamplerBindingType_BindingNotUsed = 0,
-      WGPUSamplerBindingType_Filtering = 1,
-      WGPUSamplerBindingType_NonFiltering = 2,
-      WGPUSamplerBindingType_Comparison = 3,
+      WGPUSamplerBindingType_Undefined = 1,
+      WGPUSamplerBindingType_Filtering = 2,
+      WGPUSamplerBindingType_NonFiltering = 3,
+      WGPUSamplerBindingType_Comparison = 4,
       WGPUSamplerBindingType_Force32 = 2147483647);
    PWGPUSamplerBindingType = ^TWGPUSamplerBindingType;
 
@@ -946,9 +948,10 @@ type
 
    TWGPUStorageTextureAccess = (
       WGPUStorageTextureAccess_BindingNotUsed = 0,
-      WGPUStorageTextureAccess_WriteOnly = 1,
-      WGPUStorageTextureAccess_ReadOnly = 2,
-      WGPUStorageTextureAccess_ReadWrite = 3,
+      WGPUStorageTextureAccess_Undefined = 1,
+      WGPUStorageTextureAccess_WriteOnly = 2,
+      WGPUStorageTextureAccess_ReadOnly = 3,
+      WGPUStorageTextureAccess_ReadWrite = 4,
       WGPUStorageTextureAccess_Force32 = 2147483647);
    PWGPUStorageTextureAccess = ^TWGPUStorageTextureAccess;
 
@@ -1105,11 +1108,12 @@ type
 
    TWGPUTextureSampleType = (
       WGPUTextureSampleType_BindingNotUsed = 0,
-      WGPUTextureSampleType_Float = 1,
-      WGPUTextureSampleType_UnfilterableFloat = 2,
-      WGPUTextureSampleType_Depth = 3,
-      WGPUTextureSampleType_Sint = 4,
-      WGPUTextureSampleType_Uint = 5,
+      WGPUTextureSampleType_Undefined = 1,
+      WGPUTextureSampleType_Float = 2,
+      WGPUTextureSampleType_UnfilterableFloat = 3,
+      WGPUTextureSampleType_Depth = 4,
+      WGPUTextureSampleType_Sint = 5,
+      WGPUTextureSampleType_Uint = 6,
       WGPUTextureSampleType_Force32 = 2147483647);
    PWGPUTextureSampleType = ^TWGPUTextureSampleType;
 
@@ -1671,7 +1675,6 @@ type
       powerPreference: TWGPUPowerPreference;
       backendType: TWGPUBackendType;
       forceFallbackAdapter: TWGPUBool;
-      compatibilityMode: TWGPUBool;
    end;
 
    TWGPURequestDeviceCallbackInfo = record
