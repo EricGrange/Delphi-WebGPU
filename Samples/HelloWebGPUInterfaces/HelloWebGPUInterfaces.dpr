@@ -149,14 +149,14 @@ begin
    Writeln('Pipeline ', &message.data);
 end;
 
-procedure DeviceCallback(status: TWGPURequestDeviceStatus; const device: TWGPUDevice; const &message: TWGPUStringView; userdata: Pointer); cdecl;
+procedure DeviceCallback(status: TWGPURequestDeviceStatus; device: TWGPUDevice; const &message: TWGPUStringView; userdata1: Pointer; userdata2: Pointer); cdecl;
 begin
    if status <> WGPURequestDeviceStatus_Success then
       Writeln(Ord(status), &message.data);
    vDevice := WGPUFactory.WrapDevice(device);
 end;
 
-procedure AdapterCallback(status: TWGPURequestAdapterStatus; adapter: TWGPUAdapter; const &message: TWGPUStringView; userdata: Pointer); cdecl;
+procedure AdapterCallback(status: TWGPURequestAdapterStatus; adapter: TWGPUAdapter; const &message: TWGPUStringView; userdata1: Pointer; userdata2: Pointer); cdecl;
 begin
    if status <> WGPURequestAdapterStatus_Success then
       Writeln(Ord(status), &message.data);
@@ -171,7 +171,10 @@ begin
 
    // Request adapter
    var adapterOptions := Default(TWGPURequestAdapterOptions);
-   vInstance.RequestAdapter(adapterOptions, @AdapterCallback, nil);
+   var adapterCallbackInfo := Default(TWGPURequestAdapterCallbackInfo);
+   adapterCallbackInfo.mode := WGPUCallbackMode_AllowSpontaneous;
+   adapterCallbackInfo.callback := AdapterCallback;
+   vInstance.RequestAdapter(adapterOptions, adapterCallbackInfo);
    Assert(vAdapter <> nil);
 
    // Request device
@@ -187,14 +190,17 @@ begin
    var deviceDescriptor := Default(TWGPUDeviceDescriptor);
    deviceDescriptor.&label := 'WebGPU Device';
    deviceDescriptor.requiredLimits := @requiredLimits;
-   deviceDescriptor.uncapturedErrorCallbackInfo2.callback := @UncapturedErrorCallback;
+   deviceDescriptor.uncapturedErrorCallbackInfo.callback := UncapturedErrorCallback;
    var featuresArray : array of TWGPUFeatureName := [
       WGPUFeatureName_TimestampQuery
       // , WGPUFeatureName_ChromiumExperimentalTimestampQueryInsidePasses
    ];
    deviceDescriptor.requiredFeatureCount := Length(featuresArray);
    deviceDescriptor.requiredFeatures := Pointer(featuresArray);
-   vAdapter.RequestDevice(deviceDescriptor, @DeviceCallback, nil);
+   var deviceCallbackInfo := Default(TWGPURequestDeviceCallbackInfo);
+   deviceCallbackInfo.mode := WGPUCallbackMode_AllowSpontaneous;
+   deviceCallbackInfo.callback := DeviceCallback;
+   vAdapter.RequestDevice(deviceDescriptor, deviceCallbackInfo);
    Assert(vDevice <> nil);
 
    // Create vSurface

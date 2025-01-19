@@ -149,14 +149,14 @@ begin
    Writeln('Pipeline ', &message.data);
 end;
 
-procedure DeviceCallback(status: TWGPURequestDeviceStatus; device: TWGPUDevice; const &message: TWGPUStringView; userdata: Pointer); cdecl;
+procedure DeviceCallback(status: TWGPURequestDeviceStatus; device: TWGPUDevice; const &message: TWGPUStringView; userdata1: Pointer; userdata2: Pointer); cdecl;
 begin
    vDevice := device;
    if status <> WGPURequestDeviceStatus_Success then
       Writeln(Ord(status), &message.data);
 end;
 
-procedure AdapterCallback(status: TWGPURequestAdapterStatus; adapter: TWGPUAdapter; const &message: TWGPUStringView; userdata: Pointer); cdecl;
+procedure AdapterCallback(status: TWGPURequestAdapterStatus; adapter: TWGPUAdapter; const &message: TWGPUStringView; userdata1: Pointer; userdata2: Pointer); cdecl;
 begin
    vAdapter := adapter;
    if status <> WGPURequestAdapterStatus_Success then
@@ -172,7 +172,10 @@ begin
 
    // Request adapter
    var adapterOptions := Default(TWGPURequestAdapterOptions);
-   wgpuInstanceRequestAdapter(vInstance, @adapterOptions, @AdapterCallback, nil);
+   var adapterCallbackInfo := Default(TWGPURequestAdapterCallbackInfo);
+   adapterCallbackInfo.mode := WGPUCallbackMode_AllowSpontaneous;
+   adapterCallbackInfo.callback := AdapterCallback;
+   wgpuInstanceRequestAdapter(vInstance, @adapterOptions, adapterCallbackInfo);
    Assert(vAdapter <> 0);
 
    // Request device
@@ -188,14 +191,17 @@ begin
    var deviceDescriptor := Default(TWGPUDeviceDescriptor);
    deviceDescriptor.&label := 'WebGPU Device';
    deviceDescriptor.requiredLimits := @requiredLimits;
-   deviceDescriptor.uncapturedErrorCallbackInfo2.callback := @UncapturedErrorCallback;
+   deviceDescriptor.uncapturedErrorCallbackInfo.callback := UncapturedErrorCallback;
    var featuresArray : array of TWGPUFeatureName := [
       WGPUFeatureName_TimestampQuery
       // , WGPUFeatureName_ChromiumExperimentalTimestampQueryInsidePasses
    ];
    deviceDescriptor.requiredFeatureCount := Length(featuresArray);
-   deviceDescriptor.requiredFeatures := Pointer(featuresArray);;
-   wgpuAdapterRequestDevice(vAdapter, @deviceDescriptor, @DeviceCallback, nil);
+   deviceDescriptor.requiredFeatures := Pointer(featuresArray);
+   var deviceCallbackInfo := Default(TWGPURequestDeviceCallbackInfo);
+   deviceCallbackInfo.mode := WGPUCallbackMode_AllowSpontaneous;
+   deviceCallbackInfo.callback := DeviceCallback;
+   wgpuAdapterRequestDevice(vAdapter, @deviceDescriptor, deviceCallbackInfo);
    Assert(vDevice <> 0);
 
    // Create vSurface
@@ -249,11 +255,11 @@ begin
    var vertexModule := wgpuDeviceCreateShaderModule(vDevice, @shaderModuleDescriptor);
    Assert(vertexModule <> 0);
 
-   var compilationInfoCallbackInfo2 := Default(TWGPUCompilationInfoCallbackInfo2);
-   compilationInfoCallbackInfo2.mode := WGPUCallbackMode_AllowSpontaneous;
-   compilationInfoCallbackInfo2.callback := @CompilationCallback;
-   compilationInfoCallbackInfo2.userdata1 := PChar('Vertex Shader');
-   wgpuShaderModuleGetCompilationInfo2(vertexModule, compilationInfoCallbackInfo2);
+   var compilationInfoCallbackInfo := Default(TWGPUCompilationInfoCallbackInfo);
+   compilationInfoCallbackInfo.mode := WGPUCallbackMode_AllowSpontaneous;
+   compilationInfoCallbackInfo.callback := @CompilationCallback;
+   compilationInfoCallbackInfo.userdata1 := PChar('Vertex Shader');
+   wgpuShaderModuleGetCompilationInfo(vertexModule, compilationInfoCallbackInfo);
 
    var fragmentSource := Default(TWGPUShaderSourceWGSL);
    fragmentSource.chain.sType := WGPUSType_ShaderSourceWGSL;
@@ -266,8 +272,8 @@ begin
    var fragmentModule := wgpuDeviceCreateShaderModule(vDevice, @shaderModuleDescriptor);
    Assert(fragmentModule <> 0);
 
-   compilationInfoCallbackInfo2.userdata1 := PChar('Fragment Shader');
-   wgpuShaderModuleGetCompilationInfo2(fragmentModule, compilationInfoCallbackInfo2);
+   compilationInfoCallbackInfo.userdata1 := PChar('Fragment Shader');
+   wgpuShaderModuleGetCompilationInfo(fragmentModule, compilationInfoCallbackInfo);
 
    // Create a sampler for the texture
    var samplerDescriptor := Default(TWGPUSamplerDescriptor);
