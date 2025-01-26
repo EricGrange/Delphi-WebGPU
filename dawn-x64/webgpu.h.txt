@@ -39,6 +39,7 @@
 #define WGPU_BREAKING_CHANGE_STRING_VIEW_OUTPUT_STRUCTS
 #define WGPU_BREAKING_CHANGE_STRING_VIEW_CALLBACKS
 #define WGPU_BREAKING_CHANGE_FUTURE_CALLBACK_TYPES
+#define WGPU_BREAKING_CHANGE_LOGGING_CALLBACK_TYPE
 
 #if defined(WGPU_SHARED_LIBRARY)
 #    if defined(_WIN32)
@@ -243,6 +244,7 @@ struct WGPUConstantEntry;
 struct WGPUDawnCacheDeviceDescriptor;
 struct WGPUDawnDrmFormatCapabilities;
 struct WGPUDepthStencilState;
+struct WGPUEmscriptenSurfaceSourceCanvasHTMLSelector;
 struct WGPUExternalTextureDescriptor;
 struct WGPUFutureWaitInfo;
 struct WGPUImageCopyBuffer;
@@ -269,7 +271,6 @@ struct WGPUSharedTextureMemoryDmaBufDescriptor;
 struct WGPUSharedTextureMemoryProperties;
 struct WGPUSupportedLimits;
 struct WGPUSurfaceDescriptor;
-struct WGPUSurfaceSourceCanvasHTMLSelector_Emscripten;
 struct WGPUTextureDescriptor;
 struct WGPUTextureViewDescriptor;
 struct WGPUVertexBufferLayout;
@@ -506,9 +507,7 @@ typedef enum WGPUFeatureName {
     WGPUFeatureName_AdapterPropertiesD3D = 0x00050017,
     WGPUFeatureName_AdapterPropertiesVk = 0x00050018,
     WGPUFeatureName_R8UnormStorage = 0x00050019,
-    WGPUFeatureName_FormatCapabilities = 0x0005001A,
     WGPUFeatureName_DawnFormatCapabilities = 0x0005001A,
-    WGPUFeatureName_DrmFormatCapabilities = 0x0005001B,
     WGPUFeatureName_DawnDrmFormatCapabilities = 0x0005001B,
     WGPUFeatureName_Norm16TextureFormats = 0x0005001C,
     WGPUFeatureName_MultiPlanarFormatNv16 = 0x0005001D,
@@ -659,7 +658,7 @@ typedef enum WGPUSType {
     WGPUSType_SurfaceSourceXCBWindow = 0x00000009,
     WGPUSType_AdapterPropertiesSubgroups = 0x0000000A,
     WGPUSType_TextureBindingViewDimensionDescriptor = 0x00020000,
-    WGPUSType_SurfaceSourceCanvasHTMLSelector_Emscripten = 0x00040000,
+    WGPUSType_EmscriptenSurfaceSourceCanvasHTMLSelector = 0x00040000,
     WGPUSType_SurfaceDescriptorFromWindowsCoreWindow = 0x00050000,
     WGPUSType_ExternalTextureBindingEntry = 0x00050001,
     WGPUSType_ExternalTextureBindingLayout = 0x00050002,
@@ -685,7 +684,6 @@ typedef enum WGPUSType {
     WGPUSType_AdapterPropertiesVk = 0x00050016,
     WGPUSType_DawnWireWGSLControl = 0x00050017,
     WGPUSType_DawnWGSLBlocklist = 0x00050018,
-    WGPUSType_DrmFormatCapabilities = 0x00050019,
     WGPUSType_DawnDrmFormatCapabilities = 0x00050019,
     WGPUSType_ShaderModuleCompilationOptions = 0x0005001A,
     WGPUSType_ColorTargetStateExpandResolveTextureDawn = 0x0005001B,
@@ -1036,7 +1034,6 @@ static const WGPUTextureUsage WGPUTextureUsage_StorageAttachment = 0x00000000000
 typedef void (*WGPUCallback)(void * userdata) WGPU_FUNCTION_ATTRIBUTE;
 typedef size_t (*WGPUDawnLoadCacheDataFunction)(void const * key, size_t keySize, void * value, size_t valueSize, void * userdata) WGPU_FUNCTION_ATTRIBUTE;
 typedef void (*WGPUDawnStoreCacheDataFunction)(void const * key, size_t keySize, void const * value, size_t valueSize, void * userdata) WGPU_FUNCTION_ATTRIBUTE;
-typedef void (*WGPULoggingCallback)(WGPULoggingType type, struct WGPUStringView message, void * userdata) WGPU_FUNCTION_ATTRIBUTE;
 typedef void (*WGPUProc)(void) WGPU_FUNCTION_ATTRIBUTE;
 
 // Callback function pointers
@@ -1045,6 +1042,7 @@ typedef void (*WGPUCompilationInfoCallback)(WGPUCompilationInfoRequestStatus sta
 typedef void (*WGPUCreateComputePipelineAsyncCallback)(WGPUCreatePipelineAsyncStatus status, WGPUComputePipeline pipeline, struct WGPUStringView message, void* userdata1, void* userdata2) WGPU_FUNCTION_ATTRIBUTE;
 typedef void (*WGPUCreateRenderPipelineAsyncCallback)(WGPUCreatePipelineAsyncStatus status, WGPURenderPipeline pipeline, struct WGPUStringView message, void* userdata1, void* userdata2) WGPU_FUNCTION_ATTRIBUTE;
 typedef void (*WGPUDeviceLostCallback)(WGPUDevice const * device, WGPUDeviceLostReason reason, struct WGPUStringView message, void* userdata1, void* userdata2) WGPU_FUNCTION_ATTRIBUTE;
+typedef void (*WGPULoggingCallback)(WGPULoggingType type, struct WGPUStringView message, void* userdata1, void* userdata2) WGPU_FUNCTION_ATTRIBUTE;
 typedef void (*WGPUPopErrorScopeCallback)(WGPUPopErrorScopeStatus status, WGPUErrorType type, struct WGPUStringView message, void* userdata1, void* userdata2) WGPU_FUNCTION_ATTRIBUTE;
 typedef void (*WGPUQueueWorkDoneCallback)(WGPUQueueWorkDoneStatus status, void* userdata1, void* userdata2) WGPU_FUNCTION_ATTRIBUTE;
 typedef void (*WGPURequestAdapterCallback)(WGPURequestAdapterStatus status, WGPUAdapter adapter, struct WGPUStringView message, void* userdata1, void* userdata2) WGPU_FUNCTION_ATTRIBUTE;
@@ -1139,6 +1137,20 @@ typedef struct WGPUDeviceLostCallbackInfo {
 #define WGPU_DEVICE_LOST_CALLBACK_INFO_INIT WGPU_MAKE_INIT_STRUCT(WGPUDeviceLostCallbackInfo, { \
     /*.nextInChain=*/nullptr WGPU_COMMA \
     /*.mode=*/{} WGPU_COMMA \
+    /*.callback=*/nullptr WGPU_COMMA \
+    /*.userdata1=*/nullptr WGPU_COMMA \
+    /*.userdata2=*/nullptr WGPU_COMMA \
+})
+
+typedef struct WGPULoggingCallbackInfo {
+    WGPUChainedStruct const* nextInChain;
+    WGPULoggingCallback callback;
+    void* userdata1;
+    void* userdata2;
+} WGPULoggingCallbackInfo WGPU_STRUCTURE_ATTRIBUTE;
+
+#define WGPU_LOGGING_CALLBACK_INFO_INIT WGPU_MAKE_INIT_STRUCT(WGPULoggingCallbackInfo, { \
+    /*.nextInChain=*/nullptr WGPU_COMMA \
     /*.callback=*/nullptr WGPU_COMMA \
     /*.userdata1=*/nullptr WGPU_COMMA \
     /*.userdata2=*/nullptr WGPU_COMMA \
@@ -2761,6 +2773,17 @@ typedef struct WGPUDepthStencilState {
     /*.depthBiasClamp=*/0.0f WGPU_COMMA \
 })
 
+// Can be chained in WGPUSurfaceDescriptor
+typedef struct WGPUEmscriptenSurfaceSourceCanvasHTMLSelector {
+    WGPUChainedStruct chain;
+    WGPUStringView selector;
+} WGPUEmscriptenSurfaceSourceCanvasHTMLSelector WGPU_STRUCTURE_ATTRIBUTE;
+
+#define WGPU_EMSCRIPTEN_SURFACE_SOURCE_CANVAS_HTML_SELECTOR_INIT WGPU_MAKE_INIT_STRUCT(WGPUEmscriptenSurfaceSourceCanvasHTMLSelector, { \
+    /*.chain=*/{/*.nextInChain*/nullptr WGPU_COMMA /*.sType*/WGPUSType_EmscriptenSurfaceSourceCanvasHTMLSelector} WGPU_COMMA \
+    /*.selector=*/WGPU_STRING_VIEW_INIT WGPU_COMMA \
+})
+
 typedef struct WGPUExternalTextureDescriptor {
     WGPUChainedStruct const * nextInChain;
     WGPUStringView label;
@@ -3133,17 +3156,6 @@ typedef struct WGPUSurfaceDescriptor {
     /*.label=*/WGPU_STRING_VIEW_INIT WGPU_COMMA \
 })
 
-// Can be chained in WGPUSurfaceDescriptor
-typedef struct WGPUSurfaceSourceCanvasHTMLSelector_Emscripten {
-    WGPUChainedStruct chain;
-    WGPUStringView selector;
-} WGPUSurfaceSourceCanvasHTMLSelector_Emscripten WGPU_STRUCTURE_ATTRIBUTE;
-
-#define WGPU_SURFACE_SOURCE_CANVAS_HTML_SELECTOR__EMSCRIPTEN_INIT WGPU_MAKE_INIT_STRUCT(WGPUSurfaceSourceCanvasHTMLSelector_Emscripten, { \
-    /*.chain=*/{/*.nextInChain*/nullptr WGPU_COMMA /*.sType*/WGPUSType_SurfaceSourceCanvasHTMLSelector_Emscripten} WGPU_COMMA \
-    /*.selector=*/WGPU_STRING_VIEW_INIT WGPU_COMMA \
-})
-
 typedef struct WGPUTextureDescriptor {
     WGPUChainedStruct const * nextInChain;
     WGPUStringView label;
@@ -3399,18 +3411,6 @@ typedef struct WGPURenderPipelineDescriptor {
     /*.fragment=*/nullptr WGPU_COMMA \
 })
 
-// WGPUDrmFormatCapabilities is deprecated.
-// Use WGPUDawnDrmFormatCapabilities instead.
-typedef WGPUDawnDrmFormatCapabilities WGPUDrmFormatCapabilities;
-
-// WGPUDrmFormatProperties is deprecated.
-// Use WGPUDawnDrmFormatProperties instead.
-typedef WGPUDawnDrmFormatProperties WGPUDrmFormatProperties;
-
-// WGPUFormatCapabilities is deprecated.
-// Use WGPUDawnFormatCapabilities instead.
-typedef WGPUDawnFormatCapabilities WGPUFormatCapabilities;
-
 // WGPURenderPassDescriptorMaxDrawCount is deprecated.
 // Use WGPURenderPassMaxDrawCount instead.
 typedef WGPURenderPassMaxDrawCount WGPURenderPassDescriptorMaxDrawCount;
@@ -3428,8 +3428,8 @@ typedef WGPUShaderSourceWGSL WGPUShaderModuleWGSLDescriptor;
 typedef WGPUSurfaceSourceAndroidNativeWindow WGPUSurfaceDescriptorFromAndroidNativeWindow;
 
 // WGPUSurfaceDescriptorFromCanvasHTMLSelector is deprecated.
-// Use WGPUSurfaceSourceCanvasHTMLSelector_Emscripten instead.
-typedef WGPUSurfaceSourceCanvasHTMLSelector_Emscripten WGPUSurfaceDescriptorFromCanvasHTMLSelector;
+// Use WGPUEmscriptenSurfaceSourceCanvasHTMLSelector instead.
+typedef WGPUEmscriptenSurfaceSourceCanvasHTMLSelector WGPUSurfaceDescriptorFromCanvasHTMLSelector;
 
 // WGPUSurfaceDescriptorFromMetalLayer is deprecated.
 // Use WGPUSurfaceSourceMetalLayer instead.
@@ -3591,7 +3591,7 @@ typedef void (*WGPUProcDeviceInjectError)(WGPUDevice device, WGPUErrorType type,
 typedef WGPUFuture (*WGPUProcDevicePopErrorScope)(WGPUDevice device, WGPUPopErrorScopeCallbackInfo callbackInfo) WGPU_FUNCTION_ATTRIBUTE;
 typedef void (*WGPUProcDevicePushErrorScope)(WGPUDevice device, WGPUErrorFilter filter) WGPU_FUNCTION_ATTRIBUTE;
 typedef void (*WGPUProcDeviceSetLabel)(WGPUDevice device, WGPUStringView label) WGPU_FUNCTION_ATTRIBUTE;
-typedef void (*WGPUProcDeviceSetLoggingCallback)(WGPUDevice device, WGPULoggingCallback callback, void * userdata) WGPU_FUNCTION_ATTRIBUTE;
+typedef void (*WGPUProcDeviceSetLoggingCallback)(WGPUDevice device, WGPULoggingCallbackInfo callbackInfo) WGPU_FUNCTION_ATTRIBUTE;
 typedef void (*WGPUProcDeviceTick)(WGPUDevice device) WGPU_FUNCTION_ATTRIBUTE;
 typedef void (*WGPUProcDeviceValidateTextureDescriptor)(WGPUDevice device, WGPUTextureDescriptor const * descriptor) WGPU_FUNCTION_ATTRIBUTE;
 typedef void (*WGPUProcDeviceAddRef)(WGPUDevice device) WGPU_FUNCTION_ATTRIBUTE;
@@ -3895,7 +3895,7 @@ WGPU_EXPORT void wgpuDeviceInjectError(WGPUDevice device, WGPUErrorType type, WG
 WGPU_EXPORT WGPUFuture wgpuDevicePopErrorScope(WGPUDevice device, WGPUPopErrorScopeCallbackInfo callbackInfo) WGPU_FUNCTION_ATTRIBUTE;
 WGPU_EXPORT void wgpuDevicePushErrorScope(WGPUDevice device, WGPUErrorFilter filter) WGPU_FUNCTION_ATTRIBUTE;
 WGPU_EXPORT void wgpuDeviceSetLabel(WGPUDevice device, WGPUStringView label) WGPU_FUNCTION_ATTRIBUTE;
-WGPU_EXPORT void wgpuDeviceSetLoggingCallback(WGPUDevice device, WGPULoggingCallback callback, void * userdata) WGPU_FUNCTION_ATTRIBUTE;
+WGPU_EXPORT void wgpuDeviceSetLoggingCallback(WGPUDevice device, WGPULoggingCallbackInfo callbackInfo) WGPU_FUNCTION_ATTRIBUTE;
 WGPU_EXPORT void wgpuDeviceTick(WGPUDevice device) WGPU_FUNCTION_ATTRIBUTE;
 WGPU_EXPORT void wgpuDeviceValidateTextureDescriptor(WGPUDevice device, WGPUTextureDescriptor const * descriptor) WGPU_FUNCTION_ATTRIBUTE;
 WGPU_EXPORT void wgpuDeviceAddRef(WGPUDevice device) WGPU_FUNCTION_ATTRIBUTE;

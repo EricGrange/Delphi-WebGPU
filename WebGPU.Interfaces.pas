@@ -179,7 +179,7 @@ type
       function PopErrorScope(const aCallbackInfo: TWGPUPopErrorScopeCallbackInfo): TWGPUFuture;
       procedure PushErrorScope(const aFilter: TWGPUErrorFilter);
       procedure SetLabel(const aLabel: TWGPUStringView);
-      procedure SetLoggingCallback(const aCallback: TWGPULoggingCallback; const aUserdata: Pointer);
+      procedure SetLoggingCallback(const aCallbackInfo: TWGPULoggingCallbackInfo);
       procedure Tick;
       procedure ValidateTextureDescriptor(const aDescriptor: TWGPUTextureDescriptor);
    end;
@@ -532,7 +532,7 @@ type
       function PopErrorScope(const aCallbackInfo: TWGPUPopErrorScopeCallbackInfo): TWGPUFuture;
       procedure PushErrorScope(const aFilter: TWGPUErrorFilter);
       procedure SetLabel(const aLabel: TWGPUStringView);
-      procedure SetLoggingCallback(const aCallback: TWGPULoggingCallback; const aUserdata: Pointer);
+      procedure SetLoggingCallback(const aCallbackInfo: TWGPULoggingCallbackInfo);
       procedure Tick;
       procedure ValidateTextureDescriptor(const aDescriptor: TWGPUTextureDescriptor);
    end;
@@ -1363,9 +1363,9 @@ begin
    wgpuDeviceSetLabel(FHandle, aLabel);
 end;
 
-procedure TiwgpuDevice.SetLoggingCallback(const aCallback: TWGPULoggingCallback; const aUserdata: Pointer);
+procedure TiwgpuDevice.SetLoggingCallback(const aCallbackInfo: TWGPULoggingCallbackInfo);
 begin
-   wgpuDeviceSetLoggingCallback(FHandle, aCallback, aUserdata);
+   wgpuDeviceSetLoggingCallback(FHandle, aCallbackInfo);
 end;
 
 procedure TiwgpuDevice.Tick;
