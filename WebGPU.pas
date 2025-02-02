@@ -157,7 +157,6 @@ type
    PWGPUTextureViewImpl = Pointer;
    PPWGPUTextureViewImpl = ^PWGPUTextureViewImpl;
    PWGPUChainedStruct = ^TWGPUChainedStruct;
-   PWGPUChainedStructOut = ^TWGPUChainedStructOut;
    PWGPUBufferMapCallbackInfo = ^TWGPUBufferMapCallbackInfo;
    PWGPUCompilationInfoCallbackInfo = ^TWGPUCompilationInfoCallbackInfo;
    PWGPUCreateComputePipelineAsyncCallbackInfo = ^TWGPUCreateComputePipelineAsyncCallbackInfo;
@@ -179,7 +178,6 @@ type
    PWGPUBufferHostMappedPointer = ^TWGPUBufferHostMappedPointer;
    PWGPUColor = ^TWGPUColor;
    PWGPUColorTargetStateExpandResolveTextureDawn = ^TWGPUColorTargetStateExpandResolveTextureDawn;
-   PWGPUComputePassTimestampWrites = ^TWGPUComputePassTimestampWrites;
    PWGPUCopyTextureForBrowserOptions = ^TWGPUCopyTextureForBrowserOptions;
    PWGPUDawnWGSLBlocklist = ^TWGPUDawnWGSLBlocklist;
    PWGPUDawnAdapterPropertiesPowerPreference = ^TWGPUDawnAdapterPropertiesPowerPreference;
@@ -200,18 +198,18 @@ type
    PWGPUExternalTextureBindingEntry = ^TWGPUExternalTextureBindingEntry;
    PWGPUExternalTextureBindingLayout = ^TWGPUExternalTextureBindingLayout;
    PWGPUFuture = ^TWGPUFuture;
-   PWGPUInstanceFeatures = ^TWGPUInstanceFeatures;
+   PWGPUInstanceCapabilities = ^TWGPUInstanceCapabilities;
    PWGPULimits = ^TWGPULimits;
    PWGPUMemoryHeapInfo = ^TWGPUMemoryHeapInfo;
    PWGPUMultisampleState = ^TWGPUMultisampleState;
    PWGPUOrigin2D = ^TWGPUOrigin2D;
    PWGPUOrigin3D = ^TWGPUOrigin3D;
+   PWGPUPassTimestampWrites = ^TWGPUPassTimestampWrites;
    PWGPUPipelineLayoutStorageAttachment = ^TWGPUPipelineLayoutStorageAttachment;
    PWGPUPrimitiveState = ^TWGPUPrimitiveState;
    PWGPURenderPassDepthStencilAttachment = ^TWGPURenderPassDepthStencilAttachment;
    PWGPURenderPassDescriptorExpandResolveRect = ^TWGPURenderPassDescriptorExpandResolveRect;
    PWGPURenderPassMaxDrawCount = ^TWGPURenderPassMaxDrawCount;
-   PWGPURenderPassTimestampWrites = ^TWGPURenderPassTimestampWrites;
    PWGPURequestAdapterOptions = ^TWGPURequestAdapterOptions;
    PWGPUSamplerBindingLayout = ^TWGPUSamplerBindingLayout;
    PWGPUShaderModuleCompilationOptions = ^TWGPUShaderModuleCompilationOptions;
@@ -247,6 +245,7 @@ type
    PWGPUStencilFaceState = ^TWGPUStencilFaceState;
    PWGPUStorageTextureBindingLayout = ^TWGPUStorageTextureBindingLayout;
    PWGPUStringView = ^TWGPUStringView;
+   PWGPUSupportedWGSLLanguageFeatures = ^TWGPUSupportedWGSLLanguageFeatures;
    PWGPUSupportedFeatures = ^TWGPUSupportedFeatures;
    PWGPUSurfaceCapabilities = ^TWGPUSurfaceCapabilities;
    PWGPUSurfaceConfiguration = ^TWGPUSurfaceConfiguration;
@@ -411,18 +410,18 @@ type
    TWGPUTextureView = UIntPtr;
    PWGPUTextureView = ^TWGPUTextureView;
 
-   TWGPUWGSLFeatureName = (
-      WGPUWGSLFeatureName_ReadonlyAndReadwriteStorageTextures = 1,
-      WGPUWGSLFeatureName_Packed4x8IntegerDotProduct = 2,
-      WGPUWGSLFeatureName_UnrestrictedPointerParameters = 3,
-      WGPUWGSLFeatureName_PointerCompositeAccess = 4,
-      WGPUWGSLFeatureName_ChromiumTestingUnimplemented = 327680,
-      WGPUWGSLFeatureName_ChromiumTestingUnsafeExperimental = 327681,
-      WGPUWGSLFeatureName_ChromiumTestingExperimental = 327682,
-      WGPUWGSLFeatureName_ChromiumTestingShippedWithKillswitch = 327683,
-      WGPUWGSLFeatureName_ChromiumTestingShipped = 327684,
-      WGPUWGSLFeatureName_Force32 = 2147483647);
-   PWGPUWGSLFeatureName = ^TWGPUWGSLFeatureName;
+   TWGPUWGSLLanguageFeatureName = (
+      WGPUWGSLLanguageFeatureName_ReadonlyAndReadwriteStorageTextures = 1,
+      WGPUWGSLLanguageFeatureName_Packed4x8IntegerDotProduct = 2,
+      WGPUWGSLLanguageFeatureName_UnrestrictedPointerParameters = 3,
+      WGPUWGSLLanguageFeatureName_PointerCompositeAccess = 4,
+      WGPUWGSLLanguageFeatureName_ChromiumTestingUnimplemented = 327680,
+      WGPUWGSLLanguageFeatureName_ChromiumTestingUnsafeExperimental = 327681,
+      WGPUWGSLLanguageFeatureName_ChromiumTestingExperimental = 327682,
+      WGPUWGSLLanguageFeatureName_ChromiumTestingShippedWithKillswitch = 327683,
+      WGPUWGSLLanguageFeatureName_ChromiumTestingShipped = 327684,
+      WGPUWGSLLanguageFeatureName_Force32 = 2147483647);
+   PWGPUWGSLLanguageFeatureName = ^TWGPUWGSLLanguageFeatureName;
 
    TWGPUAdapterType = (
       WGPUAdapterType_DiscreteGPU = 1,
@@ -531,9 +530,6 @@ type
    TWGPUCompilationInfoRequestStatus = (
       WGPUCompilationInfoRequestStatus_Success = 1,
       WGPUCompilationInfoRequestStatus_InstanceDropped = 2,
-      WGPUCompilationInfoRequestStatus_Error = 3,
-      WGPUCompilationInfoRequestStatus_DeviceLost = 4,
-      WGPUCompilationInfoRequestStatus_Unknown = 5,
       WGPUCompilationInfoRequestStatus_Force32 = 2147483647);
    PWGPUCompilationInfoRequestStatus = ^TWGPUCompilationInfoRequestStatus;
 
@@ -558,9 +554,6 @@ type
       WGPUCreatePipelineAsyncStatus_InstanceDropped = 2,
       WGPUCreatePipelineAsyncStatus_ValidationError = 3,
       WGPUCreatePipelineAsyncStatus_InternalError = 4,
-      WGPUCreatePipelineAsyncStatus_DeviceLost = 5,
-      WGPUCreatePipelineAsyncStatus_DeviceDestroyed = 6,
-      WGPUCreatePipelineAsyncStatus_Unknown = 7,
       WGPUCreatePipelineAsyncStatus_Force32 = 2147483647);
    PWGPUCreatePipelineAsyncStatus = ^TWGPUCreatePipelineAsyncStatus;
 
@@ -593,7 +586,6 @@ type
       WGPUErrorType_OutOfMemory = 3,
       WGPUErrorType_Internal = 4,
       WGPUErrorType_Unknown = 5,
-      WGPUErrorType_DeviceLost = 6,
       WGPUErrorType_Force32 = 2147483647);
    PWGPUErrorType = ^TWGPUErrorType;
 
@@ -729,7 +721,6 @@ type
       WGPUMapAsyncStatus_InstanceDropped = 2,
       WGPUMapAsyncStatus_Error = 3,
       WGPUMapAsyncStatus_Aborted = 4,
-      WGPUMapAsyncStatus_Unknown = 5,
       WGPUMapAsyncStatus_Force32 = 2147483647);
    PWGPUMapAsyncStatus = ^TWGPUMapAsyncStatus;
 
@@ -750,6 +741,7 @@ type
    TWGPUPopErrorScopeStatus = (
       WGPUPopErrorScopeStatus_Success = 1,
       WGPUPopErrorScopeStatus_InstanceDropped = 2,
+      WGPUPopErrorScopeStatus_EmptyStack = 3,
       WGPUPopErrorScopeStatus_Force32 = 2147483647);
    PWGPUPopErrorScopeStatus = ^TWGPUPopErrorScopeStatus;
 
@@ -788,7 +780,6 @@ type
       WGPUQueueWorkDoneStatus_Success = 1,
       WGPUQueueWorkDoneStatus_InstanceDropped = 2,
       WGPUQueueWorkDoneStatus_Error = 3,
-      WGPUQueueWorkDoneStatus_Unknown = 4,
       WGPUQueueWorkDoneStatus_Force32 = 2147483647);
    PWGPUQueueWorkDoneStatus = ^TWGPUQueueWorkDoneStatus;
 
@@ -797,7 +788,6 @@ type
       WGPURequestAdapterStatus_InstanceDropped = 2,
       WGPURequestAdapterStatus_Unavailable = 3,
       WGPURequestAdapterStatus_Error = 4,
-      WGPURequestAdapterStatus_Unknown = 5,
       WGPURequestAdapterStatus_Force32 = 2147483647);
    PWGPURequestAdapterStatus = ^TWGPURequestAdapterStatus;
 
@@ -805,7 +795,6 @@ type
       WGPURequestDeviceStatus_Success = 1,
       WGPURequestDeviceStatus_InstanceDropped = 2,
       WGPURequestDeviceStatus_Error = 3,
-      WGPURequestDeviceStatus_Unknown = 4,
       WGPURequestDeviceStatus_Force32 = 2147483647);
    PWGPURequestDeviceStatus = ^TWGPURequestDeviceStatus;
 
@@ -1159,10 +1148,7 @@ type
    TWGPUWaitStatus = (
       WGPUWaitStatus_Success = 1,
       WGPUWaitStatus_TimedOut = 2,
-      WGPUWaitStatus_UnsupportedTimeout = 3,
-      WGPUWaitStatus_UnsupportedCount = 4,
-      WGPUWaitStatus_UnsupportedMixedSources = 5,
-      WGPUWaitStatus_Unknown = 6,
+      WGPUWaitStatus_Error = 3,
       WGPUWaitStatus_Force32 = 2147483647);
    PWGPUWaitStatus = ^TWGPUWaitStatus;
    TWGPUBufferUsage = TWGPUFlags;
@@ -1196,11 +1182,6 @@ type
    TWGPUUncapturedErrorCallback = procedure(const device: PWGPUDevice; &type: TWGPUErrorType; const &message: TWGPUStringView; userdata1: Pointer; userdata2: Pointer); cdecl;
    TWGPUChainedStruct = record
       next: PWGPUChainedStruct;
-      sType: TWGPUSType;
-   end;
-
-   TWGPUChainedStructOut = record
-      next: PWGPUChainedStructOut;
       sType: TWGPUSType;
    end;
 
@@ -1295,18 +1276,18 @@ type
    end;
 
    TWGPUAdapterPropertiesD3D = record
-      chain: TWGPUChainedStructOut;
+      chain: TWGPUChainedStruct;
       shaderModel: UInt32;
    end;
 
    TWGPUAdapterPropertiesSubgroups = record
-      chain: TWGPUChainedStructOut;
+      chain: TWGPUChainedStruct;
       subgroupMinSize: UInt32;
       subgroupMaxSize: UInt32;
    end;
 
    TWGPUAdapterPropertiesVk = record
-      chain: TWGPUChainedStructOut;
+      chain: TWGPUChainedStruct;
       driverVersion: UInt32;
    end;
 
@@ -1352,12 +1333,6 @@ type
       enabled: TWGPUBool;
    end;
 
-   TWGPUComputePassTimestampWrites = record
-      querySet: TWGPUQuerySet;
-      beginningOfPassWriteIndex: UInt32;
-      endOfPassWriteIndex: UInt32;
-   end;
-
    TWGPUCopyTextureForBrowserOptions = record
       nextInChain: PWGPUChainedStruct;
       flipY: TWGPUBool;
@@ -1377,7 +1352,7 @@ type
    end;
 
    TWGPUDawnAdapterPropertiesPowerPreference = record
-      chain: TWGPUChainedStructOut;
+      chain: TWGPUChainedStruct;
       powerPreference: TWGPUPowerPreference;
    end;
 
@@ -1397,18 +1372,18 @@ type
    end;
 
    TWGPUDawnExperimentalImmediateDataLimits = record
-      chain: TWGPUChainedStructOut;
+      chain: TWGPUChainedStruct;
       maxImmediateDataRangeByteSize: UInt32;
    end;
 
    TWGPUDawnExperimentalSubgroupLimits = record
-      chain: TWGPUChainedStructOut;
+      chain: TWGPUChainedStruct;
       minSubgroupSize: UInt32;
       maxSubgroupSize: UInt32;
    end;
 
    TWGPUDawnFormatCapabilities = record
-      nextInChain: PWGPUChainedStructOut;
+      nextInChain: PWGPUChainedStruct;
    end;
 
    TWGPUDawnRenderPassColorAttachmentRenderToSingleSampled = record
@@ -1422,7 +1397,7 @@ type
    end;
 
    TWGPUDawnTexelCopyBufferRowAlignmentLimits = record
-      chain: TWGPUChainedStructOut;
+      chain: TWGPUChainedStruct;
       minTexelCopyBufferRowAlignment: UInt32;
    end;
 
@@ -1470,7 +1445,7 @@ type
       id: UInt64;
    end;
 
-   TWGPUInstanceFeatures = record
+   TWGPUInstanceCapabilities = record
       nextInChain: PWGPUChainedStruct;
       timedWaitAnyEnable: TWGPUBool;
       timedWaitAnyMaxCount: NativeUInt;
@@ -1538,6 +1513,13 @@ type
       z: UInt32;
    end;
 
+   TWGPUPassTimestampWrites = record
+      nextInChain: PWGPUChainedStruct;
+      querySet: TWGPUQuerySet;
+      beginningOfPassWriteIndex: UInt32;
+      endOfPassWriteIndex: UInt32;
+   end;
+
    TWGPUPipelineLayoutStorageAttachment = record
       offset: UInt64;
       format: TWGPUTextureFormat;
@@ -1553,6 +1535,7 @@ type
    end;
 
    TWGPURenderPassDepthStencilAttachment = record
+      nextInChain: PWGPUChainedStruct;
       view: TWGPUTextureView;
       depthLoadOp: TWGPULoadOp;
       depthStoreOp: TWGPUStoreOp;
@@ -1575,12 +1558,6 @@ type
    TWGPURenderPassMaxDrawCount = record
       chain: TWGPUChainedStruct;
       maxDrawCount: UInt64;
-   end;
-
-   TWGPURenderPassTimestampWrites = record
-      querySet: TWGPUQuerySet;
-      beginningOfPassWriteIndex: UInt32;
-      endOfPassWriteIndex: UInt32;
    end;
 
    TWGPURequestAdapterOptions = record
@@ -1617,7 +1594,7 @@ type
    end;
 
    TWGPUSharedBufferMemoryEndAccessState = record
-      nextInChain: PWGPUChainedStructOut;
+      nextInChain: PWGPUChainedStruct;
       initialized: TWGPUBool;
       fenceCount: NativeUInt;
       fences: PWGPUSharedFence;
@@ -1625,7 +1602,7 @@ type
    end;
 
    TWGPUSharedBufferMemoryProperties = record
-      nextInChain: PWGPUChainedStructOut;
+      nextInChain: PWGPUChainedStruct;
       usage: TWGPUBufferUsage;
       size: UInt64;
    end;
@@ -1636,7 +1613,7 @@ type
    end;
 
    TWGPUSharedFenceDXGISharedHandleExportInfo = record
-      chain: TWGPUChainedStructOut;
+      chain: TWGPUChainedStruct;
       handle: Pointer;
    end;
 
@@ -1646,12 +1623,12 @@ type
    end;
 
    TWGPUSharedFenceMTLSharedEventExportInfo = record
-      chain: TWGPUChainedStructOut;
+      chain: TWGPUChainedStruct;
       sharedEvent: Pointer;
    end;
 
    TWGPUSharedFenceExportInfo = record
-      nextInChain: PWGPUChainedStructOut;
+      nextInChain: PWGPUChainedStruct;
       &type: TWGPUSharedFenceType;
    end;
 
@@ -1661,7 +1638,7 @@ type
    end;
 
    TWGPUSharedFenceSyncFDExportInfo = record
-      chain: TWGPUChainedStructOut;
+      chain: TWGPUChainedStruct;
       handle: Integer;
    end;
 
@@ -1671,7 +1648,7 @@ type
    end;
 
    TWGPUSharedFenceVkSemaphoreOpaqueFDExportInfo = record
-      chain: TWGPUChainedStructOut;
+      chain: TWGPUChainedStruct;
       handle: Integer;
    end;
 
@@ -1681,7 +1658,7 @@ type
    end;
 
    TWGPUSharedFenceVkSemaphoreZirconHandleExportInfo = record
-      chain: TWGPUChainedStructOut;
+      chain: TWGPUChainedStruct;
       handle: UInt32;
    end;
 
@@ -1728,7 +1705,7 @@ type
    end;
 
    TWGPUSharedTextureMemoryEndAccessState = record
-      nextInChain: PWGPUChainedStructOut;
+      nextInChain: PWGPUChainedStruct;
       initialized: TWGPUBool;
       fenceCount: NativeUInt;
       fences: PWGPUSharedFence;
@@ -1756,7 +1733,7 @@ type
    end;
 
    TWGPUSharedTextureMemoryVkImageLayoutEndState = record
-      chain: TWGPUChainedStructOut;
+      chain: TWGPUChainedStruct;
       oldLayout: Int32;
       newLayout: Int32;
    end;
@@ -1787,13 +1764,18 @@ type
       viewDimension: TWGPUTextureViewDimension;
    end;
 
+   TWGPUSupportedWGSLLanguageFeatures = record
+      featureCount: NativeUInt;
+      features: PWGPUWGSLLanguageFeatureName;
+   end;
+
    TWGPUSupportedFeatures = record
       featureCount: NativeUInt;
       features: PWGPUFeatureName;
    end;
 
    TWGPUSurfaceCapabilities = record
-      nextInChain: PWGPUChainedStructOut;
+      nextInChain: PWGPUChainedStruct;
       usages: TWGPUTextureUsage;
       formatCount: NativeUInt;
       formats: PWGPUTextureFormat;
@@ -1912,7 +1894,7 @@ type
    end;
 
    TWGPUAdapterInfo = record
-      nextInChain: PWGPUChainedStructOut;
+      nextInChain: PWGPUChainedStruct;
       vendor: TWGPUStringView;
       architecture: TWGPUStringView;
       device: TWGPUStringView;
@@ -1925,7 +1907,7 @@ type
    end;
 
    TWGPUAdapterPropertiesMemoryHeaps = record
-      chain: TWGPUChainedStructOut;
+      chain: TWGPUChainedStruct;
       heapCount: NativeUInt;
       heapInfo: PWGPUMemoryHeapInfo;
    end;
@@ -1987,7 +1969,7 @@ type
    TWGPUComputePassDescriptor = record
       nextInChain: PWGPUChainedStruct;
       &label: TWGPUStringView;
-      timestampWrites: PWGPUComputePassTimestampWrites;
+      timestampWrites: PWGPUPassTimestampWrites;
    end;
 
    TWGPUConstantEntry = record
@@ -2005,7 +1987,7 @@ type
    end;
 
    TWGPUDawnDrmFormatCapabilities = record
-      chain: TWGPUChainedStructOut;
+      chain: TWGPUChainedStruct;
       propertiesCount: NativeUInt;
       properties: PWGPUDawnDrmFormatProperties;
    end;
@@ -2072,7 +2054,8 @@ type
 
    TWGPUInstanceDescriptor = record
       nextInChain: PWGPUChainedStruct;
-      features: TWGPUInstanceFeatures;
+      capabilities: TWGPUInstanceCapabilities;
+      features: TWGPUInstanceCapabilities;
    end;
 
    TWGPUPipelineLayoutDescriptor = record
@@ -2178,7 +2161,7 @@ type
    end;
 
    TWGPUSharedTextureMemoryAHardwareBufferProperties = record
-      chain: TWGPUChainedStructOut;
+      chain: TWGPUChainedStruct;
       yCbCrInfo: TWGPUYCbCrVkDescriptor;
    end;
 
@@ -2197,14 +2180,14 @@ type
    end;
 
    TWGPUSharedTextureMemoryProperties = record
-      nextInChain: PWGPUChainedStructOut;
+      nextInChain: PWGPUChainedStruct;
       usage: TWGPUTextureUsage;
       size: TWGPUExtent3D;
       format: TWGPUTextureFormat;
    end;
 
    TWGPUSupportedLimits = record
-      nextInChain: PWGPUChainedStructOut;
+      nextInChain: PWGPUChainedStruct;
       limits: TWGPULimits;
    end;
 
@@ -2292,7 +2275,7 @@ type
       colorAttachments: PWGPURenderPassColorAttachment;
       depthStencilAttachment: PWGPURenderPassDepthStencilAttachment;
       occlusionQuerySet: TWGPUQuerySet;
-      timestampWrites: PWGPURenderPassTimestampWrites;
+      timestampWrites: PWGPUPassTimestampWrites;
    end;
 
    TWGPURenderPassPixelLocalStorage = record
@@ -2340,11 +2323,12 @@ type
       fragment: PWGPUFragmentState;
    end;
 
+   WGPUComputePassTimestampWrites = TWGPUPassTimestampWrites;
    WGPURenderPassDescriptorMaxDrawCount = TWGPURenderPassMaxDrawCount;
+   WGPURenderPassTimestampWrites = TWGPUPassTimestampWrites;
    WGPUShaderModuleSPIRVDescriptor = TWGPUShaderSourceSPIRV;
    WGPUShaderModuleWGSLDescriptor = TWGPUShaderSourceWGSL;
    WGPUSurfaceDescriptorFromAndroidNativeWindow = TWGPUSurfaceSourceAndroidNativeWindow;
-   WGPUSurfaceDescriptorFromCanvasHTMLSelector = TWGPUEmscriptenSurfaceSourceCanvasHTMLSelector;
    WGPUSurfaceDescriptorFromMetalLayer = TWGPUSurfaceSourceMetalLayer;
    WGPUSurfaceDescriptorFromWaylandSurface = TWGPUSurfaceSourceWaylandSurface;
    WGPUSurfaceDescriptorFromWindowsHWND = TWGPUSurfaceSourceWindowsHWND;
@@ -2355,10 +2339,11 @@ type
    TWGPUProcAdapterPropertiesMemoryHeapsFreeMembers = procedure(value: TWGPUAdapterPropertiesMemoryHeaps); cdecl;
    TWGPUProcCreateInstance = function(const descriptor: PWGPUInstanceDescriptor): TWGPUInstance; cdecl;
    TWGPUProcDawnDrmFormatCapabilitiesFreeMembers = procedure(value: TWGPUDawnDrmFormatCapabilities); cdecl;
-   TWGPUProcGetInstanceFeatures = function(features: PWGPUInstanceFeatures): TWGPUStatus; cdecl;
+   TWGPUProcGetInstanceCapabilities = function(capabilities: PWGPUInstanceCapabilities): TWGPUStatus; cdecl;
    TWGPUProcGetProcAddress = function(procName: TWGPUStringView): TWGPUProc; cdecl;
    TWGPUProcSharedBufferMemoryEndAccessStateFreeMembers = procedure(value: TWGPUSharedBufferMemoryEndAccessState); cdecl;
    TWGPUProcSharedTextureMemoryEndAccessStateFreeMembers = procedure(value: TWGPUSharedTextureMemoryEndAccessState); cdecl;
+   TWGPUProcSupportedWGSLLanguageFeaturesFreeMembers = procedure(value: TWGPUSupportedWGSLLanguageFeatures); cdecl;
    TWGPUProcSupportedFeaturesFreeMembers = procedure(value: TWGPUSupportedFeatures); cdecl;
    TWGPUProcSurfaceCapabilitiesFreeMembers = procedure(value: TWGPUSurfaceCapabilities); cdecl;
    TWGPUProcAdapterCreateDevice = function(adapter: TWGPUAdapter; const descriptor: PWGPUDeviceDescriptor): TWGPUDevice; cdecl;
@@ -2473,8 +2458,8 @@ type
    TWGPUProcExternalTextureAddRef = procedure(externalTexture: TWGPUExternalTexture); cdecl;
    TWGPUProcExternalTextureRelease = procedure(externalTexture: TWGPUExternalTexture); cdecl;
    TWGPUProcInstanceCreateSurface = function(instance: TWGPUInstance; const descriptor: PWGPUSurfaceDescriptor): TWGPUSurface; cdecl;
-   TWGPUProcInstanceEnumerateWGSLLanguageFeatures = function(instance: TWGPUInstance; features: PWGPUWGSLFeatureName): NativeUInt; cdecl;
-   TWGPUProcInstanceHasWGSLLanguageFeature = function(instance: TWGPUInstance; feature: TWGPUWGSLFeatureName): TWGPUBool; cdecl;
+   TWGPUProcInstanceGetWGSLLanguageFeatures = function(instance: TWGPUInstance; features: PWGPUSupportedWGSLLanguageFeatures): TWGPUStatus; cdecl;
+   TWGPUProcInstanceHasWGSLLanguageFeature = function(instance: TWGPUInstance; feature: TWGPUWGSLLanguageFeatureName): TWGPUBool; cdecl;
    TWGPUProcInstanceProcessEvents = procedure(instance: TWGPUInstance); cdecl;
    TWGPUProcInstanceRequestAdapter = function(instance: TWGPUInstance; const options: PWGPURequestAdapterOptions; callbackInfo: TWGPURequestAdapterCallbackInfo): TWGPUFuture; cdecl;
    TWGPUProcInstanceWaitAny = function(instance: TWGPUInstance; futureCount: NativeUInt; futures: PWGPUFutureWaitInfo; timeoutNS: UInt64): TWGPUWaitStatus; cdecl;
@@ -2641,10 +2626,11 @@ var
    wgpuAdapterPropertiesMemoryHeapsFreeMembers : procedure(value: TWGPUAdapterPropertiesMemoryHeaps); cdecl;
    wgpuCreateInstance : function(const descriptor: PWGPUInstanceDescriptor): TWGPUInstance; cdecl;
    wgpuDawnDrmFormatCapabilitiesFreeMembers : procedure(value: TWGPUDawnDrmFormatCapabilities); cdecl;
-   wgpuGetInstanceFeatures : function(features: PWGPUInstanceFeatures): TWGPUStatus; cdecl;
+   wgpuGetInstanceCapabilities : function(capabilities: PWGPUInstanceCapabilities): TWGPUStatus; cdecl;
    wgpuGetProcAddress : function(procName: TWGPUStringView): TWGPUProc; cdecl;
    wgpuSharedBufferMemoryEndAccessStateFreeMembers : procedure(value: TWGPUSharedBufferMemoryEndAccessState); cdecl;
    wgpuSharedTextureMemoryEndAccessStateFreeMembers : procedure(value: TWGPUSharedTextureMemoryEndAccessState); cdecl;
+   wgpuSupportedWGSLLanguageFeaturesFreeMembers : procedure(value: TWGPUSupportedWGSLLanguageFeatures); cdecl;
    wgpuSupportedFeaturesFreeMembers : procedure(value: TWGPUSupportedFeatures); cdecl;
    wgpuSurfaceCapabilitiesFreeMembers : procedure(value: TWGPUSurfaceCapabilities); cdecl;
    wgpuAdapterCreateDevice : function(adapter: TWGPUAdapter; const descriptor: PWGPUDeviceDescriptor): TWGPUDevice; cdecl;
@@ -2759,8 +2745,8 @@ var
    wgpuExternalTextureAddRef : procedure(externalTexture: TWGPUExternalTexture); cdecl;
    wgpuExternalTextureRelease : procedure(externalTexture: TWGPUExternalTexture); cdecl;
    wgpuInstanceCreateSurface : function(instance: TWGPUInstance; const descriptor: PWGPUSurfaceDescriptor): TWGPUSurface; cdecl;
-   wgpuInstanceEnumerateWGSLLanguageFeatures : function(instance: TWGPUInstance; features: PWGPUWGSLFeatureName): NativeUInt; cdecl;
-   wgpuInstanceHasWGSLLanguageFeature : function(instance: TWGPUInstance; feature: TWGPUWGSLFeatureName): TWGPUBool; cdecl;
+   wgpuInstanceGetWGSLLanguageFeatures : function(instance: TWGPUInstance; features: PWGPUSupportedWGSLLanguageFeatures): TWGPUStatus; cdecl;
+   wgpuInstanceHasWGSLLanguageFeature : function(instance: TWGPUInstance; feature: TWGPUWGSLLanguageFeatureName): TWGPUBool; cdecl;
    wgpuInstanceProcessEvents : procedure(instance: TWGPUInstance); cdecl;
    wgpuInstanceRequestAdapter : function(instance: TWGPUInstance; const options: PWGPURequestAdapterOptions; callbackInfo: TWGPURequestAdapterCallbackInfo): TWGPUFuture; cdecl;
    wgpuInstanceWaitAny : function(instance: TWGPUInstance; futureCount: NativeUInt; futures: PWGPUFutureWaitInfo; timeoutNS: UInt64): TWGPUWaitStatus; cdecl;
@@ -2900,10 +2886,11 @@ begin
    wgpuAdapterPropertiesMemoryHeapsFreeMembers := GetProcAddress(vLib, 'wgpuAdapterPropertiesMemoryHeapsFreeMembers');
    wgpuCreateInstance := GetProcAddress(vLib, 'wgpuCreateInstance');
    wgpuDawnDrmFormatCapabilitiesFreeMembers := GetProcAddress(vLib, 'wgpuDawnDrmFormatCapabilitiesFreeMembers');
-   wgpuGetInstanceFeatures := GetProcAddress(vLib, 'wgpuGetInstanceFeatures');
+   wgpuGetInstanceCapabilities := GetProcAddress(vLib, 'wgpuGetInstanceCapabilities');
    wgpuGetProcAddress := GetProcAddress(vLib, 'wgpuGetProcAddress');
    wgpuSharedBufferMemoryEndAccessStateFreeMembers := GetProcAddress(vLib, 'wgpuSharedBufferMemoryEndAccessStateFreeMembers');
    wgpuSharedTextureMemoryEndAccessStateFreeMembers := GetProcAddress(vLib, 'wgpuSharedTextureMemoryEndAccessStateFreeMembers');
+   wgpuSupportedWGSLLanguageFeaturesFreeMembers := GetProcAddress(vLib, 'wgpuSupportedWGSLLanguageFeaturesFreeMembers');
    wgpuSupportedFeaturesFreeMembers := GetProcAddress(vLib, 'wgpuSupportedFeaturesFreeMembers');
    wgpuSurfaceCapabilitiesFreeMembers := GetProcAddress(vLib, 'wgpuSurfaceCapabilitiesFreeMembers');
    wgpuAdapterCreateDevice := GetProcAddress(vLib, 'wgpuAdapterCreateDevice');
@@ -3018,7 +3005,7 @@ begin
    wgpuExternalTextureAddRef := GetProcAddress(vLib, 'wgpuExternalTextureAddRef');
    wgpuExternalTextureRelease := GetProcAddress(vLib, 'wgpuExternalTextureRelease');
    wgpuInstanceCreateSurface := GetProcAddress(vLib, 'wgpuInstanceCreateSurface');
-   wgpuInstanceEnumerateWGSLLanguageFeatures := GetProcAddress(vLib, 'wgpuInstanceEnumerateWGSLLanguageFeatures');
+   wgpuInstanceGetWGSLLanguageFeatures := GetProcAddress(vLib, 'wgpuInstanceGetWGSLLanguageFeatures');
    wgpuInstanceHasWGSLLanguageFeature := GetProcAddress(vLib, 'wgpuInstanceHasWGSLLanguageFeature');
    wgpuInstanceProcessEvents := GetProcAddress(vLib, 'wgpuInstanceProcessEvents');
    wgpuInstanceRequestAdapter := GetProcAddress(vLib, 'wgpuInstanceRequestAdapter');

@@ -196,8 +196,8 @@ type
       ['{F1B8469C-6F36-DB74-B653-F2D1B7538413}']
       function GetHandle: TWGPUInstance;
       function CreateSurface(const aDescriptor: TWGPUSurfaceDescriptor): IWGPUSurface;
-      function EnumerateWGSLLanguageFeatures(const aFeatures: PWGPUWGSLFeatureName): NativeUInt;
-      function HasWGSLLanguageFeature(const aFeature: TWGPUWGSLFeatureName): TWGPUBool;
+      function GetWGSLLanguageFeatures(const aFeatures: PWGPUSupportedWGSLLanguageFeatures): TWGPUStatus;
+      function HasWGSLLanguageFeature(const aFeature: TWGPUWGSLLanguageFeatureName): TWGPUBool;
       procedure ProcessEvents;
       function RequestAdapter(const aOptions: TWGPURequestAdapterOptions; const aCallbackInfo: TWGPURequestAdapterCallbackInfo): TWGPUFuture;
       function WaitAny(aFutureCount: NativeUInt; const aFutures: PWGPUFutureWaitInfo; aTimeoutNS: UInt64): TWGPUWaitStatus;
@@ -553,8 +553,8 @@ type
       destructor Destroy; override;
       function GetHandle: TWGPUInstance;
       function CreateSurface(const aDescriptor: TWGPUSurfaceDescriptor): IWGPUSurface;
-      function EnumerateWGSLLanguageFeatures(const aFeatures: PWGPUWGSLFeatureName): NativeUInt;
-      function HasWGSLLanguageFeature(const aFeature: TWGPUWGSLFeatureName): TWGPUBool;
+      function GetWGSLLanguageFeatures(const aFeatures: PWGPUSupportedWGSLLanguageFeatures): TWGPUStatus;
+      function HasWGSLLanguageFeature(const aFeature: TWGPUWGSLLanguageFeatureName): TWGPUBool;
       procedure ProcessEvents;
       function RequestAdapter(const aOptions: TWGPURequestAdapterOptions; const aCallbackInfo: TWGPURequestAdapterCallbackInfo): TWGPUFuture;
       function WaitAny(aFutureCount: NativeUInt; const aFutures: PWGPUFutureWaitInfo; aTimeoutNS: UInt64): TWGPUWaitStatus;
@@ -1440,12 +1440,12 @@ begin
    Result := TiwgpuSurface.Create(wgpuInstanceCreateSurface(FHandle, @aDescriptor));
 end;
 
-function TiwgpuInstance.EnumerateWGSLLanguageFeatures(const aFeatures: PWGPUWGSLFeatureName): NativeUInt;
+function TiwgpuInstance.GetWGSLLanguageFeatures(const aFeatures: PWGPUSupportedWGSLLanguageFeatures): TWGPUStatus;
 begin
-   Result := wgpuInstanceEnumerateWGSLLanguageFeatures(FHandle, aFeatures);
+   Result := wgpuInstanceGetWGSLLanguageFeatures(FHandle, aFeatures);
 end;
 
-function TiwgpuInstance.HasWGSLLanguageFeature(const aFeature: TWGPUWGSLFeatureName): TWGPUBool;
+function TiwgpuInstance.HasWGSLLanguageFeature(const aFeature: TWGPUWGSLLanguageFeatureName): TWGPUBool;
 begin
    Result := wgpuInstanceHasWGSLLanguageFeature(FHandle, aFeature);
 end;
