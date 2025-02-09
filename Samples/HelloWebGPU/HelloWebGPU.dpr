@@ -451,12 +451,12 @@ begin
    vTexture := wgpuDeviceCreateTexture(vDevice, @textureDescriptor);
    Assert(vTexture <> 0);
 
-   var destination := Default(TWGPUImageCopyTexture);
+   var destination := Default(TWGPUTexelCopyTextureInfo);
    destination.texture := vTexture;
    destination.mipLevel := 0;
    destination.aspect := WGPUTextureAspect_All;
 
-   var source := Default(TWGPUTextureDataLayout);
+   var source := Default(TWGPUTexelCopyBufferLayout);
    source.bytesPerRow := SizeOf(TColorRec) * textureDescriptor.size.width;
    source.rowsPerImage := textureDescriptor.size.height;
 

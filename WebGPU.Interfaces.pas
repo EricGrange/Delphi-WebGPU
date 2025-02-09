@@ -105,9 +105,9 @@ type
       function BeginRenderPass(const aDescriptor: TWGPURenderPassDescriptor): IWGPURenderPassEncoder;
       procedure ClearBuffer(const aBuffer: IWGPUBuffer; aOffset: UInt64; aSize: UInt64);
       procedure CopyBufferToBuffer(const aSource: IWGPUBuffer; aSourceOffset: UInt64; const aDestination: IWGPUBuffer; aDestinationOffset: UInt64; aSize: UInt64);
-      procedure CopyBufferToTexture(const aSource: PWGPUImageCopyBuffer; const aDestination: PWGPUImageCopyTexture; const aCopySize: PWGPUExtent3D);
-      procedure CopyTextureToBuffer(const aSource: PWGPUImageCopyTexture; const aDestination: PWGPUImageCopyBuffer; const aCopySize: PWGPUExtent3D);
-      procedure CopyTextureToTexture(const aSource: PWGPUImageCopyTexture; const aDestination: PWGPUImageCopyTexture; const aCopySize: PWGPUExtent3D);
+      procedure CopyBufferToTexture(const aSource: PWGPUTexelCopyBufferInfo; const aDestination: PWGPUTexelCopyTextureInfo; const aCopySize: PWGPUExtent3D);
+      procedure CopyTextureToBuffer(const aSource: PWGPUTexelCopyTextureInfo; const aDestination: PWGPUTexelCopyBufferInfo; const aCopySize: PWGPUExtent3D);
+      procedure CopyTextureToTexture(const aSource: PWGPUTexelCopyTextureInfo; const aDestination: PWGPUTexelCopyTextureInfo; const aCopySize: PWGPUExtent3D);
       function Finish(const aDescriptor: PWGPUCommandBufferDescriptor): IWGPUCommandBuffer;
       procedure InjectValidationError(const aMessage: TWGPUStringView);
       procedure InsertDebugMarker(const aMarkerLabel: TWGPUStringView);
@@ -220,14 +220,14 @@ type
    IWGPUQueue = interface
       ['{4CBE6E56-BD36-266F-EEF2-D54D52FE5869}']
       function GetHandle: TWGPUQueue;
-      procedure CopyExternalTextureForBrowser(const aSource: PWGPUImageCopyExternalTexture; const aDestination: PWGPUImageCopyTexture; const aCopySize: PWGPUExtent3D; const aOptions: TWGPUCopyTextureForBrowserOptions);
-      procedure CopyTextureForBrowser(const aSource: PWGPUImageCopyTexture; const aDestination: PWGPUImageCopyTexture; const aCopySize: PWGPUExtent3D; const aOptions: TWGPUCopyTextureForBrowserOptions);
+      procedure CopyExternalTextureForBrowser(const aSource: PWGPUImageCopyExternalTexture; const aDestination: PWGPUTexelCopyTextureInfo; const aCopySize: PWGPUExtent3D; const aOptions: TWGPUCopyTextureForBrowserOptions);
+      procedure CopyTextureForBrowser(const aSource: PWGPUTexelCopyTextureInfo; const aDestination: PWGPUTexelCopyTextureInfo; const aCopySize: PWGPUExtent3D; const aOptions: TWGPUCopyTextureForBrowserOptions);
       function OnSubmittedWorkDone(const aCallbackInfo: TWGPUQueueWorkDoneCallbackInfo): TWGPUFuture;
       procedure SetLabel(const aLabel: TWGPUStringView);
       procedure Submit(const aCommand: IWGPUCommandBuffer); overload;
       procedure Submit(const aCommands: TIWGPUCommandBufferArray); overload;
       procedure WriteBuffer(const aBuffer: IWGPUBuffer; aBufferOffset: UInt64; const aData: Pointer; aSize: NativeUInt);
-      procedure WriteTexture(const aDestination: PWGPUImageCopyTexture; const aData: Pointer; aDataSize: NativeUInt; const aDataLayout: PWGPUTextureDataLayout; const aWriteSize: PWGPUExtent3D);
+      procedure WriteTexture(const aDestination: PWGPUTexelCopyTextureInfo; const aData: Pointer; aDataSize: NativeUInt; const aDataLayout: PWGPUTexelCopyBufferLayout; const aWriteSize: PWGPUExtent3D);
    end;
 
    IWGPURenderBundle = interface
@@ -452,9 +452,9 @@ type
       function BeginRenderPass(const aDescriptor: TWGPURenderPassDescriptor): IWGPURenderPassEncoder;
       procedure ClearBuffer(const aBuffer: IWGPUBuffer; aOffset: UInt64; aSize: UInt64);
       procedure CopyBufferToBuffer(const aSource: IWGPUBuffer; aSourceOffset: UInt64; const aDestination: IWGPUBuffer; aDestinationOffset: UInt64; aSize: UInt64);
-      procedure CopyBufferToTexture(const aSource: PWGPUImageCopyBuffer; const aDestination: PWGPUImageCopyTexture; const aCopySize: PWGPUExtent3D);
-      procedure CopyTextureToBuffer(const aSource: PWGPUImageCopyTexture; const aDestination: PWGPUImageCopyBuffer; const aCopySize: PWGPUExtent3D);
-      procedure CopyTextureToTexture(const aSource: PWGPUImageCopyTexture; const aDestination: PWGPUImageCopyTexture; const aCopySize: PWGPUExtent3D);
+      procedure CopyBufferToTexture(const aSource: PWGPUTexelCopyBufferInfo; const aDestination: PWGPUTexelCopyTextureInfo; const aCopySize: PWGPUExtent3D);
+      procedure CopyTextureToBuffer(const aSource: PWGPUTexelCopyTextureInfo; const aDestination: PWGPUTexelCopyBufferInfo; const aCopySize: PWGPUExtent3D);
+      procedure CopyTextureToTexture(const aSource: PWGPUTexelCopyTextureInfo; const aDestination: PWGPUTexelCopyTextureInfo; const aCopySize: PWGPUExtent3D);
       function Finish(const aDescriptor: PWGPUCommandBufferDescriptor): IWGPUCommandBuffer;
       procedure InjectValidationError(const aMessage: TWGPUStringView);
       procedure InsertDebugMarker(const aMarkerLabel: TWGPUStringView);
@@ -583,14 +583,14 @@ type
       constructor Create(const h: TWGPUQueue);
       destructor Destroy; override;
       function GetHandle: TWGPUQueue;
-      procedure CopyExternalTextureForBrowser(const aSource: PWGPUImageCopyExternalTexture; const aDestination: PWGPUImageCopyTexture; const aCopySize: PWGPUExtent3D; const aOptions: TWGPUCopyTextureForBrowserOptions);
-      procedure CopyTextureForBrowser(const aSource: PWGPUImageCopyTexture; const aDestination: PWGPUImageCopyTexture; const aCopySize: PWGPUExtent3D; const aOptions: TWGPUCopyTextureForBrowserOptions);
+      procedure CopyExternalTextureForBrowser(const aSource: PWGPUImageCopyExternalTexture; const aDestination: PWGPUTexelCopyTextureInfo; const aCopySize: PWGPUExtent3D; const aOptions: TWGPUCopyTextureForBrowserOptions);
+      procedure CopyTextureForBrowser(const aSource: PWGPUTexelCopyTextureInfo; const aDestination: PWGPUTexelCopyTextureInfo; const aCopySize: PWGPUExtent3D; const aOptions: TWGPUCopyTextureForBrowserOptions);
       function OnSubmittedWorkDone(const aCallbackInfo: TWGPUQueueWorkDoneCallbackInfo): TWGPUFuture;
       procedure SetLabel(const aLabel: TWGPUStringView);
       procedure Submit(const aCommand: IWGPUCommandBuffer); overload;
       procedure Submit(const aCommands: TIWGPUCommandBufferArray); overload;
       procedure WriteBuffer(const aBuffer: IWGPUBuffer; aBufferOffset: UInt64; const aData: Pointer; aSize: NativeUInt);
-      procedure WriteTexture(const aDestination: PWGPUImageCopyTexture; const aData: Pointer; aDataSize: NativeUInt; const aDataLayout: PWGPUTextureDataLayout; const aWriteSize: PWGPUExtent3D);
+      procedure WriteTexture(const aDestination: PWGPUTexelCopyTextureInfo; const aData: Pointer; aDataSize: NativeUInt; const aDataLayout: PWGPUTexelCopyBufferLayout; const aWriteSize: PWGPUExtent3D);
    end;
 
    TiwgpuRenderBundle = class(TInterfacedObject, IWGPURenderBundle)
@@ -1005,17 +1005,17 @@ begin
    wgpuCommandEncoderCopyBufferToBuffer(FHandle, aSource.GetHandle, aSourceOffset, aDestination.GetHandle, aDestinationOffset, aSize);
 end;
 
-procedure TiwgpuCommandEncoder.CopyBufferToTexture(const aSource: PWGPUImageCopyBuffer; const aDestination: PWGPUImageCopyTexture; const aCopySize: PWGPUExtent3D);
+procedure TiwgpuCommandEncoder.CopyBufferToTexture(const aSource: PWGPUTexelCopyBufferInfo; const aDestination: PWGPUTexelCopyTextureInfo; const aCopySize: PWGPUExtent3D);
 begin
    wgpuCommandEncoderCopyBufferToTexture(FHandle, aSource, aDestination, aCopySize);
 end;
 
-procedure TiwgpuCommandEncoder.CopyTextureToBuffer(const aSource: PWGPUImageCopyTexture; const aDestination: PWGPUImageCopyBuffer; const aCopySize: PWGPUExtent3D);
+procedure TiwgpuCommandEncoder.CopyTextureToBuffer(const aSource: PWGPUTexelCopyTextureInfo; const aDestination: PWGPUTexelCopyBufferInfo; const aCopySize: PWGPUExtent3D);
 begin
    wgpuCommandEncoderCopyTextureToBuffer(FHandle, aSource, aDestination, aCopySize);
 end;
 
-procedure TiwgpuCommandEncoder.CopyTextureToTexture(const aSource: PWGPUImageCopyTexture; const aDestination: PWGPUImageCopyTexture; const aCopySize: PWGPUExtent3D);
+procedure TiwgpuCommandEncoder.CopyTextureToTexture(const aSource: PWGPUTexelCopyTextureInfo; const aDestination: PWGPUTexelCopyTextureInfo; const aCopySize: PWGPUExtent3D);
 begin
    wgpuCommandEncoderCopyTextureToTexture(FHandle, aSource, aDestination, aCopySize);
 end;
@@ -1548,12 +1548,12 @@ begin
    Result := FHandle;
 end;
 
-procedure TiwgpuQueue.CopyExternalTextureForBrowser(const aSource: PWGPUImageCopyExternalTexture; const aDestination: PWGPUImageCopyTexture; const aCopySize: PWGPUExtent3D; const aOptions: TWGPUCopyTextureForBrowserOptions);
+procedure TiwgpuQueue.CopyExternalTextureForBrowser(const aSource: PWGPUImageCopyExternalTexture; const aDestination: PWGPUTexelCopyTextureInfo; const aCopySize: PWGPUExtent3D; const aOptions: TWGPUCopyTextureForBrowserOptions);
 begin
    wgpuQueueCopyExternalTextureForBrowser(FHandle, aSource, aDestination, aCopySize, @aOptions);
 end;
 
-procedure TiwgpuQueue.CopyTextureForBrowser(const aSource: PWGPUImageCopyTexture; const aDestination: PWGPUImageCopyTexture; const aCopySize: PWGPUExtent3D; const aOptions: TWGPUCopyTextureForBrowserOptions);
+procedure TiwgpuQueue.CopyTextureForBrowser(const aSource: PWGPUTexelCopyTextureInfo; const aDestination: PWGPUTexelCopyTextureInfo; const aCopySize: PWGPUExtent3D; const aOptions: TWGPUCopyTextureForBrowserOptions);
 begin
    wgpuQueueCopyTextureForBrowser(FHandle, aSource, aDestination, aCopySize, @aOptions);
 end;
@@ -1589,7 +1589,7 @@ begin
    wgpuQueueWriteBuffer(FHandle, aBuffer.GetHandle, aBufferOffset, aData, aSize);
 end;
 
-procedure TiwgpuQueue.WriteTexture(const aDestination: PWGPUImageCopyTexture; const aData: Pointer; aDataSize: NativeUInt; const aDataLayout: PWGPUTextureDataLayout; const aWriteSize: PWGPUExtent3D);
+procedure TiwgpuQueue.WriteTexture(const aDestination: PWGPUTexelCopyTextureInfo; const aData: Pointer; aDataSize: NativeUInt; const aDataLayout: PWGPUTexelCopyBufferLayout; const aWriteSize: PWGPUExtent3D);
 begin
    wgpuQueueWriteTexture(FHandle, aDestination, aData, aDataSize, aDataLayout, aWriteSize);
 end;

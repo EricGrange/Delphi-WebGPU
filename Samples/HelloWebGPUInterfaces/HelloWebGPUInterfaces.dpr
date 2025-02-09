@@ -448,12 +448,12 @@ begin
    vTexture := vDevice.CreateTexture(textureDescriptor);
    Assert(vTexture <> nil);
 
-   var destination := Default(TWGPUImageCopyTexture);
+   var destination := Default(TWGPUTexelCopyTextureInfo);
    destination.texture := vTexture.GetHandle;
    destination.mipLevel := 0;
    destination.aspect := WGPUTextureAspect_All;
 
-   var source := Default(TWGPUTextureDataLayout);
+   var source := Default(TWGPUTexelCopyBufferLayout);
    source.bytesPerRow := SizeOf(TColorRec) * textureDescriptor.size.width;
    source.rowsPerImage := textureDescriptor.size.height;
 

@@ -258,9 +258,9 @@ type
    PWGPUSurfaceSourceWindowsHWND = ^TWGPUSurfaceSourceWindowsHWND;
    PWGPUSurfaceSourceXlibWindow = ^TWGPUSurfaceSourceXlibWindow;
    PWGPUSurfaceTexture = ^TWGPUSurfaceTexture;
+   PWGPUTexelCopyBufferLayout = ^TWGPUTexelCopyBufferLayout;
    PWGPUTextureBindingLayout = ^TWGPUTextureBindingLayout;
    PWGPUTextureBindingViewDimensionDescriptor = ^TWGPUTextureBindingViewDimensionDescriptor;
-   PWGPUTextureDataLayout = ^TWGPUTextureDataLayout;
    PWGPUVertexAttribute = ^TWGPUVertexAttribute;
    PWGPUYCbCrVkDescriptor = ^TWGPUYCbCrVkDescriptor;
    PWGPUAHardwareBufferProperties = ^TWGPUAHardwareBufferProperties;
@@ -281,9 +281,7 @@ type
    PWGPUEmscriptenSurfaceSourceCanvasHTMLSelector = ^TWGPUEmscriptenSurfaceSourceCanvasHTMLSelector;
    PWGPUExternalTextureDescriptor = ^TWGPUExternalTextureDescriptor;
    PWGPUFutureWaitInfo = ^TWGPUFutureWaitInfo;
-   PWGPUImageCopyBuffer = ^TWGPUImageCopyBuffer;
    PWGPUImageCopyExternalTexture = ^TWGPUImageCopyExternalTexture;
-   PWGPUImageCopyTexture = ^TWGPUImageCopyTexture;
    PWGPUInstanceDescriptor = ^TWGPUInstanceDescriptor;
    PWGPUPipelineLayoutDescriptor = ^TWGPUPipelineLayoutDescriptor;
    PWGPUPipelineLayoutPixelLocalStorage = ^TWGPUPipelineLayoutPixelLocalStorage;
@@ -305,6 +303,8 @@ type
    PWGPUSharedTextureMemoryProperties = ^TWGPUSharedTextureMemoryProperties;
    PWGPUSupportedLimits = ^TWGPUSupportedLimits;
    PWGPUSurfaceDescriptor = ^TWGPUSurfaceDescriptor;
+   PWGPUTexelCopyBufferInfo = ^TWGPUTexelCopyBufferInfo;
+   PWGPUTexelCopyTextureInfo = ^TWGPUTexelCopyTextureInfo;
    PWGPUTextureDescriptor = ^TWGPUTextureDescriptor;
    PWGPUTextureViewDescriptor = ^TWGPUTextureViewDescriptor;
    PWGPUVertexBufferLayout = ^TWGPUVertexBufferLayout;
@@ -415,6 +415,7 @@ type
       WGPUWGSLLanguageFeatureName_Packed4x8IntegerDotProduct = 2,
       WGPUWGSLLanguageFeatureName_UnrestrictedPointerParameters = 3,
       WGPUWGSLLanguageFeatureName_PointerCompositeAccess = 4,
+      WGPUWGSLLanguageFeatureName_SizedBindingArray = 5,
       WGPUWGSLLanguageFeatureName_ChromiumTestingUnimplemented = 327680,
       WGPUWGSLLanguageFeatureName_ChromiumTestingUnsafeExperimental = 327681,
       WGPUWGSLLanguageFeatureName_ChromiumTestingExperimental = 327682,
@@ -1681,6 +1682,7 @@ type
    TWGPUSharedTextureMemoryIOSurfaceDescriptor = record
       chain: TWGPUChainedStruct;
       ioSurface: Pointer;
+      allowStorageBinding: TWGPUBool;
    end;
 
    TWGPUSharedTextureMemoryAHardwareBufferDescriptor = record
@@ -1848,6 +1850,12 @@ type
       status: TWGPUSurfaceGetCurrentTextureStatus;
    end;
 
+   TWGPUTexelCopyBufferLayout = record
+      offset: UInt64;
+      bytesPerRow: UInt32;
+      rowsPerImage: UInt32;
+   end;
+
    TWGPUTextureBindingLayout = record
       nextInChain: PWGPUChainedStruct;
       sampleType: TWGPUTextureSampleType;
@@ -1860,14 +1868,8 @@ type
       textureBindingViewDimension: TWGPUTextureViewDimension;
    end;
 
-   TWGPUTextureDataLayout = record
-      nextInChain: PWGPUChainedStruct;
-      offset: UInt64;
-      bytesPerRow: UInt32;
-      rowsPerImage: UInt32;
-   end;
-
    TWGPUVertexAttribute = record
+      nextInChain: PWGPUChainedStruct;
       format: TWGPUVertexFormat;
       offset: UInt64;
       shaderLocation: UInt32;
@@ -1903,6 +1905,8 @@ type
       adapterType: TWGPUAdapterType;
       vendorID: UInt32;
       deviceID: UInt32;
+      subgroupMinSize: UInt32;
+      subgroupMaxSize: UInt32;
       compatibilityMode: TWGPUBool;
    end;
 
@@ -2033,11 +2037,6 @@ type
       completed: TWGPUBool;
    end;
 
-   TWGPUImageCopyBuffer = record
-      layout: TWGPUTextureDataLayout;
-      buffer: TWGPUBuffer;
-   end;
-
    TWGPUImageCopyExternalTexture = record
       nextInChain: PWGPUChainedStruct;
       externalTexture: TWGPUExternalTexture;
@@ -2045,17 +2044,9 @@ type
       naturalSize: TWGPUExtent2D;
    end;
 
-   TWGPUImageCopyTexture = record
-      texture: TWGPUTexture;
-      mipLevel: UInt32;
-      origin: TWGPUOrigin3D;
-      aspect: TWGPUTextureAspect;
-   end;
-
    TWGPUInstanceDescriptor = record
       nextInChain: PWGPUChainedStruct;
       capabilities: TWGPUInstanceCapabilities;
-      features: TWGPUInstanceCapabilities;
    end;
 
    TWGPUPipelineLayoutDescriptor = record
@@ -2196,6 +2187,18 @@ type
       &label: TWGPUStringView;
    end;
 
+   TWGPUTexelCopyBufferInfo = record
+      layout: TWGPUTexelCopyBufferLayout;
+      buffer: TWGPUBuffer;
+   end;
+
+   TWGPUTexelCopyTextureInfo = record
+      texture: TWGPUTexture;
+      mipLevel: UInt32;
+      origin: TWGPUOrigin3D;
+      aspect: TWGPUTextureAspect;
+   end;
+
    TWGPUTextureDescriptor = record
       nextInChain: PWGPUChainedStruct;
       &label: TWGPUStringView;
@@ -2223,6 +2226,7 @@ type
    end;
 
    TWGPUVertexBufferLayout = record
+      nextInChain: PWGPUChainedStruct;
       arrayStride: UInt64;
       stepMode: TWGPUVertexStepMode;
       attributeCount: NativeUInt;
@@ -2323,9 +2327,9 @@ type
       fragment: PWGPUFragmentState;
    end;
 
-   WGPUComputePassTimestampWrites = TWGPUPassTimestampWrites;
+   WGPUImageCopyBuffer = TWGPUTexelCopyBufferInfo;
+   WGPUImageCopyTexture = TWGPUTexelCopyTextureInfo;
    WGPURenderPassDescriptorMaxDrawCount = TWGPURenderPassMaxDrawCount;
-   WGPURenderPassTimestampWrites = TWGPUPassTimestampWrites;
    WGPUShaderModuleSPIRVDescriptor = TWGPUShaderSourceSPIRV;
    WGPUShaderModuleWGSLDescriptor = TWGPUShaderSourceWGSL;
    WGPUSurfaceDescriptorFromAndroidNativeWindow = TWGPUSurfaceSourceAndroidNativeWindow;
@@ -2334,6 +2338,7 @@ type
    WGPUSurfaceDescriptorFromWindowsHWND = TWGPUSurfaceSourceWindowsHWND;
    WGPUSurfaceDescriptorFromXcbWindow = TWGPUSurfaceSourceXCBWindow;
    WGPUSurfaceDescriptorFromXlibWindow = TWGPUSurfaceSourceXlibWindow;
+   WGPUTextureDataLayout = TWGPUTexelCopyBufferLayout;
 
    TWGPUProcAdapterInfoFreeMembers = procedure(value: TWGPUAdapterInfo); cdecl;
    TWGPUProcAdapterPropertiesMemoryHeapsFreeMembers = procedure(value: TWGPUAdapterPropertiesMemoryHeaps); cdecl;
@@ -2380,9 +2385,9 @@ type
    TWGPUProcCommandEncoderBeginRenderPass = function(commandEncoder: TWGPUCommandEncoder; const descriptor: PWGPURenderPassDescriptor): TWGPURenderPassEncoder; cdecl;
    TWGPUProcCommandEncoderClearBuffer = procedure(commandEncoder: TWGPUCommandEncoder; buffer: TWGPUBuffer; offset: UInt64; size: UInt64); cdecl;
    TWGPUProcCommandEncoderCopyBufferToBuffer = procedure(commandEncoder: TWGPUCommandEncoder; source: TWGPUBuffer; sourceOffset: UInt64; destination: TWGPUBuffer; destinationOffset: UInt64; size: UInt64); cdecl;
-   TWGPUProcCommandEncoderCopyBufferToTexture = procedure(commandEncoder: TWGPUCommandEncoder; const source: PWGPUImageCopyBuffer; const destination: PWGPUImageCopyTexture; const copySize: PWGPUExtent3D); cdecl;
-   TWGPUProcCommandEncoderCopyTextureToBuffer = procedure(commandEncoder: TWGPUCommandEncoder; const source: PWGPUImageCopyTexture; const destination: PWGPUImageCopyBuffer; const copySize: PWGPUExtent3D); cdecl;
-   TWGPUProcCommandEncoderCopyTextureToTexture = procedure(commandEncoder: TWGPUCommandEncoder; const source: PWGPUImageCopyTexture; const destination: PWGPUImageCopyTexture; const copySize: PWGPUExtent3D); cdecl;
+   TWGPUProcCommandEncoderCopyBufferToTexture = procedure(commandEncoder: TWGPUCommandEncoder; const source: PWGPUTexelCopyBufferInfo; const destination: PWGPUTexelCopyTextureInfo; const copySize: PWGPUExtent3D); cdecl;
+   TWGPUProcCommandEncoderCopyTextureToBuffer = procedure(commandEncoder: TWGPUCommandEncoder; const source: PWGPUTexelCopyTextureInfo; const destination: PWGPUTexelCopyBufferInfo; const copySize: PWGPUExtent3D); cdecl;
+   TWGPUProcCommandEncoderCopyTextureToTexture = procedure(commandEncoder: TWGPUCommandEncoder; const source: PWGPUTexelCopyTextureInfo; const destination: PWGPUTexelCopyTextureInfo; const copySize: PWGPUExtent3D); cdecl;
    TWGPUProcCommandEncoderFinish = function(commandEncoder: TWGPUCommandEncoder; const descriptor: PWGPUCommandBufferDescriptor): TWGPUCommandBuffer; cdecl;
    TWGPUProcCommandEncoderInjectValidationError = procedure(commandEncoder: TWGPUCommandEncoder; const &message: TWGPUStringView); cdecl;
    TWGPUProcCommandEncoderInsertDebugMarker = procedure(commandEncoder: TWGPUCommandEncoder; markerLabel: TWGPUStringView); cdecl;
@@ -2474,13 +2479,13 @@ type
    TWGPUProcQuerySetSetLabel = procedure(querySet: TWGPUQuerySet; &label: TWGPUStringView); cdecl;
    TWGPUProcQuerySetAddRef = procedure(querySet: TWGPUQuerySet); cdecl;
    TWGPUProcQuerySetRelease = procedure(querySet: TWGPUQuerySet); cdecl;
-   TWGPUProcQueueCopyExternalTextureForBrowser = procedure(queue: TWGPUQueue; const source: PWGPUImageCopyExternalTexture; const destination: PWGPUImageCopyTexture; const copySize: PWGPUExtent3D; const options: PWGPUCopyTextureForBrowserOptions); cdecl;
-   TWGPUProcQueueCopyTextureForBrowser = procedure(queue: TWGPUQueue; const source: PWGPUImageCopyTexture; const destination: PWGPUImageCopyTexture; const copySize: PWGPUExtent3D; const options: PWGPUCopyTextureForBrowserOptions); cdecl;
+   TWGPUProcQueueCopyExternalTextureForBrowser = procedure(queue: TWGPUQueue; const source: PWGPUImageCopyExternalTexture; const destination: PWGPUTexelCopyTextureInfo; const copySize: PWGPUExtent3D; const options: PWGPUCopyTextureForBrowserOptions); cdecl;
+   TWGPUProcQueueCopyTextureForBrowser = procedure(queue: TWGPUQueue; const source: PWGPUTexelCopyTextureInfo; const destination: PWGPUTexelCopyTextureInfo; const copySize: PWGPUExtent3D; const options: PWGPUCopyTextureForBrowserOptions); cdecl;
    TWGPUProcQueueOnSubmittedWorkDone = function(queue: TWGPUQueue; callbackInfo: TWGPUQueueWorkDoneCallbackInfo): TWGPUFuture; cdecl;
    TWGPUProcQueueSetLabel = procedure(queue: TWGPUQueue; &label: TWGPUStringView); cdecl;
    TWGPUProcQueueSubmit = procedure(queue: TWGPUQueue; commandCount: NativeUInt; const commands: PWGPUCommandBuffer); cdecl;
    TWGPUProcQueueWriteBuffer = procedure(queue: TWGPUQueue; buffer: TWGPUBuffer; bufferOffset: UInt64; const data: Pointer; size: NativeUInt); cdecl;
-   TWGPUProcQueueWriteTexture = procedure(queue: TWGPUQueue; const destination: PWGPUImageCopyTexture; const data: Pointer; dataSize: NativeUInt; const dataLayout: PWGPUTextureDataLayout; const writeSize: PWGPUExtent3D); cdecl;
+   TWGPUProcQueueWriteTexture = procedure(queue: TWGPUQueue; const destination: PWGPUTexelCopyTextureInfo; const data: Pointer; dataSize: NativeUInt; const dataLayout: PWGPUTexelCopyBufferLayout; const writeSize: PWGPUExtent3D); cdecl;
    TWGPUProcQueueAddRef = procedure(queue: TWGPUQueue); cdecl;
    TWGPUProcQueueRelease = procedure(queue: TWGPUQueue); cdecl;
    TWGPUProcRenderBundleSetLabel = procedure(renderBundle: TWGPURenderBundle; &label: TWGPUStringView); cdecl;
@@ -2667,9 +2672,9 @@ var
    wgpuCommandEncoderBeginRenderPass : function(commandEncoder: TWGPUCommandEncoder; const descriptor: PWGPURenderPassDescriptor): TWGPURenderPassEncoder; cdecl;
    wgpuCommandEncoderClearBuffer : procedure(commandEncoder: TWGPUCommandEncoder; buffer: TWGPUBuffer; offset: UInt64; size: UInt64); cdecl;
    wgpuCommandEncoderCopyBufferToBuffer : procedure(commandEncoder: TWGPUCommandEncoder; source: TWGPUBuffer; sourceOffset: UInt64; destination: TWGPUBuffer; destinationOffset: UInt64; size: UInt64); cdecl;
-   wgpuCommandEncoderCopyBufferToTexture : procedure(commandEncoder: TWGPUCommandEncoder; const source: PWGPUImageCopyBuffer; const destination: PWGPUImageCopyTexture; const copySize: PWGPUExtent3D); cdecl;
-   wgpuCommandEncoderCopyTextureToBuffer : procedure(commandEncoder: TWGPUCommandEncoder; const source: PWGPUImageCopyTexture; const destination: PWGPUImageCopyBuffer; const copySize: PWGPUExtent3D); cdecl;
-   wgpuCommandEncoderCopyTextureToTexture : procedure(commandEncoder: TWGPUCommandEncoder; const source: PWGPUImageCopyTexture; const destination: PWGPUImageCopyTexture; const copySize: PWGPUExtent3D); cdecl;
+   wgpuCommandEncoderCopyBufferToTexture : procedure(commandEncoder: TWGPUCommandEncoder; const source: PWGPUTexelCopyBufferInfo; const destination: PWGPUTexelCopyTextureInfo; const copySize: PWGPUExtent3D); cdecl;
+   wgpuCommandEncoderCopyTextureToBuffer : procedure(commandEncoder: TWGPUCommandEncoder; const source: PWGPUTexelCopyTextureInfo; const destination: PWGPUTexelCopyBufferInfo; const copySize: PWGPUExtent3D); cdecl;
+   wgpuCommandEncoderCopyTextureToTexture : procedure(commandEncoder: TWGPUCommandEncoder; const source: PWGPUTexelCopyTextureInfo; const destination: PWGPUTexelCopyTextureInfo; const copySize: PWGPUExtent3D); cdecl;
    wgpuCommandEncoderFinish : function(commandEncoder: TWGPUCommandEncoder; const descriptor: PWGPUCommandBufferDescriptor): TWGPUCommandBuffer; cdecl;
    wgpuCommandEncoderInjectValidationError : procedure(commandEncoder: TWGPUCommandEncoder; const &message: TWGPUStringView); cdecl;
    wgpuCommandEncoderInsertDebugMarker : procedure(commandEncoder: TWGPUCommandEncoder; markerLabel: TWGPUStringView); cdecl;
@@ -2761,13 +2766,13 @@ var
    wgpuQuerySetSetLabel : procedure(querySet: TWGPUQuerySet; &label: TWGPUStringView); cdecl;
    wgpuQuerySetAddRef : procedure(querySet: TWGPUQuerySet); cdecl;
    wgpuQuerySetRelease : procedure(querySet: TWGPUQuerySet); cdecl;
-   wgpuQueueCopyExternalTextureForBrowser : procedure(queue: TWGPUQueue; const source: PWGPUImageCopyExternalTexture; const destination: PWGPUImageCopyTexture; const copySize: PWGPUExtent3D; const options: PWGPUCopyTextureForBrowserOptions); cdecl;
-   wgpuQueueCopyTextureForBrowser : procedure(queue: TWGPUQueue; const source: PWGPUImageCopyTexture; const destination: PWGPUImageCopyTexture; const copySize: PWGPUExtent3D; const options: PWGPUCopyTextureForBrowserOptions); cdecl;
+   wgpuQueueCopyExternalTextureForBrowser : procedure(queue: TWGPUQueue; const source: PWGPUImageCopyExternalTexture; const destination: PWGPUTexelCopyTextureInfo; const copySize: PWGPUExtent3D; const options: PWGPUCopyTextureForBrowserOptions); cdecl;
+   wgpuQueueCopyTextureForBrowser : procedure(queue: TWGPUQueue; const source: PWGPUTexelCopyTextureInfo; const destination: PWGPUTexelCopyTextureInfo; const copySize: PWGPUExtent3D; const options: PWGPUCopyTextureForBrowserOptions); cdecl;
    wgpuQueueOnSubmittedWorkDone : function(queue: TWGPUQueue; callbackInfo: TWGPUQueueWorkDoneCallbackInfo): TWGPUFuture; cdecl;
    wgpuQueueSetLabel : procedure(queue: TWGPUQueue; &label: TWGPUStringView); cdecl;
    wgpuQueueSubmit : procedure(queue: TWGPUQueue; commandCount: NativeUInt; const commands: PWGPUCommandBuffer); cdecl;
    wgpuQueueWriteBuffer : procedure(queue: TWGPUQueue; buffer: TWGPUBuffer; bufferOffset: UInt64; const data: Pointer; size: NativeUInt); cdecl;
-   wgpuQueueWriteTexture : procedure(queue: TWGPUQueue; const destination: PWGPUImageCopyTexture; const data: Pointer; dataSize: NativeUInt; const dataLayout: PWGPUTextureDataLayout; const writeSize: PWGPUExtent3D); cdecl;
+   wgpuQueueWriteTexture : procedure(queue: TWGPUQueue; const destination: PWGPUTexelCopyTextureInfo; const data: Pointer; dataSize: NativeUInt; const dataLayout: PWGPUTexelCopyBufferLayout; const writeSize: PWGPUExtent3D); cdecl;
    wgpuQueueAddRef : procedure(queue: TWGPUQueue); cdecl;
    wgpuQueueRelease : procedure(queue: TWGPUQueue); cdecl;
    wgpuRenderBundleSetLabel : procedure(renderBundle: TWGPURenderBundle; &label: TWGPUStringView); cdecl;
