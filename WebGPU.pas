@@ -245,6 +245,7 @@ type
    PWGPUStencilFaceState = ^TWGPUStencilFaceState;
    PWGPUStorageTextureBindingLayout = ^TWGPUStorageTextureBindingLayout;
    PWGPUStringView = ^TWGPUStringView;
+   PWGPUSubgroupMatrixConfig = ^TWGPUSubgroupMatrixConfig;
    PWGPUSupportedWGSLLanguageFeatures = ^TWGPUSupportedWGSLLanguageFeatures;
    PWGPUSupportedFeatures = ^TWGPUSupportedFeatures;
    PWGPUSurfaceCapabilities = ^TWGPUSurfaceCapabilities;
@@ -266,6 +267,7 @@ type
    PWGPUAHardwareBufferProperties = ^TWGPUAHardwareBufferProperties;
    PWGPUAdapterInfo = ^TWGPUAdapterInfo;
    PWGPUAdapterPropertiesMemoryHeaps = ^TWGPUAdapterPropertiesMemoryHeaps;
+   PWGPUAdapterPropertiesSubgroupMatrixConfigs = ^TWGPUAdapterPropertiesSubgroupMatrixConfigs;
    PWGPUBindGroupDescriptor = ^TWGPUBindGroupDescriptor;
    PWGPUBindGroupLayoutEntry = ^TWGPUBindGroupLayoutEntry;
    PWGPUBlendState = ^TWGPUBlendState;
@@ -677,6 +679,7 @@ type
       WGPUFeatureName_ClipDistances = 327734,
       WGPUFeatureName_DawnTexelCopyBufferRowAlignment = 327735,
       WGPUFeatureName_FlexibleTextureViews = 327736,
+      WGPUFeatureName_ChromiumExperimentalSubgroupMatrix = 327737,
       WGPUFeatureName_Force32 = 2147483647);
    PWGPUFeatureName = ^TWGPUFeatureName;
 
@@ -872,6 +875,7 @@ type
       WGPUSType_AHardwareBufferProperties = 327737,
       WGPUSType_DawnExperimentalImmediateDataLimits = 327738,
       WGPUSType_DawnTexelCopyBufferRowAlignmentLimits = 327739,
+      WGPUSType_AdapterPropertiesSubgroupMatrixConfigs = 327740,
       WGPUSType_Force32 = 2147483647);
    PWGPUSType = ^TWGPUSType;
 
@@ -927,6 +931,14 @@ type
       WGPUStoreOp_Discard = 2,
       WGPUStoreOp_Force32 = 2147483647);
    PWGPUStoreOp = ^TWGPUStoreOp;
+
+   TWGPUSubgroupMatrixComponentType = (
+      WGPUSubgroupMatrixComponentType_F32 = 1,
+      WGPUSubgroupMatrixComponentType_F16 = 2,
+      WGPUSubgroupMatrixComponentType_U32 = 3,
+      WGPUSubgroupMatrixComponentType_I32 = 4,
+      WGPUSubgroupMatrixComponentType_Force32 = 2147483647);
+   PWGPUSubgroupMatrixComponentType = ^TWGPUSubgroupMatrixComponentType;
 
    TWGPUSurfaceGetCurrentTextureStatus = (
       WGPUSurfaceGetCurrentTextureStatus_Success = 1,
@@ -1766,6 +1778,14 @@ type
       viewDimension: TWGPUTextureViewDimension;
    end;
 
+   TWGPUSubgroupMatrixConfig = record
+      componentType: TWGPUSubgroupMatrixComponentType;
+      resultComponentType: TWGPUSubgroupMatrixComponentType;
+      M: UInt32;
+      N: UInt32;
+      K: UInt32;
+   end;
+
    TWGPUSupportedWGSLLanguageFeatures = record
       featureCount: NativeUInt;
       features: PWGPUWGSLLanguageFeatureName;
@@ -1914,6 +1934,12 @@ type
       chain: TWGPUChainedStruct;
       heapCount: NativeUInt;
       heapInfo: PWGPUMemoryHeapInfo;
+   end;
+
+   TWGPUAdapterPropertiesSubgroupMatrixConfigs = record
+      chain: TWGPUChainedStruct;
+      configCount: NativeUInt;
+      configs: PWGPUSubgroupMatrixConfig;
    end;
 
    TWGPUBindGroupDescriptor = record
@@ -2342,6 +2368,7 @@ type
 
    TWGPUProcAdapterInfoFreeMembers = procedure(value: TWGPUAdapterInfo); cdecl;
    TWGPUProcAdapterPropertiesMemoryHeapsFreeMembers = procedure(value: TWGPUAdapterPropertiesMemoryHeaps); cdecl;
+   TWGPUProcAdapterPropertiesSubgroupMatrixConfigsFreeMembers = procedure(value: TWGPUAdapterPropertiesSubgroupMatrixConfigs); cdecl;
    TWGPUProcCreateInstance = function(const descriptor: PWGPUInstanceDescriptor): TWGPUInstance; cdecl;
    TWGPUProcDawnDrmFormatCapabilitiesFreeMembers = procedure(value: TWGPUDawnDrmFormatCapabilities); cdecl;
    TWGPUProcGetInstanceCapabilities = function(capabilities: PWGPUInstanceCapabilities): TWGPUStatus; cdecl;
@@ -2629,6 +2656,7 @@ const
 var
    wgpuAdapterInfoFreeMembers : procedure(value: TWGPUAdapterInfo); cdecl;
    wgpuAdapterPropertiesMemoryHeapsFreeMembers : procedure(value: TWGPUAdapterPropertiesMemoryHeaps); cdecl;
+   wgpuAdapterPropertiesSubgroupMatrixConfigsFreeMembers : procedure(value: TWGPUAdapterPropertiesSubgroupMatrixConfigs); cdecl;
    wgpuCreateInstance : function(const descriptor: PWGPUInstanceDescriptor): TWGPUInstance; cdecl;
    wgpuDawnDrmFormatCapabilitiesFreeMembers : procedure(value: TWGPUDawnDrmFormatCapabilities); cdecl;
    wgpuGetInstanceCapabilities : function(capabilities: PWGPUInstanceCapabilities): TWGPUStatus; cdecl;
@@ -2889,6 +2917,7 @@ begin
 
    wgpuAdapterInfoFreeMembers := GetProcAddress(vLib, 'wgpuAdapterInfoFreeMembers');
    wgpuAdapterPropertiesMemoryHeapsFreeMembers := GetProcAddress(vLib, 'wgpuAdapterPropertiesMemoryHeapsFreeMembers');
+   wgpuAdapterPropertiesSubgroupMatrixConfigsFreeMembers := GetProcAddress(vLib, 'wgpuAdapterPropertiesSubgroupMatrixConfigsFreeMembers');
    wgpuCreateInstance := GetProcAddress(vLib, 'wgpuCreateInstance');
    wgpuDawnDrmFormatCapabilitiesFreeMembers := GetProcAddress(vLib, 'wgpuDawnDrmFormatCapabilitiesFreeMembers');
    wgpuGetInstanceCapabilities := GetProcAddress(vLib, 'wgpuGetInstanceCapabilities');
