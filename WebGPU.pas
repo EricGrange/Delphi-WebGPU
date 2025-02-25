@@ -219,6 +219,8 @@ type
    PWGPUSharedBufferMemoryProperties = ^TWGPUSharedBufferMemoryProperties;
    PWGPUSharedFenceDXGISharedHandleDescriptor = ^TWGPUSharedFenceDXGISharedHandleDescriptor;
    PWGPUSharedFenceDXGISharedHandleExportInfo = ^TWGPUSharedFenceDXGISharedHandleExportInfo;
+   PWGPUSharedFenceEGLSyncDescriptor = ^TWGPUSharedFenceEGLSyncDescriptor;
+   PWGPUSharedFenceEGLSyncExportInfo = ^TWGPUSharedFenceEGLSyncExportInfo;
    PWGPUSharedFenceMTLSharedEventDescriptor = ^TWGPUSharedFenceMTLSharedEventDescriptor;
    PWGPUSharedFenceMTLSharedEventExportInfo = ^TWGPUSharedFenceMTLSharedEventExportInfo;
    PWGPUSharedFenceExportInfo = ^TWGPUSharedFenceExportInfo;
@@ -680,6 +682,7 @@ type
       WGPUFeatureName_DawnTexelCopyBufferRowAlignment = 327735,
       WGPUFeatureName_FlexibleTextureViews = 327736,
       WGPUFeatureName_ChromiumExperimentalSubgroupMatrix = 327737,
+      WGPUFeatureName_SharedFenceEGLSync = 327738,
       WGPUFeatureName_Force32 = 2147483647);
    PWGPUFeatureName = ^TWGPUFeatureName;
 
@@ -876,6 +879,8 @@ type
       WGPUSType_DawnExperimentalImmediateDataLimits = 327738,
       WGPUSType_DawnTexelCopyBufferRowAlignmentLimits = 327739,
       WGPUSType_AdapterPropertiesSubgroupMatrixConfigs = 327740,
+      WGPUSType_SharedFenceEGLSyncDescriptor = 327741,
+      WGPUSType_SharedFenceEGLSyncExportInfo = 327742,
       WGPUSType_Force32 = 2147483647);
    PWGPUSType = ^TWGPUSType;
 
@@ -894,6 +899,7 @@ type
       WGPUSharedFenceType_VkSemaphoreZirconHandle = 3,
       WGPUSharedFenceType_DXGISharedHandle = 4,
       WGPUSharedFenceType_MTLSharedEvent = 5,
+      WGPUSharedFenceType_EGLSync = 6,
       WGPUSharedFenceType_Force32 = 2147483647);
    PWGPUSharedFenceType = ^TWGPUSharedFenceType;
 
@@ -1628,6 +1634,16 @@ type
    TWGPUSharedFenceDXGISharedHandleExportInfo = record
       chain: TWGPUChainedStruct;
       handle: Pointer;
+   end;
+
+   TWGPUSharedFenceEGLSyncDescriptor = record
+      chain: TWGPUChainedStruct;
+      sync: Pointer;
+   end;
+
+   TWGPUSharedFenceEGLSyncExportInfo = record
+      chain: TWGPUChainedStruct;
+      sync: Pointer;
    end;
 
    TWGPUSharedFenceMTLSharedEventDescriptor = record
@@ -2433,6 +2449,7 @@ type
    TWGPUProcComputePassEncoderPopDebugGroup = procedure(computePassEncoder: TWGPUComputePassEncoder); cdecl;
    TWGPUProcComputePassEncoderPushDebugGroup = procedure(computePassEncoder: TWGPUComputePassEncoder; groupLabel: TWGPUStringView); cdecl;
    TWGPUProcComputePassEncoderSetBindGroup = procedure(computePassEncoder: TWGPUComputePassEncoder; groupIndex: UInt32; group: TWGPUBindGroup; dynamicOffsetCount: NativeUInt; const dynamicOffsets: PUInt32); cdecl;
+   TWGPUProcComputePassEncoderSetImmediateData = procedure(computePassEncoder: TWGPUComputePassEncoder; offset: UInt32; const data: Pointer; size: NativeUInt); cdecl;
    TWGPUProcComputePassEncoderSetLabel = procedure(computePassEncoder: TWGPUComputePassEncoder; &label: TWGPUStringView); cdecl;
    TWGPUProcComputePassEncoderSetPipeline = procedure(computePassEncoder: TWGPUComputePassEncoder; pipeline: TWGPUComputePipeline); cdecl;
    TWGPUProcComputePassEncoderWriteTimestamp = procedure(computePassEncoder: TWGPUComputePassEncoder; querySet: TWGPUQuerySet; queryIndex: UInt32); cdecl;
@@ -2527,6 +2544,7 @@ type
    TWGPUProcRenderBundleEncoderPopDebugGroup = procedure(renderBundleEncoder: TWGPURenderBundleEncoder); cdecl;
    TWGPUProcRenderBundleEncoderPushDebugGroup = procedure(renderBundleEncoder: TWGPURenderBundleEncoder; groupLabel: TWGPUStringView); cdecl;
    TWGPUProcRenderBundleEncoderSetBindGroup = procedure(renderBundleEncoder: TWGPURenderBundleEncoder; groupIndex: UInt32; group: TWGPUBindGroup; dynamicOffsetCount: NativeUInt; const dynamicOffsets: PUInt32); cdecl;
+   TWGPUProcRenderBundleEncoderSetImmediateData = procedure(renderBundleEncoder: TWGPURenderBundleEncoder; offset: UInt32; const data: Pointer; size: NativeUInt); cdecl;
    TWGPUProcRenderBundleEncoderSetIndexBuffer = procedure(renderBundleEncoder: TWGPURenderBundleEncoder; buffer: TWGPUBuffer; format: TWGPUIndexFormat; offset: UInt64; size: UInt64); cdecl;
    TWGPUProcRenderBundleEncoderSetLabel = procedure(renderBundleEncoder: TWGPURenderBundleEncoder; &label: TWGPUStringView); cdecl;
    TWGPUProcRenderBundleEncoderSetPipeline = procedure(renderBundleEncoder: TWGPURenderBundleEncoder; pipeline: TWGPURenderPipeline); cdecl;
@@ -2549,6 +2567,7 @@ type
    TWGPUProcRenderPassEncoderPushDebugGroup = procedure(renderPassEncoder: TWGPURenderPassEncoder; groupLabel: TWGPUStringView); cdecl;
    TWGPUProcRenderPassEncoderSetBindGroup = procedure(renderPassEncoder: TWGPURenderPassEncoder; groupIndex: UInt32; group: TWGPUBindGroup; dynamicOffsetCount: NativeUInt; const dynamicOffsets: PUInt32); cdecl;
    TWGPUProcRenderPassEncoderSetBlendConstant = procedure(renderPassEncoder: TWGPURenderPassEncoder; const color: PWGPUColor); cdecl;
+   TWGPUProcRenderPassEncoderSetImmediateData = procedure(renderPassEncoder: TWGPURenderPassEncoder; offset: UInt32; const data: Pointer; size: NativeUInt); cdecl;
    TWGPUProcRenderPassEncoderSetIndexBuffer = procedure(renderPassEncoder: TWGPURenderPassEncoder; buffer: TWGPUBuffer; format: TWGPUIndexFormat; offset: UInt64; size: UInt64); cdecl;
    TWGPUProcRenderPassEncoderSetLabel = procedure(renderPassEncoder: TWGPURenderPassEncoder; &label: TWGPUStringView); cdecl;
    TWGPUProcRenderPassEncoderSetPipeline = procedure(renderPassEncoder: TWGPURenderPassEncoder; pipeline: TWGPURenderPipeline); cdecl;
@@ -2721,6 +2740,7 @@ var
    wgpuComputePassEncoderPopDebugGroup : procedure(computePassEncoder: TWGPUComputePassEncoder); cdecl;
    wgpuComputePassEncoderPushDebugGroup : procedure(computePassEncoder: TWGPUComputePassEncoder; groupLabel: TWGPUStringView); cdecl;
    wgpuComputePassEncoderSetBindGroup : procedure(computePassEncoder: TWGPUComputePassEncoder; groupIndex: UInt32; group: TWGPUBindGroup; dynamicOffsetCount: NativeUInt; const dynamicOffsets: PUInt32); cdecl;
+   wgpuComputePassEncoderSetImmediateData : procedure(computePassEncoder: TWGPUComputePassEncoder; offset: UInt32; const data: Pointer; size: NativeUInt); cdecl;
    wgpuComputePassEncoderSetLabel : procedure(computePassEncoder: TWGPUComputePassEncoder; &label: TWGPUStringView); cdecl;
    wgpuComputePassEncoderSetPipeline : procedure(computePassEncoder: TWGPUComputePassEncoder; pipeline: TWGPUComputePipeline); cdecl;
    wgpuComputePassEncoderWriteTimestamp : procedure(computePassEncoder: TWGPUComputePassEncoder; querySet: TWGPUQuerySet; queryIndex: UInt32); cdecl;
@@ -2815,6 +2835,7 @@ var
    wgpuRenderBundleEncoderPopDebugGroup : procedure(renderBundleEncoder: TWGPURenderBundleEncoder); cdecl;
    wgpuRenderBundleEncoderPushDebugGroup : procedure(renderBundleEncoder: TWGPURenderBundleEncoder; groupLabel: TWGPUStringView); cdecl;
    wgpuRenderBundleEncoderSetBindGroup : procedure(renderBundleEncoder: TWGPURenderBundleEncoder; groupIndex: UInt32; group: TWGPUBindGroup; dynamicOffsetCount: NativeUInt; const dynamicOffsets: PUInt32); cdecl;
+   wgpuRenderBundleEncoderSetImmediateData : procedure(renderBundleEncoder: TWGPURenderBundleEncoder; offset: UInt32; const data: Pointer; size: NativeUInt); cdecl;
    wgpuRenderBundleEncoderSetIndexBuffer : procedure(renderBundleEncoder: TWGPURenderBundleEncoder; buffer: TWGPUBuffer; format: TWGPUIndexFormat; offset: UInt64; size: UInt64); cdecl;
    wgpuRenderBundleEncoderSetLabel : procedure(renderBundleEncoder: TWGPURenderBundleEncoder; &label: TWGPUStringView); cdecl;
    wgpuRenderBundleEncoderSetPipeline : procedure(renderBundleEncoder: TWGPURenderBundleEncoder; pipeline: TWGPURenderPipeline); cdecl;
@@ -2837,6 +2858,7 @@ var
    wgpuRenderPassEncoderPushDebugGroup : procedure(renderPassEncoder: TWGPURenderPassEncoder; groupLabel: TWGPUStringView); cdecl;
    wgpuRenderPassEncoderSetBindGroup : procedure(renderPassEncoder: TWGPURenderPassEncoder; groupIndex: UInt32; group: TWGPUBindGroup; dynamicOffsetCount: NativeUInt; const dynamicOffsets: PUInt32); cdecl;
    wgpuRenderPassEncoderSetBlendConstant : procedure(renderPassEncoder: TWGPURenderPassEncoder; const color: PWGPUColor); cdecl;
+   wgpuRenderPassEncoderSetImmediateData : procedure(renderPassEncoder: TWGPURenderPassEncoder; offset: UInt32; const data: Pointer; size: NativeUInt); cdecl;
    wgpuRenderPassEncoderSetIndexBuffer : procedure(renderPassEncoder: TWGPURenderPassEncoder; buffer: TWGPUBuffer; format: TWGPUIndexFormat; offset: UInt64; size: UInt64); cdecl;
    wgpuRenderPassEncoderSetLabel : procedure(renderPassEncoder: TWGPURenderPassEncoder; &label: TWGPUStringView); cdecl;
    wgpuRenderPassEncoderSetPipeline : procedure(renderPassEncoder: TWGPURenderPassEncoder; pipeline: TWGPURenderPipeline); cdecl;
@@ -2982,6 +3004,7 @@ begin
    wgpuComputePassEncoderPopDebugGroup := GetProcAddress(vLib, 'wgpuComputePassEncoderPopDebugGroup');
    wgpuComputePassEncoderPushDebugGroup := GetProcAddress(vLib, 'wgpuComputePassEncoderPushDebugGroup');
    wgpuComputePassEncoderSetBindGroup := GetProcAddress(vLib, 'wgpuComputePassEncoderSetBindGroup');
+   wgpuComputePassEncoderSetImmediateData := GetProcAddress(vLib, 'wgpuComputePassEncoderSetImmediateData');
    wgpuComputePassEncoderSetLabel := GetProcAddress(vLib, 'wgpuComputePassEncoderSetLabel');
    wgpuComputePassEncoderSetPipeline := GetProcAddress(vLib, 'wgpuComputePassEncoderSetPipeline');
    wgpuComputePassEncoderWriteTimestamp := GetProcAddress(vLib, 'wgpuComputePassEncoderWriteTimestamp');
@@ -3076,6 +3099,7 @@ begin
    wgpuRenderBundleEncoderPopDebugGroup := GetProcAddress(vLib, 'wgpuRenderBundleEncoderPopDebugGroup');
    wgpuRenderBundleEncoderPushDebugGroup := GetProcAddress(vLib, 'wgpuRenderBundleEncoderPushDebugGroup');
    wgpuRenderBundleEncoderSetBindGroup := GetProcAddress(vLib, 'wgpuRenderBundleEncoderSetBindGroup');
+   wgpuRenderBundleEncoderSetImmediateData := GetProcAddress(vLib, 'wgpuRenderBundleEncoderSetImmediateData');
    wgpuRenderBundleEncoderSetIndexBuffer := GetProcAddress(vLib, 'wgpuRenderBundleEncoderSetIndexBuffer');
    wgpuRenderBundleEncoderSetLabel := GetProcAddress(vLib, 'wgpuRenderBundleEncoderSetLabel');
    wgpuRenderBundleEncoderSetPipeline := GetProcAddress(vLib, 'wgpuRenderBundleEncoderSetPipeline');
@@ -3098,6 +3122,7 @@ begin
    wgpuRenderPassEncoderPushDebugGroup := GetProcAddress(vLib, 'wgpuRenderPassEncoderPushDebugGroup');
    wgpuRenderPassEncoderSetBindGroup := GetProcAddress(vLib, 'wgpuRenderPassEncoderSetBindGroup');
    wgpuRenderPassEncoderSetBlendConstant := GetProcAddress(vLib, 'wgpuRenderPassEncoderSetBlendConstant');
+   wgpuRenderPassEncoderSetImmediateData := GetProcAddress(vLib, 'wgpuRenderPassEncoderSetImmediateData');
    wgpuRenderPassEncoderSetIndexBuffer := GetProcAddress(vLib, 'wgpuRenderPassEncoderSetIndexBuffer');
    wgpuRenderPassEncoderSetLabel := GetProcAddress(vLib, 'wgpuRenderPassEncoderSetLabel');
    wgpuRenderPassEncoderSetPipeline := GetProcAddress(vLib, 'wgpuRenderPassEncoderSetPipeline');

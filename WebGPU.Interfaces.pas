@@ -129,6 +129,7 @@ type
       procedure PopDebugGroup;
       procedure PushDebugGroup(const aGroupLabel: TWGPUStringView);
       procedure SetBindGroup(aGroupIndex: UInt32; const aGroup: IWGPUBindGroup; aDynamicOffsetCount: NativeUInt; const aDynamicOffsets: PUInt32);
+      procedure SetImmediateData(aOffset: UInt32; const aData: Pointer; aSize: NativeUInt);
       procedure SetLabel(const aLabel: TWGPUStringView);
       procedure SetPipeline(const aPipeline: IWGPUComputePipeline);
       procedure WriteTimestamp(const aQuerySet: IWGPUQuerySet; aQueryIndex: UInt32);
@@ -248,6 +249,7 @@ type
       procedure PopDebugGroup;
       procedure PushDebugGroup(const aGroupLabel: TWGPUStringView);
       procedure SetBindGroup(aGroupIndex: UInt32; const aGroup: IWGPUBindGroup; aDynamicOffsetCount: NativeUInt; const aDynamicOffsets: PUInt32);
+      procedure SetImmediateData(aOffset: UInt32; const aData: Pointer; aSize: NativeUInt);
       procedure SetIndexBuffer(const aBuffer: IWGPUBuffer; const aFormat: TWGPUIndexFormat; aOffset: UInt64; aSize: UInt64);
       procedure SetLabel(const aLabel: TWGPUStringView);
       procedure SetPipeline(const aPipeline: IWGPURenderPipeline);
@@ -273,6 +275,7 @@ type
       procedure PushDebugGroup(const aGroupLabel: TWGPUStringView);
       procedure SetBindGroup(aGroupIndex: UInt32; const aGroup: IWGPUBindGroup; aDynamicOffsetCount: NativeUInt; const aDynamicOffsets: PUInt32);
       procedure SetBlendConstant(const aColor: PWGPUColor);
+      procedure SetImmediateData(aOffset: UInt32; const aData: Pointer; aSize: NativeUInt);
       procedure SetIndexBuffer(const aBuffer: IWGPUBuffer; const aFormat: TWGPUIndexFormat; aOffset: UInt64; aSize: UInt64);
       procedure SetLabel(const aLabel: TWGPUStringView);
       procedure SetPipeline(const aPipeline: IWGPURenderPipeline);
@@ -478,6 +481,7 @@ type
       procedure PopDebugGroup;
       procedure PushDebugGroup(const aGroupLabel: TWGPUStringView);
       procedure SetBindGroup(aGroupIndex: UInt32; const aGroup: IWGPUBindGroup; aDynamicOffsetCount: NativeUInt; const aDynamicOffsets: PUInt32);
+      procedure SetImmediateData(aOffset: UInt32; const aData: Pointer; aSize: NativeUInt);
       procedure SetLabel(const aLabel: TWGPUStringView);
       procedure SetPipeline(const aPipeline: IWGPUComputePipeline);
       procedure WriteTimestamp(const aQuerySet: IWGPUQuerySet; aQueryIndex: UInt32);
@@ -615,6 +619,7 @@ type
       procedure PopDebugGroup;
       procedure PushDebugGroup(const aGroupLabel: TWGPUStringView);
       procedure SetBindGroup(aGroupIndex: UInt32; const aGroup: IWGPUBindGroup; aDynamicOffsetCount: NativeUInt; const aDynamicOffsets: PUInt32);
+      procedure SetImmediateData(aOffset: UInt32; const aData: Pointer; aSize: NativeUInt);
       procedure SetIndexBuffer(const aBuffer: IWGPUBuffer; const aFormat: TWGPUIndexFormat; aOffset: UInt64; aSize: UInt64);
       procedure SetLabel(const aLabel: TWGPUStringView);
       procedure SetPipeline(const aPipeline: IWGPURenderPipeline);
@@ -642,6 +647,7 @@ type
       procedure PushDebugGroup(const aGroupLabel: TWGPUStringView);
       procedure SetBindGroup(aGroupIndex: UInt32; const aGroup: IWGPUBindGroup; aDynamicOffsetCount: NativeUInt; const aDynamicOffsets: PUInt32);
       procedure SetBlendConstant(const aColor: PWGPUColor);
+      procedure SetImmediateData(aOffset: UInt32; const aData: Pointer; aSize: NativeUInt);
       procedure SetIndexBuffer(const aBuffer: IWGPUBuffer; const aFormat: TWGPUIndexFormat; aOffset: UInt64; aSize: UInt64);
       procedure SetLabel(const aLabel: TWGPUStringView);
       procedure SetPipeline(const aPipeline: IWGPURenderPipeline);
@@ -1119,6 +1125,11 @@ end;
 procedure TiwgpuComputePassEncoder.SetBindGroup(aGroupIndex: UInt32; const aGroup: IWGPUBindGroup; aDynamicOffsetCount: NativeUInt; const aDynamicOffsets: PUInt32);
 begin
    wgpuComputePassEncoderSetBindGroup(FHandle, aGroupIndex, aGroup.GetHandle, aDynamicOffsetCount, aDynamicOffsets);
+end;
+
+procedure TiwgpuComputePassEncoder.SetImmediateData(aOffset: UInt32; const aData: Pointer; aSize: NativeUInt);
+begin
+   wgpuComputePassEncoderSetImmediateData(FHandle, aOffset, aData, aSize);
 end;
 
 procedure TiwgpuComputePassEncoder.SetLabel(const aLabel: TWGPUStringView);
@@ -1686,6 +1697,11 @@ begin
    wgpuRenderBundleEncoderSetBindGroup(FHandle, aGroupIndex, aGroup.GetHandle, aDynamicOffsetCount, aDynamicOffsets);
 end;
 
+procedure TiwgpuRenderBundleEncoder.SetImmediateData(aOffset: UInt32; const aData: Pointer; aSize: NativeUInt);
+begin
+   wgpuRenderBundleEncoderSetImmediateData(FHandle, aOffset, aData, aSize);
+end;
+
 procedure TiwgpuRenderBundleEncoder.SetIndexBuffer(const aBuffer: IWGPUBuffer; const aFormat: TWGPUIndexFormat; aOffset: UInt64; aSize: UInt64);
 begin
    wgpuRenderBundleEncoderSetIndexBuffer(FHandle, aBuffer.GetHandle, aFormat, aOffset, aSize);
@@ -1805,6 +1821,11 @@ end;
 procedure TiwgpuRenderPassEncoder.SetBlendConstant(const aColor: PWGPUColor);
 begin
    wgpuRenderPassEncoderSetBlendConstant(FHandle, aColor);
+end;
+
+procedure TiwgpuRenderPassEncoder.SetImmediateData(aOffset: UInt32; const aData: Pointer; aSize: NativeUInt);
+begin
+   wgpuRenderPassEncoderSetImmediateData(FHandle, aOffset, aData, aSize);
 end;
 
 procedure TiwgpuRenderPassEncoder.SetIndexBuffer(const aBuffer: IWGPUBuffer; const aFormat: TWGPUIndexFormat; aOffset: UInt64; aSize: UInt64);
