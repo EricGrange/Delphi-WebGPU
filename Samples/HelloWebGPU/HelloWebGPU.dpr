@@ -179,14 +179,14 @@ begin
    Assert(vAdapter <> 0);
 
    // Request device
-   var requiredLimits := Default(TWGPURequiredLimits);
-   requiredLimits.limits.maxBindGroups := 1;
-   requiredLimits.limits.maxUniformBuffersPerShaderStage := 1;
-   requiredLimits.limits.maxUniformBufferBindingSize := 16 * 4;
-   requiredLimits.limits.minUniformBufferOffsetAlignment := 256;
-   requiredLimits.limits.minStorageBufferOffsetAlignment := 256;
-   requiredLimits.limits.maxSampledTexturesPerShaderStage := 1;
-   requiredLimits.limits.maxSamplersPerShaderStage := 1;
+   var requiredLimits := Default(TWGPULimits);
+   requiredLimits.maxBindGroups := 1;
+   requiredLimits.maxUniformBuffersPerShaderStage := 1;
+   requiredLimits.maxUniformBufferBindingSize := 16 * 4;
+   requiredLimits.minUniformBufferOffsetAlignment := 256;
+   requiredLimits.minStorageBufferOffsetAlignment := 256;
+   requiredLimits.maxSampledTexturesPerShaderStage := 1;
+   requiredLimits.maxSamplersPerShaderStage := 1;
 
    var deviceDescriptor := Default(TWGPUDeviceDescriptor);
    deviceDescriptor.&label := 'WebGPU Device';
@@ -482,7 +482,8 @@ procedure Render;
 begin
    var surfaceTexture := Default(TWGPUSurfaceTexture);
    wgpuSurfaceGetCurrentTexture(vSurface, @surfaceTexture);
-   Assert(surfaceTexture.status = WGPUSurfaceGetCurrentTextureStatus_Success);
+   Assert(surfaceTexture.status in [ WGPUSurfaceGetCurrentTextureStatus_SuccessOptimal,
+                                     WGPUSurfaceGetCurrentTextureStatus_SuccessSubOptimal ]);
 
    var viewDescriptor := Default(TWGPUTextureViewDescriptor);
    viewDescriptor.nextInChain := nil;

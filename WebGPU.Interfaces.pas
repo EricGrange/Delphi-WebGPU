@@ -59,7 +59,7 @@ type
       function GetFormatCapabilities(const aFormat: TWGPUTextureFormat; const aCapabilities: PWGPUDawnFormatCapabilities): TWGPUStatus;
       function GetInfo(const aInfo: PWGPUAdapterInfo): TWGPUStatus;
       function GetInstance: IWGPUInstance;
-      function GetLimits(const aLimits: PWGPUSupportedLimits): TWGPUStatus;
+      function GetLimits(const aLimits: PWGPULimits): TWGPUStatus;
       function HasFeature(const aFeature: TWGPUFeatureName): TWGPUBool;
       function RequestDevice(const aOptions: TWGPUDeviceDescriptor; const aCallbackInfo: TWGPURequestDeviceCallbackInfo): TWGPUFuture;
    end;
@@ -86,8 +86,10 @@ type
       function GetSize: UInt64;
       function GetUsage: TWGPUBufferUsage;
       function MapAsync(const aMode: TWGPUMapMode; aOffset: NativeUInt; aSize: NativeUInt; const aCallbackInfo: TWGPUBufferMapCallbackInfo): TWGPUFuture;
+      function ReadMappedRange(aOffset: NativeUInt; const aData: Pointer; aSize: NativeUInt): TWGPUStatus;
       procedure SetLabel(const aLabel: TWGPUStringView);
       procedure Unmap;
+      function WriteMappedRange(aOffset: NativeUInt; const aData: Pointer; aSize: NativeUInt): TWGPUStatus;
       property &Label : TWGPUStringView read GetLabel write SetLabel;
    end;
 
@@ -169,7 +171,7 @@ type
       function GetAdapter: IWGPUAdapter;
       function GetAdapterInfo(const aAdapterInfo: PWGPUAdapterInfo): TWGPUStatus;
       procedure GetFeatures(const aFeatures: PWGPUSupportedFeatures);
-      function GetLimits(const aLimits: PWGPUSupportedLimits): TWGPUStatus;
+      function GetLimits(const aLimits: PWGPULimits): TWGPUStatus;
       function GetLostFuture: TWGPUFuture;
       function GetQueue: IWGPUQueue;
       function HasFeature(const aFeature: TWGPUFeatureName): TWGPUBool;
@@ -399,7 +401,7 @@ type
       function GetFormatCapabilities(const aFormat: TWGPUTextureFormat; const aCapabilities: PWGPUDawnFormatCapabilities): TWGPUStatus;
       function GetInfo(const aInfo: PWGPUAdapterInfo): TWGPUStatus;
       function GetInstance: IWGPUInstance;
-      function GetLimits(const aLimits: PWGPUSupportedLimits): TWGPUStatus;
+      function GetLimits(const aLimits: PWGPULimits): TWGPUStatus;
       function HasFeature(const aFeature: TWGPUFeatureName): TWGPUBool;
       function RequestDevice(const aOptions: TWGPUDeviceDescriptor; const aCallbackInfo: TWGPURequestDeviceCallbackInfo): TWGPUFuture;
    end;
@@ -433,8 +435,10 @@ type
       function GetSize: UInt64;
       function GetUsage: TWGPUBufferUsage;
       function MapAsync(const aMode: TWGPUMapMode; aOffset: NativeUInt; aSize: NativeUInt; const aCallbackInfo: TWGPUBufferMapCallbackInfo): TWGPUFuture;
+      function ReadMappedRange(aOffset: NativeUInt; const aData: Pointer; aSize: NativeUInt): TWGPUStatus;
       procedure SetLabel(const aLabel: TWGPUStringView);
       procedure Unmap;
+      function WriteMappedRange(aOffset: NativeUInt; const aData: Pointer; aSize: NativeUInt): TWGPUStatus;
    end;
 
    TiwgpuCommandBuffer = class(TInterfacedObject, IWGPUCommandBuffer)
@@ -525,7 +529,7 @@ type
       function GetAdapter: IWGPUAdapter;
       function GetAdapterInfo(const aAdapterInfo: PWGPUAdapterInfo): TWGPUStatus;
       procedure GetFeatures(const aFeatures: PWGPUSupportedFeatures);
-      function GetLimits(const aLimits: PWGPUSupportedLimits): TWGPUStatus;
+      function GetLimits(const aLimits: PWGPULimits): TWGPUStatus;
       function GetLostFuture: TWGPUFuture;
       function GetQueue: IWGPUQueue;
       function HasFeature(const aFeature: TWGPUFeatureName): TWGPUBool;
@@ -805,7 +809,7 @@ begin
    Result := TiwgpuInstance.Create(wgpuAdapterGetInstance(FHandle));
 end;
 
-function TiwgpuAdapter.GetLimits(const aLimits: PWGPUSupportedLimits): TWGPUStatus;
+function TiwgpuAdapter.GetLimits(const aLimits: PWGPULimits): TWGPUStatus;
 begin
    Result := wgpuAdapterGetLimits(FHandle, aLimits);
 end;
@@ -929,6 +933,11 @@ begin
    Result := wgpuBufferMapAsync(FHandle, aMode, aOffset, aSize, aCallbackInfo);
 end;
 
+function TiwgpuBuffer.ReadMappedRange(aOffset: NativeUInt; const aData: Pointer; aSize: NativeUInt): TWGPUStatus;
+begin
+   Result := wgpuBufferReadMappedRange(FHandle, aOffset, aData, aSize);
+end;
+
 procedure TiwgpuBuffer.SetLabel(const aLabel: TWGPUStringView);
 begin
    wgpuBufferSetLabel(FHandle, aLabel);
@@ -937,6 +946,11 @@ end;
 procedure TiwgpuBuffer.Unmap;
 begin
    wgpuBufferUnmap(FHandle);
+end;
+
+function TiwgpuBuffer.WriteMappedRange(aOffset: NativeUInt; const aData: Pointer; aSize: NativeUInt): TWGPUStatus;
+begin
+   Result := wgpuBufferWriteMappedRange(FHandle, aOffset, aData, aSize);
 end;
 
 //
@@ -1319,7 +1333,7 @@ begin
    wgpuDeviceGetFeatures(FHandle, aFeatures);
 end;
 
-function TiwgpuDevice.GetLimits(const aLimits: PWGPUSupportedLimits): TWGPUStatus;
+function TiwgpuDevice.GetLimits(const aLimits: PWGPULimits): TWGPUStatus;
 begin
    Result := wgpuDeviceGetLimits(FHandle, aLimits);
 end;
@@ -2119,7 +2133,7 @@ function TIwgpuSurface.GetCurrentTexture : IWGPUTexture;
 begin
    var texture := Default(TWGPUSurfaceTexture);
    wgpuSurfaceGetCurrentTexture(FHandle, @texture);
-   if texture.status = WGPUSurfaceGetCurrentTextureStatus_Success then
+   if texture.status in [ WGPUSurfaceGetCurrentTextureStatus_SuccessOptimal, WGPUSurfaceGetCurrentTextureStatus_SuccessSuboptimal ] then
       Result := TiwgpuTexture.Create(texture.texture)
    else Result := nil;
 end;
