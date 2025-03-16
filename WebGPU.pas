@@ -753,7 +753,7 @@ type
    TWGPUPopErrorScopeStatus = (
       WGPUPopErrorScopeStatus_Success = 1,
       WGPUPopErrorScopeStatus_InstanceDropped = 2,
-      WGPUPopErrorScopeStatus_EmptyStack = 3,
+      WGPUPopErrorScopeStatus_Error = 3,
       WGPUPopErrorScopeStatus_Force32 = 2147483647);
    PWGPUPopErrorScopeStatus = ^TWGPUPopErrorScopeStatus;
 
@@ -1788,11 +1788,11 @@ type
       device: TWGPUDevice;
       format: TWGPUTextureFormat;
       usage: TWGPUTextureUsage;
+      width: UInt32;
+      height: UInt32;
       viewFormatCount: NativeUInt;
       viewFormats: PWGPUTextureFormat;
       alphaMode: TWGPUCompositeAlphaMode;
-      width: UInt32;
-      height: UInt32;
       presentMode: TWGPUPresentMode;
    end;
 
@@ -2130,11 +2130,11 @@ type
 
    TWGPURequestAdapterOptions = record
       nextInChain: PWGPUChainedStruct;
-      compatibleSurface: TWGPUSurface;
       featureLevel: TWGPUFeatureLevel;
       powerPreference: TWGPUPowerPreference;
-      backendType: TWGPUBackendType;
       forceFallbackAdapter: TWGPUBool;
+      backendType: TWGPUBackendType;
+      compatibleSurface: TWGPUSurface;
    end;
 
    TWGPUSamplerDescriptor = record
@@ -2243,8 +2243,8 @@ type
 
    TWGPUVertexBufferLayout = record
       nextInChain: PWGPUChainedStruct;
-      arrayStride: UInt64;
       stepMode: TWGPUVertexStepMode;
+      arrayStride: UInt64;
       attributeCount: NativeUInt;
       attributes: PWGPUVertexAttribute;
    end;
@@ -2261,7 +2261,6 @@ type
       deviceID: UInt32;
       subgroupMinSize: UInt32;
       subgroupMaxSize: UInt32;
-      compatibilityMode: TWGPUBool;
    end;
 
    TWGPUBindGroupDescriptor = record
@@ -2681,6 +2680,7 @@ const
    WGPUColorWriteMask_Blue: TWGPUColorWriteMask = $0000000000000004;
    WGPUColorWriteMask_Alpha: TWGPUColorWriteMask = $0000000000000008;
    WGPUColorWriteMask_All: TWGPUColorWriteMask = $000000000000000F;
+   WGPUHeapProperty_None: TWGPUHeapProperty = $0000000000000000;
    WGPUHeapProperty_DeviceLocal: TWGPUHeapProperty = $0000000000000001;
    WGPUHeapProperty_HostVisible: TWGPUHeapProperty = $0000000000000002;
    WGPUHeapProperty_HostCoherent: TWGPUHeapProperty = $0000000000000004;
