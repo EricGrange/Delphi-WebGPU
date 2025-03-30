@@ -89,6 +89,7 @@ const
    WINT_MIN = 0;
    WGPU_ARRAY_LAYER_COUNT_UNDEFINED = UINT32_MAX;
    WGPU_COPY_STRIDE_UNDEFINED = UINT32_MAX;
+   WGPU_DEPTH_CLEAR_VALUE_UNDEFINED = 1/0;
    WGPU_DEPTH_SLICE_UNDEFINED = UINT32_MAX;
    WGPU_LIMIT_U32_UNDEFINED = UINT32_MAX;
    WGPU_LIMIT_U64_UNDEFINED = UINT64_MAX;
@@ -186,6 +187,7 @@ type
    PWGPUDawnEncoderInternalUsageDescriptor = ^TWGPUDawnEncoderInternalUsageDescriptor;
    PWGPUDawnExperimentalImmediateDataLimits = ^TWGPUDawnExperimentalImmediateDataLimits;
    PWGPUDawnExperimentalSubgroupLimits = ^TWGPUDawnExperimentalSubgroupLimits;
+   PWGPUDawnFakeBufferOOMForTesting = ^TWGPUDawnFakeBufferOOMForTesting;
    PWGPUDawnInjectedInvalidSType = ^TWGPUDawnInjectedInvalidSType;
    PWGPUDawnRenderPassColorAttachmentRenderToSingleSampled = ^TWGPUDawnRenderPassColorAttachmentRenderToSingleSampled;
    PWGPUDawnShaderModuleSPIRVOptionsDescriptor = ^TWGPUDawnShaderModuleSPIRVOptionsDescriptor;
@@ -536,7 +538,7 @@ type
 
    TWGPUCompilationInfoRequestStatus = (
       WGPUCompilationInfoRequestStatus_Success = 1,
-      WGPUCompilationInfoRequestStatus_InstanceDropped = 2,
+      WGPUCompilationInfoRequestStatus_CallbackCancelled = 2,
       WGPUCompilationInfoRequestStatus_Force32 = 2147483647);
    PWGPUCompilationInfoRequestStatus = ^TWGPUCompilationInfoRequestStatus;
 
@@ -558,7 +560,7 @@ type
 
    TWGPUCreatePipelineAsyncStatus = (
       WGPUCreatePipelineAsyncStatus_Success = 1,
-      WGPUCreatePipelineAsyncStatus_InstanceDropped = 2,
+      WGPUCreatePipelineAsyncStatus_CallbackCancelled = 2,
       WGPUCreatePipelineAsyncStatus_ValidationError = 3,
       WGPUCreatePipelineAsyncStatus_InternalError = 4,
       WGPUCreatePipelineAsyncStatus_Force32 = 2147483647);
@@ -575,7 +577,7 @@ type
    TWGPUDeviceLostReason = (
       WGPUDeviceLostReason_Unknown = 1,
       WGPUDeviceLostReason_Destroyed = 2,
-      WGPUDeviceLostReason_InstanceDropped = 3,
+      WGPUDeviceLostReason_CallbackCancelled = 3,
       WGPUDeviceLostReason_FailedCreation = 4,
       WGPUDeviceLostReason_Force32 = 2147483647);
    PWGPUDeviceLostReason = ^TWGPUDeviceLostReason;
@@ -730,7 +732,7 @@ type
 
    TWGPUMapAsyncStatus = (
       WGPUMapAsyncStatus_Success = 1,
-      WGPUMapAsyncStatus_InstanceDropped = 2,
+      WGPUMapAsyncStatus_CallbackCancelled = 2,
       WGPUMapAsyncStatus_Error = 3,
       WGPUMapAsyncStatus_Aborted = 4,
       WGPUMapAsyncStatus_Force32 = 2147483647);
@@ -752,7 +754,7 @@ type
 
    TWGPUPopErrorScopeStatus = (
       WGPUPopErrorScopeStatus_Success = 1,
-      WGPUPopErrorScopeStatus_InstanceDropped = 2,
+      WGPUPopErrorScopeStatus_CallbackCancelled = 2,
       WGPUPopErrorScopeStatus_Error = 3,
       WGPUPopErrorScopeStatus_Force32 = 2147483647);
    PWGPUPopErrorScopeStatus = ^TWGPUPopErrorScopeStatus;
@@ -771,6 +773,7 @@ type
    PWGPUPredefinedColorSpace = ^TWGPUPredefinedColorSpace;
 
    TWGPUPresentMode = (
+      WGPUPresentMode_Undefined = 0,
       WGPUPresentMode_Fifo = 1,
       WGPUPresentMode_FifoRelaxed = 2,
       WGPUPresentMode_Immediate = 3,
@@ -796,14 +799,14 @@ type
 
    TWGPUQueueWorkDoneStatus = (
       WGPUQueueWorkDoneStatus_Success = 1,
-      WGPUQueueWorkDoneStatus_InstanceDropped = 2,
+      WGPUQueueWorkDoneStatus_CallbackCancelled = 2,
       WGPUQueueWorkDoneStatus_Error = 3,
       WGPUQueueWorkDoneStatus_Force32 = 2147483647);
    PWGPUQueueWorkDoneStatus = ^TWGPUQueueWorkDoneStatus;
 
    TWGPURequestAdapterStatus = (
       WGPURequestAdapterStatus_Success = 1,
-      WGPURequestAdapterStatus_InstanceDropped = 2,
+      WGPURequestAdapterStatus_CallbackCancelled = 2,
       WGPURequestAdapterStatus_Unavailable = 3,
       WGPURequestAdapterStatus_Error = 4,
       WGPURequestAdapterStatus_Force32 = 2147483647);
@@ -811,7 +814,7 @@ type
 
    TWGPURequestDeviceStatus = (
       WGPURequestDeviceStatus_Success = 1,
-      WGPURequestDeviceStatus_InstanceDropped = 2,
+      WGPURequestDeviceStatus_CallbackCancelled = 2,
       WGPURequestDeviceStatus_Error = 3,
       WGPURequestDeviceStatus_Force32 = 2147483647);
    PWGPURequestDeviceStatus = ^TWGPURequestDeviceStatus;
@@ -896,6 +899,7 @@ type
       WGPUSType_SharedFenceEGLSyncExportInfo = 327742,
       WGPUSType_DawnInjectedInvalidSType = 327743,
       WGPUSType_DawnCompilationMessageUtf16 = 327744,
+      WGPUSType_DawnFakeBufferOOMForTesting = 327745,
       WGPUSType_Force32 = 2147483647);
    PWGPUSType = ^TWGPUSType;
 
@@ -1416,6 +1420,13 @@ type
       chain: TWGPUChainedStruct;
       minSubgroupSize: UInt32;
       maxSubgroupSize: UInt32;
+   end;
+
+   TWGPUDawnFakeBufferOOMForTesting = record
+      chain: TWGPUChainedStruct;
+      fakeOOMAtWireClientMap: TWGPUBool;
+      fakeOOMAtNativeMap: TWGPUBool;
+      fakeOOMAtDevice: TWGPUBool;
    end;
 
    TWGPUDawnInjectedInvalidSType = record
