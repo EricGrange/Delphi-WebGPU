@@ -38,7 +38,6 @@
 #define WGPU_BREAKING_CHANGE_STRING_VIEW_LABELS
 #define WGPU_BREAKING_CHANGE_STRING_VIEW_OUTPUT_STRUCTS
 #define WGPU_BREAKING_CHANGE_STRING_VIEW_CALLBACKS
-#define WGPU_BREAKING_CHANGE_INSTANCE_DROPPED_RENAME
 
 #if defined(WGPU_SHARED_LIBRARY)
 #    if defined(_WIN32)
@@ -153,10 +152,10 @@ struct WGPUDawnWGSLBlocklist;
 struct WGPUDawnAdapterPropertiesPowerPreference;
 struct WGPUDawnBufferDescriptorErrorInfoFromWireClient;
 struct WGPUDawnCompilationMessageUtf16;
+struct WGPUDawnDeviceAllocatorControl;
 struct WGPUDawnDrmFormatProperties;
 struct WGPUDawnEncoderInternalUsageDescriptor;
 struct WGPUDawnExperimentalImmediateDataLimits;
-struct WGPUDawnExperimentalSubgroupLimits;
 struct WGPUDawnFakeBufferOOMForTesting;
 struct WGPUDawnInjectedInvalidSType;
 struct WGPUDawnRenderPassColorAttachmentRenderToSingleSampled;
@@ -221,8 +220,9 @@ struct WGPUSupportedFeatures;
 struct WGPUSurfaceCapabilities;
 struct WGPUSurfaceColorManagement;
 struct WGPUSurfaceConfiguration;
+struct WGPUSurfaceDescriptorFromWindowsUWPSwapChainPanel;
+struct WGPUSurfaceDescriptorFromWindowsWinUISwapChainPanel;
 struct WGPUSurfaceDescriptorFromWindowsCoreWindow;
-struct WGPUSurfaceDescriptorFromWindowsSwapChainPanel;
 struct WGPUSurfaceSourceXCBWindow;
 struct WGPUSurfaceSourceAndroidNativeWindow;
 struct WGPUSurfaceSourceMetalLayer;
@@ -499,56 +499,56 @@ typedef enum WGPUFeatureName {
     WGPUFeatureName_ChromiumExperimentalImmediateData = 0x00050005,
     WGPUFeatureName_TransientAttachments = 0x00050006,
     WGPUFeatureName_MSAARenderToSingleSampled = 0x00050007,
-    WGPUFeatureName_SubgroupsF16 = 0x00050008,
-    WGPUFeatureName_D3D11MultithreadProtected = 0x00050009,
-    WGPUFeatureName_ANGLETextureSharing = 0x0005000A,
-    WGPUFeatureName_PixelLocalStorageCoherent = 0x0005000B,
-    WGPUFeatureName_PixelLocalStorageNonCoherent = 0x0005000C,
-    WGPUFeatureName_Unorm16TextureFormats = 0x0005000D,
-    WGPUFeatureName_Snorm16TextureFormats = 0x0005000E,
-    WGPUFeatureName_MultiPlanarFormatExtendedUsages = 0x0005000F,
-    WGPUFeatureName_MultiPlanarFormatP010 = 0x00050010,
-    WGPUFeatureName_HostMappedPointer = 0x00050011,
-    WGPUFeatureName_MultiPlanarRenderTargets = 0x00050012,
-    WGPUFeatureName_MultiPlanarFormatNv12a = 0x00050013,
-    WGPUFeatureName_FramebufferFetch = 0x00050014,
-    WGPUFeatureName_BufferMapExtendedUsages = 0x00050015,
-    WGPUFeatureName_AdapterPropertiesMemoryHeaps = 0x00050016,
-    WGPUFeatureName_AdapterPropertiesD3D = 0x00050017,
-    WGPUFeatureName_AdapterPropertiesVk = 0x00050018,
-    WGPUFeatureName_R8UnormStorage = 0x00050019,
-    WGPUFeatureName_DawnFormatCapabilities = 0x0005001A,
-    WGPUFeatureName_DawnDrmFormatCapabilities = 0x0005001B,
-    WGPUFeatureName_Norm16TextureFormats = 0x0005001C,
-    WGPUFeatureName_MultiPlanarFormatNv16 = 0x0005001D,
-    WGPUFeatureName_MultiPlanarFormatNv24 = 0x0005001E,
-    WGPUFeatureName_MultiPlanarFormatP210 = 0x0005001F,
-    WGPUFeatureName_MultiPlanarFormatP410 = 0x00050020,
-    WGPUFeatureName_SharedTextureMemoryVkDedicatedAllocation = 0x00050021,
-    WGPUFeatureName_SharedTextureMemoryAHardwareBuffer = 0x00050022,
-    WGPUFeatureName_SharedTextureMemoryDmaBuf = 0x00050023,
-    WGPUFeatureName_SharedTextureMemoryOpaqueFD = 0x00050024,
-    WGPUFeatureName_SharedTextureMemoryZirconHandle = 0x00050025,
-    WGPUFeatureName_SharedTextureMemoryDXGISharedHandle = 0x00050026,
-    WGPUFeatureName_SharedTextureMemoryD3D11Texture2D = 0x00050027,
-    WGPUFeatureName_SharedTextureMemoryIOSurface = 0x00050028,
-    WGPUFeatureName_SharedTextureMemoryEGLImage = 0x00050029,
-    WGPUFeatureName_SharedFenceVkSemaphoreOpaqueFD = 0x0005002A,
-    WGPUFeatureName_SharedFenceSyncFD = 0x0005002B,
-    WGPUFeatureName_SharedFenceVkSemaphoreZirconHandle = 0x0005002C,
-    WGPUFeatureName_SharedFenceDXGISharedHandle = 0x0005002D,
-    WGPUFeatureName_SharedFenceMTLSharedEvent = 0x0005002E,
-    WGPUFeatureName_SharedBufferMemoryD3D12Resource = 0x0005002F,
-    WGPUFeatureName_StaticSamplers = 0x00050030,
-    WGPUFeatureName_YCbCrVulkanSamplers = 0x00050031,
-    WGPUFeatureName_ShaderModuleCompilationOptions = 0x00050032,
-    WGPUFeatureName_DawnLoadResolveTexture = 0x00050033,
-    WGPUFeatureName_DawnPartialLoadResolveTexture = 0x00050034,
-    WGPUFeatureName_MultiDrawIndirect = 0x00050035,
-    WGPUFeatureName_DawnTexelCopyBufferRowAlignment = 0x00050037,
-    WGPUFeatureName_FlexibleTextureViews = 0x00050038,
-    WGPUFeatureName_ChromiumExperimentalSubgroupMatrix = 0x00050039,
-    WGPUFeatureName_SharedFenceEGLSync = 0x0005003A,
+    WGPUFeatureName_D3D11MultithreadProtected = 0x00050008,
+    WGPUFeatureName_ANGLETextureSharing = 0x00050009,
+    WGPUFeatureName_PixelLocalStorageCoherent = 0x0005000A,
+    WGPUFeatureName_PixelLocalStorageNonCoherent = 0x0005000B,
+    WGPUFeatureName_Unorm16TextureFormats = 0x0005000C,
+    WGPUFeatureName_Snorm16TextureFormats = 0x0005000D,
+    WGPUFeatureName_MultiPlanarFormatExtendedUsages = 0x0005000E,
+    WGPUFeatureName_MultiPlanarFormatP010 = 0x0005000F,
+    WGPUFeatureName_HostMappedPointer = 0x00050010,
+    WGPUFeatureName_MultiPlanarRenderTargets = 0x00050011,
+    WGPUFeatureName_MultiPlanarFormatNv12a = 0x00050012,
+    WGPUFeatureName_FramebufferFetch = 0x00050013,
+    WGPUFeatureName_BufferMapExtendedUsages = 0x00050014,
+    WGPUFeatureName_AdapterPropertiesMemoryHeaps = 0x00050015,
+    WGPUFeatureName_AdapterPropertiesD3D = 0x00050016,
+    WGPUFeatureName_AdapterPropertiesVk = 0x00050017,
+    WGPUFeatureName_R8UnormStorage = 0x00050018,
+    WGPUFeatureName_DawnFormatCapabilities = 0x00050019,
+    WGPUFeatureName_DawnDrmFormatCapabilities = 0x0005001A,
+    WGPUFeatureName_Norm16TextureFormats = 0x0005001B,
+    WGPUFeatureName_MultiPlanarFormatNv16 = 0x0005001C,
+    WGPUFeatureName_MultiPlanarFormatNv24 = 0x0005001D,
+    WGPUFeatureName_MultiPlanarFormatP210 = 0x0005001E,
+    WGPUFeatureName_MultiPlanarFormatP410 = 0x0005001F,
+    WGPUFeatureName_SharedTextureMemoryVkDedicatedAllocation = 0x00050020,
+    WGPUFeatureName_SharedTextureMemoryAHardwareBuffer = 0x00050021,
+    WGPUFeatureName_SharedTextureMemoryDmaBuf = 0x00050022,
+    WGPUFeatureName_SharedTextureMemoryOpaqueFD = 0x00050023,
+    WGPUFeatureName_SharedTextureMemoryZirconHandle = 0x00050024,
+    WGPUFeatureName_SharedTextureMemoryDXGISharedHandle = 0x00050025,
+    WGPUFeatureName_SharedTextureMemoryD3D11Texture2D = 0x00050026,
+    WGPUFeatureName_SharedTextureMemoryIOSurface = 0x00050027,
+    WGPUFeatureName_SharedTextureMemoryEGLImage = 0x00050028,
+    WGPUFeatureName_SharedFenceVkSemaphoreOpaqueFD = 0x00050029,
+    WGPUFeatureName_SharedFenceSyncFD = 0x0005002A,
+    WGPUFeatureName_SharedFenceVkSemaphoreZirconHandle = 0x0005002B,
+    WGPUFeatureName_SharedFenceDXGISharedHandle = 0x0005002C,
+    WGPUFeatureName_SharedFenceMTLSharedEvent = 0x0005002D,
+    WGPUFeatureName_SharedBufferMemoryD3D12Resource = 0x0005002E,
+    WGPUFeatureName_StaticSamplers = 0x0005002F,
+    WGPUFeatureName_YCbCrVulkanSamplers = 0x00050030,
+    WGPUFeatureName_ShaderModuleCompilationOptions = 0x00050031,
+    WGPUFeatureName_DawnLoadResolveTexture = 0x00050032,
+    WGPUFeatureName_DawnPartialLoadResolveTexture = 0x00050033,
+    WGPUFeatureName_MultiDrawIndirect = 0x00050034,
+    WGPUFeatureName_DawnTexelCopyBufferRowAlignment = 0x00050035,
+    WGPUFeatureName_FlexibleTextureViews = 0x00050036,
+    WGPUFeatureName_ChromiumExperimentalSubgroupMatrix = 0x00050037,
+    WGPUFeatureName_SharedFenceEGLSync = 0x00050038,
+    WGPUFeatureName_DawnDeviceAllocatorControl = 0x00050039,
     WGPUFeatureName_Force32 = 0x7FFFFFFF
 } WGPUFeatureName WGPU_ENUM_ATTRIBUTE;
 typedef enum WGPUFilterMode {
@@ -678,7 +678,7 @@ typedef enum WGPUSType {
     WGPUSType_SurfaceDescriptorFromWindowsCoreWindow = 0x00050000,
     WGPUSType_ExternalTextureBindingEntry = 0x00050001,
     WGPUSType_ExternalTextureBindingLayout = 0x00050002,
-    WGPUSType_SurfaceDescriptorFromWindowsSwapChainPanel = 0x00050003,
+    WGPUSType_SurfaceDescriptorFromWindowsUWPSwapChainPanel = 0x00050003,
     WGPUSType_DawnTextureInternalUsageDescriptor = 0x00050004,
     WGPUSType_DawnEncoderInternalUsageDescriptor = 0x00050005,
     WGPUSType_DawnInstanceDescriptor = 0x00050006,
@@ -694,53 +694,54 @@ typedef enum WGPUSType {
     WGPUSType_RenderPassPixelLocalStorage = 0x00050010,
     WGPUSType_PipelineLayoutPixelLocalStorage = 0x00050011,
     WGPUSType_BufferHostMappedPointer = 0x00050012,
-    WGPUSType_DawnExperimentalSubgroupLimits = 0x00050013,
-    WGPUSType_AdapterPropertiesMemoryHeaps = 0x00050014,
-    WGPUSType_AdapterPropertiesD3D = 0x00050015,
-    WGPUSType_AdapterPropertiesVk = 0x00050016,
-    WGPUSType_DawnWireWGSLControl = 0x00050017,
-    WGPUSType_DawnWGSLBlocklist = 0x00050018,
-    WGPUSType_DawnDrmFormatCapabilities = 0x00050019,
-    WGPUSType_ShaderModuleCompilationOptions = 0x0005001A,
-    WGPUSType_ColorTargetStateExpandResolveTextureDawn = 0x0005001B,
-    WGPUSType_RenderPassDescriptorExpandResolveRect = 0x0005001C,
-    WGPUSType_SharedTextureMemoryVkDedicatedAllocationDescriptor = 0x0005001D,
-    WGPUSType_SharedTextureMemoryAHardwareBufferDescriptor = 0x0005001E,
-    WGPUSType_SharedTextureMemoryDmaBufDescriptor = 0x0005001F,
-    WGPUSType_SharedTextureMemoryOpaqueFDDescriptor = 0x00050020,
-    WGPUSType_SharedTextureMemoryZirconHandleDescriptor = 0x00050021,
-    WGPUSType_SharedTextureMemoryDXGISharedHandleDescriptor = 0x00050022,
-    WGPUSType_SharedTextureMemoryD3D11Texture2DDescriptor = 0x00050023,
-    WGPUSType_SharedTextureMemoryIOSurfaceDescriptor = 0x00050024,
-    WGPUSType_SharedTextureMemoryEGLImageDescriptor = 0x00050025,
-    WGPUSType_SharedTextureMemoryInitializedBeginState = 0x00050026,
-    WGPUSType_SharedTextureMemoryInitializedEndState = 0x00050027,
-    WGPUSType_SharedTextureMemoryVkImageLayoutBeginState = 0x00050028,
-    WGPUSType_SharedTextureMemoryVkImageLayoutEndState = 0x00050029,
-    WGPUSType_SharedTextureMemoryD3DSwapchainBeginState = 0x0005002A,
-    WGPUSType_SharedFenceVkSemaphoreOpaqueFDDescriptor = 0x0005002B,
-    WGPUSType_SharedFenceVkSemaphoreOpaqueFDExportInfo = 0x0005002C,
-    WGPUSType_SharedFenceSyncFDDescriptor = 0x0005002D,
-    WGPUSType_SharedFenceSyncFDExportInfo = 0x0005002E,
-    WGPUSType_SharedFenceVkSemaphoreZirconHandleDescriptor = 0x0005002F,
-    WGPUSType_SharedFenceVkSemaphoreZirconHandleExportInfo = 0x00050030,
-    WGPUSType_SharedFenceDXGISharedHandleDescriptor = 0x00050031,
-    WGPUSType_SharedFenceDXGISharedHandleExportInfo = 0x00050032,
-    WGPUSType_SharedFenceMTLSharedEventDescriptor = 0x00050033,
-    WGPUSType_SharedFenceMTLSharedEventExportInfo = 0x00050034,
-    WGPUSType_SharedBufferMemoryD3D12ResourceDescriptor = 0x00050035,
-    WGPUSType_StaticSamplerBindingLayout = 0x00050036,
-    WGPUSType_YCbCrVkDescriptor = 0x00050037,
-    WGPUSType_SharedTextureMemoryAHardwareBufferProperties = 0x00050038,
-    WGPUSType_AHardwareBufferProperties = 0x00050039,
-    WGPUSType_DawnExperimentalImmediateDataLimits = 0x0005003A,
-    WGPUSType_DawnTexelCopyBufferRowAlignmentLimits = 0x0005003B,
-    WGPUSType_AdapterPropertiesSubgroupMatrixConfigs = 0x0005003C,
-    WGPUSType_SharedFenceEGLSyncDescriptor = 0x0005003D,
-    WGPUSType_SharedFenceEGLSyncExportInfo = 0x0005003E,
-    WGPUSType_DawnInjectedInvalidSType = 0x0005003F,
-    WGPUSType_DawnCompilationMessageUtf16 = 0x00050040,
-    WGPUSType_DawnFakeBufferOOMForTesting = 0x00050041,
+    WGPUSType_AdapterPropertiesMemoryHeaps = 0x00050013,
+    WGPUSType_AdapterPropertiesD3D = 0x00050014,
+    WGPUSType_AdapterPropertiesVk = 0x00050015,
+    WGPUSType_DawnWireWGSLControl = 0x00050016,
+    WGPUSType_DawnWGSLBlocklist = 0x00050017,
+    WGPUSType_DawnDrmFormatCapabilities = 0x00050018,
+    WGPUSType_ShaderModuleCompilationOptions = 0x00050019,
+    WGPUSType_ColorTargetStateExpandResolveTextureDawn = 0x0005001A,
+    WGPUSType_RenderPassDescriptorExpandResolveRect = 0x0005001B,
+    WGPUSType_SharedTextureMemoryVkDedicatedAllocationDescriptor = 0x0005001C,
+    WGPUSType_SharedTextureMemoryAHardwareBufferDescriptor = 0x0005001D,
+    WGPUSType_SharedTextureMemoryDmaBufDescriptor = 0x0005001E,
+    WGPUSType_SharedTextureMemoryOpaqueFDDescriptor = 0x0005001F,
+    WGPUSType_SharedTextureMemoryZirconHandleDescriptor = 0x00050020,
+    WGPUSType_SharedTextureMemoryDXGISharedHandleDescriptor = 0x00050021,
+    WGPUSType_SharedTextureMemoryD3D11Texture2DDescriptor = 0x00050022,
+    WGPUSType_SharedTextureMemoryIOSurfaceDescriptor = 0x00050023,
+    WGPUSType_SharedTextureMemoryEGLImageDescriptor = 0x00050024,
+    WGPUSType_SharedTextureMemoryInitializedBeginState = 0x00050025,
+    WGPUSType_SharedTextureMemoryInitializedEndState = 0x00050026,
+    WGPUSType_SharedTextureMemoryVkImageLayoutBeginState = 0x00050027,
+    WGPUSType_SharedTextureMemoryVkImageLayoutEndState = 0x00050028,
+    WGPUSType_SharedTextureMemoryD3DSwapchainBeginState = 0x00050029,
+    WGPUSType_SharedFenceVkSemaphoreOpaqueFDDescriptor = 0x0005002A,
+    WGPUSType_SharedFenceVkSemaphoreOpaqueFDExportInfo = 0x0005002B,
+    WGPUSType_SharedFenceSyncFDDescriptor = 0x0005002C,
+    WGPUSType_SharedFenceSyncFDExportInfo = 0x0005002D,
+    WGPUSType_SharedFenceVkSemaphoreZirconHandleDescriptor = 0x0005002E,
+    WGPUSType_SharedFenceVkSemaphoreZirconHandleExportInfo = 0x0005002F,
+    WGPUSType_SharedFenceDXGISharedHandleDescriptor = 0x00050030,
+    WGPUSType_SharedFenceDXGISharedHandleExportInfo = 0x00050031,
+    WGPUSType_SharedFenceMTLSharedEventDescriptor = 0x00050032,
+    WGPUSType_SharedFenceMTLSharedEventExportInfo = 0x00050033,
+    WGPUSType_SharedBufferMemoryD3D12ResourceDescriptor = 0x00050034,
+    WGPUSType_StaticSamplerBindingLayout = 0x00050035,
+    WGPUSType_YCbCrVkDescriptor = 0x00050036,
+    WGPUSType_SharedTextureMemoryAHardwareBufferProperties = 0x00050037,
+    WGPUSType_AHardwareBufferProperties = 0x00050038,
+    WGPUSType_DawnExperimentalImmediateDataLimits = 0x00050039,
+    WGPUSType_DawnTexelCopyBufferRowAlignmentLimits = 0x0005003A,
+    WGPUSType_AdapterPropertiesSubgroupMatrixConfigs = 0x0005003B,
+    WGPUSType_SharedFenceEGLSyncDescriptor = 0x0005003C,
+    WGPUSType_SharedFenceEGLSyncExportInfo = 0x0005003D,
+    WGPUSType_DawnInjectedInvalidSType = 0x0005003E,
+    WGPUSType_DawnCompilationMessageUtf16 = 0x0005003F,
+    WGPUSType_DawnFakeBufferOOMForTesting = 0x00050040,
+    WGPUSType_SurfaceDescriptorFromWindowsWinUISwapChainPanel = 0x00050041,
+    WGPUSType_DawnDeviceAllocatorControl = 0x00050042,
     WGPUSType_Force32 = 0x7FFFFFFF
 } WGPUSType WGPU_ENUM_ATTRIBUTE;
 typedef enum WGPUSamplerBindingType {
@@ -1472,6 +1473,20 @@ typedef struct WGPUDawnCompilationMessageUtf16 {
     /*.length=*/0 _wgpu_COMMA \
 })
 
+// Can be chained in WGPUDeviceDescriptor
+typedef struct WGPUDawnDeviceAllocatorControl {
+    WGPUChainedStruct chain;
+    size_t allocatorHeapBlockSize;
+} WGPUDawnDeviceAllocatorControl WGPU_STRUCTURE_ATTRIBUTE;
+
+#define WGPU_DAWN_DEVICE_ALLOCATOR_CONTROL_INIT _wgpu_MAKE_INIT_STRUCT(WGPUDawnDeviceAllocatorControl, { \
+    /*.chain=*/_wgpu_MAKE_INIT_STRUCT(WGPUChainedStruct, { \
+        /*.next=*/NULL _wgpu_COMMA \
+        /*.sType=*/WGPUSType_DawnDeviceAllocatorControl _wgpu_COMMA \
+    }) _wgpu_COMMA \
+    /*.allocatorHeapBlockSize=*/0 _wgpu_COMMA \
+})
+
 typedef struct WGPUDawnDrmFormatProperties {
     uint64_t modifier;
     uint32_t modifierPlaneCount;
@@ -1508,22 +1523,6 @@ typedef struct WGPUDawnExperimentalImmediateDataLimits {
         /*.sType=*/WGPUSType_DawnExperimentalImmediateDataLimits _wgpu_COMMA \
     }) _wgpu_COMMA \
     /*.maxImmediateDataRangeByteSize=*/WGPU_LIMIT_U32_UNDEFINED _wgpu_COMMA \
-})
-
-// Can be chained in WGPULimits
-typedef struct WGPUDawnExperimentalSubgroupLimits {
-    WGPUChainedStruct chain;
-    uint32_t minSubgroupSize;
-    uint32_t maxSubgroupSize;
-} WGPUDawnExperimentalSubgroupLimits WGPU_STRUCTURE_ATTRIBUTE;
-
-#define WGPU_DAWN_EXPERIMENTAL_SUBGROUP_LIMITS_INIT _wgpu_MAKE_INIT_STRUCT(WGPUDawnExperimentalSubgroupLimits, { \
-    /*.chain=*/_wgpu_MAKE_INIT_STRUCT(WGPUChainedStruct, { \
-        /*.next=*/NULL _wgpu_COMMA \
-        /*.sType=*/WGPUSType_DawnExperimentalSubgroupLimits _wgpu_COMMA \
-    }) _wgpu_COMMA \
-    /*.minSubgroupSize=*/WGPU_LIMIT_U32_UNDEFINED _wgpu_COMMA \
-    /*.maxSubgroupSize=*/WGPU_LIMIT_U32_UNDEFINED _wgpu_COMMA \
 })
 
 // Can be chained in WGPUBufferDescriptor
@@ -2464,6 +2463,34 @@ typedef struct WGPUSurfaceConfiguration {
 })
 
 // Can be chained in WGPUSurfaceDescriptor
+typedef struct WGPUSurfaceDescriptorFromWindowsUWPSwapChainPanel {
+    WGPUChainedStruct chain;
+    void * swapChainPanel;
+} WGPUSurfaceDescriptorFromWindowsUWPSwapChainPanel WGPU_STRUCTURE_ATTRIBUTE;
+
+#define WGPU_SURFACE_DESCRIPTOR_FROM_WINDOWS_UWP_SWAP_CHAIN_PANEL_INIT _wgpu_MAKE_INIT_STRUCT(WGPUSurfaceDescriptorFromWindowsUWPSwapChainPanel, { \
+    /*.chain=*/_wgpu_MAKE_INIT_STRUCT(WGPUChainedStruct, { \
+        /*.next=*/NULL _wgpu_COMMA \
+        /*.sType=*/WGPUSType_SurfaceDescriptorFromWindowsUWPSwapChainPanel _wgpu_COMMA \
+    }) _wgpu_COMMA \
+    /*.swapChainPanel=*/NULL _wgpu_COMMA \
+})
+
+// Can be chained in WGPUSurfaceDescriptor
+typedef struct WGPUSurfaceDescriptorFromWindowsWinUISwapChainPanel {
+    WGPUChainedStruct chain;
+    void * swapChainPanel;
+} WGPUSurfaceDescriptorFromWindowsWinUISwapChainPanel WGPU_STRUCTURE_ATTRIBUTE;
+
+#define WGPU_SURFACE_DESCRIPTOR_FROM_WINDOWS_WINUI_SWAP_CHAIN_PANEL_INIT _wgpu_MAKE_INIT_STRUCT(WGPUSurfaceDescriptorFromWindowsWinUISwapChainPanel, { \
+    /*.chain=*/_wgpu_MAKE_INIT_STRUCT(WGPUChainedStruct, { \
+        /*.next=*/NULL _wgpu_COMMA \
+        /*.sType=*/WGPUSType_SurfaceDescriptorFromWindowsWinUISwapChainPanel _wgpu_COMMA \
+    }) _wgpu_COMMA \
+    /*.swapChainPanel=*/NULL _wgpu_COMMA \
+})
+
+// Can be chained in WGPUSurfaceDescriptor
 typedef struct WGPUSurfaceDescriptorFromWindowsCoreWindow {
     WGPUChainedStruct chain;
     void * coreWindow;
@@ -2475,20 +2502,6 @@ typedef struct WGPUSurfaceDescriptorFromWindowsCoreWindow {
         /*.sType=*/WGPUSType_SurfaceDescriptorFromWindowsCoreWindow _wgpu_COMMA \
     }) _wgpu_COMMA \
     /*.coreWindow=*/NULL _wgpu_COMMA \
-})
-
-// Can be chained in WGPUSurfaceDescriptor
-typedef struct WGPUSurfaceDescriptorFromWindowsSwapChainPanel {
-    WGPUChainedStruct chain;
-    void * swapChainPanel;
-} WGPUSurfaceDescriptorFromWindowsSwapChainPanel WGPU_STRUCTURE_ATTRIBUTE;
-
-#define WGPU_SURFACE_DESCRIPTOR_FROM_WINDOWS_SWAP_CHAIN_PANEL_INIT _wgpu_MAKE_INIT_STRUCT(WGPUSurfaceDescriptorFromWindowsSwapChainPanel, { \
-    /*.chain=*/_wgpu_MAKE_INIT_STRUCT(WGPUChainedStruct, { \
-        /*.next=*/NULL _wgpu_COMMA \
-        /*.sType=*/WGPUSType_SurfaceDescriptorFromWindowsSwapChainPanel _wgpu_COMMA \
-    }) _wgpu_COMMA \
-    /*.swapChainPanel=*/NULL _wgpu_COMMA \
 })
 
 // Can be chained in WGPUSurfaceDescriptor
